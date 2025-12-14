@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All requests</title>
+    <link rel="icon" type="image/x-icon" href="images/dashboard.png" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        /* Your existing styles remain exactly the same */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: #d32f2f;
+            background-color: #ffebee;
+            border-radius: 4px;
+            margin: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .admin-header {
+            background: rgb(4, 4, 118);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 7.4rem;
+            position: relative;
+        }
+
+        #admin-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 15px;
+            margin-top: 9px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            padding-left: 10rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            margin-left: -50px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 600;
+            flex: 1;
+            margin: 0;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+
+        }
+
+        .requests-table-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-header h2 {
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+            margin-left: 30px;
+        }
+
+        .download {
+            background: rgb(212, 180, 132);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgb(27, 24, 24);
+            font-weight: 600;
+        }
+
+        .download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .table-wrapper {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 16px;
+            color: #667eea;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #e74c3c;
+            background-color: #ffebee;
+            border-radius: 4px;
+            margin: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+        }
+
+        #requests-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #requests-table thead {
+            background: rgb(4, 4, 118);
+            color: white;
+        }
+
+        #requests-table th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #requests-table tbody tr {
+            border-bottom: 1px solid #e8eef3;
+            transition: background-color 0.2s ease;
+        }
+
+        #requests-table tbody tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        #requests-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        #requests-table td {
+            padding: 16px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        /* Status badge styling */
+        .status-pending {
+            color: #e64d4d;
+            background-color: #f4d4d4;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .status-processing {
+            color: #42794d;
+            background-color: #d4edda;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .status-waiting {
+            color: #27ae60;
+            background-color: #d4edda;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        /* Request number styling */
+        #requests-table td:first-child {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* Loading spinner */
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #667eea;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Main header row - search on left, stats on right */
+        .header-row {
+            display: flex;
+            align-items: stretch;
+            gap: 86px;
+            margin-bottom: 30px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 30px;
+        }
+
+        /* Stats summary */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* Creates 2 equal columns */
+            gap: 20px;
+            flex-direction: row;
+            justify-content: flex-end;
+            /* gap: 15px; */
+            /* flex-wrap: nowrap;
+            disables wrapping, rows all in one line */
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            width: 130px;
+            height: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card.active {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            transform: scale(1.08);
+        }
+
+
+        .stat-card.total.active {
+            background-color: #d8dfff;
+            border: 3px solid #667eea;
+        }
+
+        .stat-card.pending.active {
+            background-color: #f4d4d4;
+            border: 3px solid #e64d4d;
+        }
+
+        .stat-card.processing.active {
+            background-color: #dff7e4;
+            border: 3px solid #42794d;
+        }
+
+        .stat-card.waiting.active {
+            border: 2px solid #FFB74D;
+            background-color: #ffebcd;
+        }
+
+        .stat-card h3 {
+            color: #000000;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .stat-card.total {
+            border: 2px solid #667eea;
+            background-color: #eff2fd;
+        }
+
+        .stat-card.pending {
+            border: 2px solid #e64d4d;
+            background-color: #f4d4d4;
+        }
+
+        .stat-card.processing {
+            border: 2px solid #42794d;
+            background-color: #dff7e4;
+        }
+
+        .stat-card.waiting {
+            border: 2px solid #FFB74D;
+            background-color: #ffebcd;
+        }
+
+        /* Search and Filters Styling */
+        .search-filters-container {
+            background: white;
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .search-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            /* Reduce space below the search row */
+        }
+
+        .search-bar {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-bar input {
+            width: 97%;
+            padding: 10px 40px 10px 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e0e0e0;
+            border: none;
+            color: #666;
+            font-size: 16px;
+            cursor: pointer;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .clear-search:hover {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .clear-search.visible {
+            display: flex;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filters select,
+        .filters input[type="date"] {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            max-width: 300px;
+        }
+
+        .filters select:focus,
+        .filters input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+        }
+
+        .clear-btn {
+            padding: 8px 16px;
+            background: #d3e4ff;
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #414082;
+            font-size: 13px;
+            width: 200px;
+        }
+
+        .clear-btn:hover {
+            background: #414082;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        @media (max-width: 1200px) {
+            .header-row {
+                flex-direction: column;
+            }
+
+            .stats-container {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+            }
+
+            .filters select,
+            .filters input[type="date"] {
+                width: 100%;
+            }
+
+            .stats-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        .account-menu {
+            position: absolute;
+            top: 40px;
+            right: 34px;
+            z-index: 1000;
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4A5568;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden
+        }
+
+        .account-icon img {
+            width: 50%;
+            object-fit: cover;
+        }
+
+        .account-icon:hover {
+            background-color: #f0f4f8;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Clickable request number */
+        .request-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .request-link:hover {
+            color: #4a5dc9;
+            text-decoration: underline;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .dropdown-header .admin-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .dropdown-header .admin-email {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-item .icon {
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 8px 0;
+        }
+
+        .dropdown-item.logout {
+            color: #d32f2f;
+        }
+
+        .dropdown-item.logout:hover {
+            background-color: #ffebee;
+        }
+
+        #requestModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* Modal content - scrolls inside */
+        #requestModal>div {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            /* ← This makes modal scroll */
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            margin: auto;
+        }
+
+        #requestModal button[onclick*="closeModal"] {
+            position: sticky;
+            top: -15px;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================ -->
+    <!-- AUTHENTICATION PROTECTION - START -->
+    <!-- ============================================ -->
+    <!-- <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const authConfig = {
+            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+            authDomain: "requests-ffdd6.firebaseapp.com",
+            projectId: "requests-ffdd6",
+            storageBucket: "requests-ffdd6.firebasestorage.app",
+            messagingSenderId: "316405880275",
+            appId: "1:316405880275:web:f4b271583e903ac639cb26"
+        };
+
+        const authApp = initializeApp(authConfig, 'adminAuth');
+        const adminAuth = getAuth(authApp);
+
+        console.log('🔍 Checking authentication...');
+
+        // Check sessionStorage (ATHAR Museum method)
+        const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+        const userEmail = sessionStorage.getItem('userEmail');
+
+        if (isAuthenticated !== 'true' || !userEmail) {
+            console.log('❌ Not authenticated - redirecting to login');
+            window.location.replace('login.html');
+        } else {
+            console.log('✅ Authenticated as:', userEmail);
+
+            // Update UI
+            const adminEmailElement = document.querySelector('.admin-email');
+            const adminNameElement = document.querySelector('.admin-name');
+
+            if (adminEmailElement) {
+                adminEmailElement.textContent = userEmail;
+            }
+            if (adminNameElement) {
+                const displayName = userEmail.split('@')[0];
+                adminNameElement.textContent = displayName;
+            }
+        }
+
+        // Global logout function
+        window.logout = async function () {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    console.log('🚪 Logging out...');
+
+                    // Clear session
+                    sessionStorage.clear();
+                    localStorage.clear();
+
+                    // Sign out from Firebase
+                    await signOut(adminAuth);
+
+                    console.log('✅ Logged out successfully');
+                    window.location.replace('login.html');
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    // Force logout even if Firebase fails
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    window.location.replace('login.html');
+                }
+            }
+        };
+    </script> -->
+    <!-- ============================================ -->
+    <!-- AUTHENTICATION PROTECTION - END -->
+    <!-- ============================================ -->
+
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="header-title">
+                <img id="admin-img" src="images/dashboard.png">
+                <button onclick="window.location.href='admin-dashboard.html'"
+                    style="background: none; border: none; cursor: pointer; padding: 0;">
+                    <h1 style="color: white; margin: 0;">Admin Dashboard</h1>
+                </button>
+            </div>
+            <div class="account-menu">
+                <div class="account-icon" id="accountIcon">
+                    <img src="images/user.png" alt="User Account">
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="admin-name">Admin User</div>
+                        <div class="admin-email">admin@university.edu</div>
+                    </div>
+                    <a href="#" class="dropdown-item">
+                        <span class="icon">👤</span>
+                        <span>My Account</span>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span class="icon">❓</span>
+                        <span>Help & Support</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <!-- ⬇️ UPDATED LOGOUT BUTTON ⬇️ -->
+                    <a href="#" class="dropdown-item logout" onclick="logout(); return false;">
+                        <span class="icon">🚪</span>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </header>
+
+    <!-- REST OF YOUR HTML CONTINUES HERE... -->
+    <div class="requests-table-container">
+        <!-- Header row: Search/Filters on left, Stats on right -->
+        <div class="header-row">
+            <div class="stats-container" id="stats-container">
+                <div class="stat-card total" onclick="filterByStatus('')" id="card-total">
+                    <h3>Total Requests</h3>
+                    <p id="stat-total">0</p>
+                </div>
+                <div class="stat-card pending" onclick="filterByStatus('Pending')" id="card-pending">
+                    <h3>Pending</h3>
+                    <p id="stat-pending">0</p>
+                </div>
+                <div class="stat-card processing" onclick="filterByStatus('Processing')" id="card-processing">
+                    <h3>Processing</h3>
+                    <p id="stat-processing">0</p>
+                </div>
+                <div class="stat-card waiting" onclick="filterByStatus('waiting')" id="card-waiting">
+                    <h3>Waiting</h3>
+                    <p id="stat-waiting">0</p>
+                </div>
+            </div>
+            <!-- Search and Filters Section -->
+            <div class="search-filters-container">
+                <div class="search-row">
+                    <div class="search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search by Request #, Description, Location...">
+                        <button class="clear-search" id="clearSearch" onclick="clearSearchInput()">×</button>
+                    </div>
+                </div>
+                <div class="filters">
+                    <select id="filterCollege">
+                        <option value="">All Colleges</option>
+                        <option value="College of Applied Studies">College of Applied Studies</option>
+                        <option value="College of Arts">College of Arts</option>
+                        <option value="College of Business Adminstration">College of Business Administration</option>
+                        <option value="College of Engineering">College of Engineering</option>
+                        <option value="College of Health & Sport Sciences">College of Health & Sport Sciences</option>
+                        <option value="College of Information Technology">College of Information Technology</option>
+                        <option value="College of Law">College of Law</option>
+                        <option value="College of Science">College of Science</option>
+                        <option value="Alumni Club">Alumni Club</option>
+                        <option value="Business Incubator Center">Business Incubator Center</option>
+                        <option value="Career Counselling Office">Career Counselling Office</option>
+                        <option value="Centre D'études Françaises">Centre D'études Françaises</option>
+                        <option value="Cloud Innovation Center">Cloud Innovation Center</option>
+                        <option value="Community Service and Continuing Education Center">Community Service and
+                            Continuing
+                            Education Center</option>
+                        <option value="Confucius Institiute">Confucius Institute</option>
+                        <option value="E-Learning Center">E-Learning Center</option>
+                        <option value="English Language Center">English Language Center</option>
+                        <option value="Information Technology Center">Information Technology Center</option>
+                        <option value="Information and Follow-up Office">Information and Follow-up Office</option>
+                        <option value="King Sejong Institiute for Teaching Korean">King Sejong Institute for Teaching
+                            Korean
+                        </option>
+                        <option value="Legal Clinic & Human Rights Centre">Legal Clinic & Human Rights Centre</option>
+                        <option value="Media Center">Media Center</option>
+                        <option value="Quality Assurance and Accrediation Centre">Quality Assurance and Accreditation
+                            Centre
+                        </option>
+                        <option value="Unit for Teaching Excellence and Leadership">Unit for Teaching Excellence and
+                            Leadership</option>
+                        <option value="Yunus Emre Institiute for Teaching Turkish">Yunus Emre Institute for Teaching
+                            Turkish
+                        </option>
+                    </select>
+
+                    <select id="filterStatus">
+                        <option value="">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Waiting for Approval">Waiting for Approval</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Rejected">Rejected</option>
+
+                    </select>
+
+                    <input type="date" id="filterDateFrom" placeholder="From Date">
+                    <input type="date" id="filterDateTo" placeholder="To Date">
+
+                    <button id="clearFilters" class="clear-btn">Clear Filters</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="table-header">
+            <h2> Maintenance Requests</h2>
+            <button class="download" id="download">
+                <span>📥 Download PDF</span>
+            </button>
+        </div>
+        <div class="table-wrapper">
+            <div id="loading" class="loading">Loading requests</div>
+            <div id="error" class="error" style="display: none;"></div>
+            <table id="requests-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Request #</th>
+                        <th>Status</th>
+                        <th>College / Center</th>
+                        <th>Department</th>
+                        <th>Location</th>
+                        <th>Issue Description</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="tickets-tbody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs - YOUR EXISTING FIREBASE CODE -->
+    <script type="module">
+        // YOUR EXISTING FIREBASE CODE STAYS EXACTLY THE SAME
+        // I'm keeping all your existing code here...
+
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, orderBy, query, updateDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+            authDomain: "requests-ffdd6.firebaseapp.com",
+            databaseURL: "https://requests-ffdd6-default-rtdb.firebaseio.com",
+            projectId: "requests-ffdd6",
+            storageBucket: "requests-ffdd6.firebasestorage.app",
+            messagingSenderId: "316405880275",
+            appId: "1:316405880275:web:f4b271583e903ac639cb26",
+            measurementId: "G-L0LR313Q4D"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ALL YOUR EXISTING FUNCTIONS REMAIN THE SAME
+        // (keeping all your existing JavaScript code...)
+
+        let allRequestsData = [];
+
+        function formatDate(dateValue) {
+            if (!dateValue) return 'N/A';
+
+            try {
+                if (dateValue.toDate) {
+                    const date = dateValue.toDate();
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+
+                if (typeof dateValue === 'string') {
+                    return dateValue;
+                }
+
+                if (dateValue instanceof Date) {
+                    return dateValue.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            } catch (error) {
+                console.error('Error formatting date:', error);
+            }
+
+            return 'N/A';
+        }
+
+        function getStatusClass(status) {
+            const statusLower = (status || '').toLowerCase();
+            if (statusLower.includes('progress') || statusLower.includes('processing')) return 'status-processing';
+            if (statusLower.includes('waiting')) return 'status-waiting';
+            return 'status-pending';
+        }
+
+        function formatStatus(status) {
+            if (!status) return 'Pending';
+            return status;
+        }
+
+        function getApprovalButtons(request) {
+            const supervisorStatus = request['Supervisor Approval'] || 'Pending';
+            const directorStatus = request['Director Approval'] || 'Pending';
+
+            if (supervisorStatus === 'Approved' && directorStatus === 'Approved') {
+                return `
+                    <div style="text-align: center; padding: 20px; background: #d4edda; border-radius: 8px; color: #155724;">
+                        <h3>✓ Request Fully Approved and Processing</h3>
+                    </div>
+                `;
+            }
+
+            if (supervisorStatus === 'Pending') {
+                return `
+                    <div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 5px;">Supervisor Name:</label>
+                            <input type="text" id="supervisorName" placeholder="Enter your name" style="
+                                width: 100%;
+                                padding: 10px;
+                                border: 1px solid #ddd;
+                                border-radius: 5px;
+                                font-size: 14px;
+                            ">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <button onclick="handleSupervisorApproval('${request['Request Number']}')" style="
+                                background: #27ae60;
+                                color: white;
+                                border: none;
+                                padding: 12px 30px;
+                                border-radius: 8px;
+                                font-size: 16px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.background='#229954'"
+                               onmouseout="this.style.background='#27ae60'">✓ Supervisor Approve</button>
+                            <button onclick="handleRejectRequest('${request['Request Number']}', 'Supervisor')" style="
+                                background: #e74c3c;
+                                color: white;
+                                border: none;
+                                padding: 12px 30px;
+                                border-radius: 8px;
+                                font-size: 16px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.background='#c0392b'"
+                               onmouseout="this.style.background='#e74c3c'">✗ Reject</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (supervisorStatus === 'Approved' && directorStatus === 'Pending') {
+                return `
+                    <div>
+                        <h4 style="margin-bottom: 15px; color: #2c3e50;">Director Final Approval Required</h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 5px;">Director Name:</label>
+                            <input type="text" id="directorName" placeholder="Enter your name" style="
+                                width: 100%;
+                                padding: 10px;
+                                border: 1px solid #ddd;
+                                border-radius: 5px;
+                                font-size: 14px;
+                            ">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <button onclick="handleDirectorApproval('${request['Request Number']}')" style="
+                                background: #27ae60;
+                                color: white;
+                                border: none;
+                                padding: 12px 30px;
+                                border-radius: 8px;
+                                font-size: 16px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.background='#229954'"
+                               onmouseout="this.style.background='#27ae60'">✓ Director Approve (Set to Processing)</button>
+                            <button onclick="handleRejectRequest('${request['Request Number']}', 'Director')" style="
+                                background: #e74c3c;
+                                color: white;
+                                border: none;
+                                padding: 12px 30px;
+                                border-radius: 8px;
+                                font-size: 16px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.background='#c0392b'"
+                               onmouseout="this.style.background='#e74c3c'">✗ Reject</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (supervisorStatus === 'Rejected' || directorStatus === 'Rejected') {
+                return `
+                    <div style="text-align: center; padding: 20px; background: #f8d7da; border-radius: 8px; color: #721c24;">
+                        <h3>✗ Request Rejected</h3>
+                    </div>
+                `;
+            }
+
+            return '';
+        }
+
+        function mapCollegeName(oldName) {
+            const collegeMapping = {
+                'Applied': 'College of Applied Studies',
+                'Arts': 'College of Arts',
+                'Business': 'College of Business Adminstration',
+                'Engineering': 'College of Engineering',
+                'Health': 'College of Health & Sport Sciences',
+                'IT': 'College of Information Technology',
+                'Law': 'College of Law',
+                'Science': 'College of Science',
+                'Alumni': 'Alumni Club',
+                'BIC': 'Business Incubator Center',
+                'Counselling': 'Career Counselling Office',
+                'French': 'Centre D\'études Françaises',
+                'Cloud': 'Cloud Innovation Center',
+                'CI': 'Confucius Institiute',
+                'E-Learning': 'E-Learning Center',
+                'English': 'English Language Center',
+                'ITC': 'Information Technology Center',
+                'Follow-up': 'Information and Follow-up Office',
+                'Korean': 'King Sejong Institiute for Teaching Korean',
+                'Legal': 'Legal Clinic & Human Rights Centre',
+                'Media': 'Media Center',
+                'QA': 'Quality Assurance and Accrediation Centre',
+                'Teaching': 'Unit for Teaching Excellence and Leadership',
+                'Turkish': 'Yunus Emre Institiute for Teaching Turkish'
+            };
+
+            return collegeMapping[oldName] || oldName;
+        }
+
+        function updateStats(requests) {
+            const stats = {
+                total: requests.length,
+                pending: 0,
+                inProgress: 0,
+                waiting: 0
+            };
+
+            requests.forEach(req => {
+                const status = (req.Status || '').toLowerCase();
+                if (status.includes('progress') || status.includes('processing')) {
+                    stats.inProgress++;
+                } else if (status.includes('waiting')) {
+                    stats.waiting++;
+                } else {
+                    stats.pending++;
+                }
+            });
+
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-pending').textContent = stats.pending;
+            document.getElementById('stat-processing').textContent = stats.inProgress;
+            document.getElementById('stat-waiting').textContent = stats.waiting;
+        }
+
+        function filterAndDisplayRequests() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filterCollege = document.getElementById('filterCollege').value;
+            const filterStatus = document.getElementById('filterStatus').value;
+            const filterDateFrom = document.getElementById('filterDateFrom').value;
+            const filterDateTo = document.getElementById('filterDateTo').value;
+
+            const clearSearchBtn = document.getElementById('clearSearch');
+            if (searchTerm) {
+                clearSearchBtn.classList.add('visible');
+            } else {
+                clearSearchBtn.classList.remove('visible');
+            }
+
+            const tbody = document.getElementById("tickets-tbody");
+            const table = document.getElementById("requests-table");
+            tbody.innerHTML = "";
+
+            let filteredRequests = allRequestsData.filter(data => {
+                const matchesSearch = !searchTerm ||
+                    (data['Request Number'] || '').toLowerCase().includes(searchTerm) ||
+                    (data.Description || '').toLowerCase().includes(searchTerm) ||
+                    (data.Location || '').toLowerCase().includes(searchTerm) ||
+                    (data.College || '').toLowerCase().includes(searchTerm) ||
+                    (data.Department || '').toLowerCase().includes(searchTerm);
+
+                const matchesCollege = !filterCollege || mapCollegeName(data.College) === filterCollege;
+
+                const matchesStatus = !filterStatus || (() => {
+                    const dataStatus = (data.Status || 'Pending').trim().toLowerCase();
+                    const filterStatusLower = filterStatus.trim().toLowerCase();
+                    return dataStatus === filterStatusLower;
+                })();
+
+                let matchesDate = true;
+                if (filterDateFrom || filterDateTo) {
+                    const requestDate = data.Date?.toDate ? data.Date.toDate() : new Date(data.Date);
+                    const fromDate = filterDateFrom ? new Date(filterDateFrom) : null;
+                    const toDate = filterDateTo ? new Date(filterDateTo + 'T23:59:59') : null;
+
+                    if (fromDate && requestDate < fromDate) matchesDate = false;
+                    if (toDate && requestDate > toDate) matchesDate = false;
+                }
+
+                return matchesSearch && matchesCollege && matchesStatus && matchesDate;
+            });
+
+            if (filteredRequests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No requests match your filters</td></tr>';
+                table.style.display = "table";
+                return;
+            }
+
+            filteredRequests.forEach((data) => {
+                const status = formatStatus(data.Status);
+                const statusClass = getStatusClass(status);
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td><a href="#" class="request-link" onclick="viewRequestDetails('${data['Request Number']}'); return false;">${data['Request Number'] || 'N/A'}</a></td>
+                <td><span class="${statusClass}">${status}</span></td>
+                <td>${mapCollegeName(data.College) || 'N/A'}</td>
+                <td>${data.Department || 'N/A'}</td>
+                <td>${data.Location || 'N/A'}</td>
+                <td>${data.Description || data.Issue || 'N/A'}</td>
+                <td>${formatDate(data['Date'] || data['Submitted on'])}</td>
+            `;
+                tbody.appendChild(row);
+            });
+
+            table.style.display = "table";
+            updateStats(filteredRequests);
+        }
+
+        async function loadRequests() {
+            const tbody = document.getElementById("tickets-tbody");
+            const loadingDiv = document.getElementById("loading");
+            const errorDiv = document.getElementById("error");
+            const table = document.getElementById("requests-table");
+
+            try {
+                tbody.innerHTML = "";
+                loadingDiv.style.display = "block";
+                errorDiv.style.display = "none";
+                table.style.display = "none";
+
+                const q = query(collection(db, "Requests"), orderBy("Date", "desc"));
+                const requestsSnapshot = await getDocs(q);
+
+                loadingDiv.style.display = "none";
+
+                if (requestsSnapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No requests found</td></tr>';
+                    table.style.display = "table";
+                    return;
+                }
+
+                allRequestsData = [];
+                requestsSnapshot.forEach((doc) => {
+                    allRequestsData.push(doc.data());
+                });
+
+                filterAndDisplayRequests();
+
+            } catch (error) {
+                console.error("Error loading requests:", error);
+                loadingDiv.style.display = "none";
+                errorDiv.textContent = `Error loading requests: ${error.message}`;
+                errorDiv.style.display = "block";
+            }
+        }
+
+        loadRequests();
+        setInterval(loadRequests, 100000);
+
+        // ═══════════════════════════════════════════
+        // URL FILTER - READ ?status= FROM URL
+        // ═══════════════════════════════════════════
+        function getFilterFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('status');
+        }
+
+        function applyURLFilter() {
+            const urlFilter = getFilterFromURL();
+
+            console.log('=== URL FILTER DEBUG ===');
+            console.log('URL:', window.location.href);
+            console.log('Filter:', urlFilter);
+
+            if (urlFilter) {
+                let statusValue = '';
+
+                if (urlFilter === 'pending') {
+                    // Pending Requests → Pending
+                    statusValue = 'Pending';
+                    console.log('Mapping: pending → Pending');
+
+                } else if (urlFilter === 'waiting-approval') {
+                    // Waiting for Approval → Waiting (CHANGED!)
+                    statusValue = 'Waiting';  // ← CHANGE THIS LINE
+                    console.log('Mapping: waiting-approval → Waiting');
+
+                } else if (urlFilter === 'approved') {
+                    // Approved Requests → Processing
+                    statusValue = 'Processing';
+                    console.log('Mapping: approved → Processing');
+                }
+
+                if (statusValue) {
+                    console.log('Setting filter dropdown to:', statusValue);
+                    document.getElementById('filterStatus').value = statusValue;
+
+                    // Highlight the correct stat card
+                    document.querySelectorAll('.stat-card').forEach(card => {
+                        card.classList.remove('active');
+                    });
+
+                    if (statusValue === 'Pending') {
+                        document.getElementById('card-pending').classList.add('active');
+                    } else if (statusValue === 'Waiting') {  // ← CHANGE THIS TOO
+                        document.getElementById('card-waiting').classList.add('active');
+                    } else if (statusValue === 'Processing') {
+                        document.getElementById('card-processing').classList.add('active');
+                    }
+
+                    console.log('Calling filterAndDisplayRequests()...');
+                    filterAndDisplayRequests();
+                }
+            } else {
+                console.log('No filter in URL - showing all requests');
+            }
+            console.log('========================');
+        }
+
+        window.addEventListener('load', function () {
+            setTimeout(applyURLFilter, 1000);
+        });
+        // 
+
+        document.getElementById('searchInput').addEventListener('input', filterAndDisplayRequests);
+        document.getElementById('filterCollege').addEventListener('change', filterAndDisplayRequests);
+        document.getElementById('filterStatus').addEventListener('change', filterAndDisplayRequests);
+        document.getElementById('filterDateFrom').addEventListener('change', filterAndDisplayRequests);
+        document.getElementById('filterDateTo').addEventListener('change', filterAndDisplayRequests);
+
+        document.getElementById('clearFilters').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterCollege').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+            document.getElementById('clearSearch').classList.remove('visible');
+            filterAndDisplayRequests();
+        });
+
+        window.clearSearchInput = function () {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearch').classList.remove('visible');
+            filterAndDisplayRequests();
+        };
+
+        window.downloadPDF = function () {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+
+            doc.setFontSize(20);
+            doc.setTextColor(4, 4, 118);
+            doc.text('Maintenance Requests Report', 14, 20);
+
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            const now = new Date();
+            doc.text(`Generated: ${now.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })}`, 14, 28);
+
+            const searchTerm = document.getElementById('searchInput').value;
+            const filterCollege = document.getElementById('filterCollege').value;
+            const filterStatus = document.getElementById('filterStatus').value;
+            const filterDateFrom = document.getElementById('filterDateFrom').value;
+            const filterDateTo = document.getElementById('filterDateTo').value;
+
+            let yPos = 34;
+            if (searchTerm || filterCollege || filterStatus || filterDateFrom || filterDateTo) {
+                doc.setFontSize(9);
+                doc.setTextColor(60);
+                const filters = [];
+                if (searchTerm) filters.push(`Search: "${searchTerm}"`);
+                if (filterCollege) filters.push(`College: ${filterCollege}`);
+                if (filterStatus) filters.push(`Status: ${filterStatus}`);
+                if (filterDateFrom) filters.push(`From: ${filterDateFrom}`);
+                if (filterDateTo) filters.push(`To: ${filterDateTo}`);
+
+                doc.text('Filters Applied: ' + filters.join(' | '), 14, yPos);
+                yPos += 8;
+            }
+
+            const tbody = document.getElementById('tickets-tbody');
+            const rows = tbody.querySelectorAll('tr');
+
+            if (rows.length === 0 || rows[0].querySelector('.empty-state')) {
+                alert('No data to export');
+                return;
+            }
+
+            const tableData = [];
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 0 && !cells[0].classList.contains('empty-state')) {
+                    tableData.push([
+                        cells[0].textContent.trim(),
+                        cells[1].textContent.trim(),
+                        cells[2].textContent.trim(),
+                        cells[3].textContent.trim(),
+                        cells[4].textContent.trim(),
+                        cells[5].textContent.trim().substring(0, 60) + (cells[5].textContent.trim().length > 60 ? '...' : ''),
+                        cells[6].textContent.trim()
+                    ]);
+                }
+            });
+
+            doc.autoTable({
+                startY: yPos + 2,
+                head: [['Request #', 'Status', 'College/Center', 'Department', 'Location', 'Issue Description', 'Date']],
+                body: tableData,
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 3,
+                },
+                headStyles: {
+                    fillColor: [4, 4, 118],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                    halign: 'center'
+                },
+                columnStyles: {
+                    0: { cellWidth: 25, fontStyle: 'bold' },
+                    1: { cellWidth: 22 },
+                    2: { cellWidth: 45 },
+                    3: { cellWidth: 35 },
+                    4: { cellWidth: 30 },
+                    5: { cellWidth: 60 },
+                    6: { cellWidth: 35 }
+                },
+                alternateRowStyles: {
+                    fillColor: [245, 245, 250]
+                },
+                didParseCell: function (data) {
+                    if (data.column.index === 1 && data.section === 'body') {
+                        const status = data.cell.text[0].toLowerCase();
+
+                        if (status.includes('pending')) {
+                            data.cell.styles.fillColor = [255, 243, 205];
+                            data.cell.styles.textColor = [243, 156, 18];
+                            data.cell.styles.fontStyle = 'bold';
+                        } else if (status.includes('progress')) {
+                            data.cell.styles.fillColor = [209, 236, 241];
+                            data.cell.styles.textColor = [52, 152, 219];
+                            data.cell.styles.fontStyle = 'bold';
+                        } else if (status.includes('waiting')) {
+                            data.cell.styles.fillColor = [212, 237, 218];
+                            data.cell.styles.textColor = [39, 174, 96];
+                            data.cell.styles.fontStyle = 'bold';
+                        }
+                    }
+
+                    if (data.column.index === 0 && data.section === 'body') {
+                        data.cell.styles.textColor = [102, 126, 234];
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                }
+            });
+
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(10);
+            doc.setTextColor(60);
+
+            const stats = {
+                total: tableData.length,
+                pending: tableData.filter(row => row[1].toLowerCase().includes('pending')).length,
+                inProgress: tableData.filter(row => row[1].toLowerCase().includes('progress')).length,
+                waiting: tableData.filter(row => row[1].toLowerCase().includes('waiting')).length
+            };
+
+            doc.text(
+                `Summary: Total: ${stats.total} | Pending: ${stats.pending} | Processing: ${stats.inProgress} | waiting for approval: ${stats.waiting}`,
+                14,
+                finalY
+            );
+
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150);
+
+                doc.text(
+                    `Page ${i} of ${pageCount}`,
+                    doc.internal.pageSize.width / 2,
+                    doc.internal.pageSize.height - 10,
+                    { align: 'center' }
+                );
+            }
+
+            const timestamp = now.toISOString().slice(0, 10);
+            const fileName = `Maintenance_Requests_${timestamp}.pdf`;
+            doc.save(fileName);
+        };
+
+        document.getElementById('download').addEventListener('click', downloadPDF);
+
+        //viewRequestDetails function with closeModal
+        window.viewRequestDetails = function (requestNumber) {
+            const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
+
+            if (!request) {
+                alert('Request not found');
+                return;
+            }
+
+            const modalHTML = `
+        <div id="requestModal" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        ">
+            <div style="
+                background: white;
+                border-radius: 12px;
+                padding: 30px;
+                max-width: 700px;
+                width: 90%;
+                max-height: 85vh;
+                overflow-y: auto;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                position: relative;
+            ">
+                <button onclick="closeModal()" style="
+                    position: absolute;
+                    top: 15px;
+                    right: 15px;
+                    background: #e0e0e0;
+                    color: #333;
+                    border: none;
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 50%;
+                    font-size: 20px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0;
+                " onmouseover="this.style.background='#d32f2f'; this.style.color='white'" 
+                   onmouseout="this.style.background='#e0e0e0'; this.style.color='#333'">×</button>
+
+                <h2 style="
+                    color: rgb(4, 4, 118);
+                    margin-bottom: 20px;
+                    font-size: 24px;
+                    border-bottom: 2px solid rgb(4, 4, 118);
+                    padding-bottom: 10px;
+                    padding-right: 40px;
+                ">Request Details</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Request Number:</p>
+                        <p style="color: #667eea; font-weight: bold; font-size: 18px;">${request['Request Number']}</p>
+                    </div>
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Status:</p>
+                        <p><span class="${getStatusClass(request.Status)}" style="padding: 6px 12px; border-radius: 20px; display: inline-block;">${request.Status || 'Pending'}</span></p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Date:</p>
+                        <p style="color: #2c3e50;">${formatDate(request.Date)}</p>
+                    </div>
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Submitted by:</p>
+                        <p style="color: #2c3e50;">${request['Submitted by'] || 'N/A'}</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">College:</p>
+                        <p style="color: #2c3e50;">${mapCollegeName(request.College) || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Department:</p>
+                        <p style="color: #2c3e50;">${request.Department || 'N/A'}</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Location Type:</p>
+                        <p style="color: #2c3e50;">${request['Location Type'] || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Location:</p>
+                        <p style="color: #2c3e50;">${request.Location || 'N/A'}</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Mobile:</p>
+                        <p style="color: #2c3e50;">${request['Mobile Number'] || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Email:</p>
+                        <p style="color: #2c3e50;">${request.Email || 'N/A'}</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Issue Description:</p>
+                    <p style="
+                        color: #2c3e50;
+                        background: #f5f5f5;
+                        padding: 15px;
+                        border-radius: 8px;
+                        line-height: 1.6;
+                        white-space: pre-wrap;
+                    ">${request.Description || 'N/A'}</p>
+                </div>
+
+                <div style="
+                    background: #f8f9fa;
+                    border: 2px solid #e9ecef;
+                    border-radius: 10px;
+                    padding: 20px;
+                    margin-bottom: 25px;
+                ">
+                    <h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 18px;">Approval Workflow</h3>
+
+                    <div style="
+                        background: white;
+                        border-left: 4px solid ${request['Supervisor Approval'] === 'Approved' ? '#27ae60' : request['Supervisor Approval'] === 'Rejected' ? '#e74c3c' : '#f39c12'};
+                        padding: 15px;
+                        margin-bottom: 15px;
+                        border-radius: 5px;
+                    ">
+                        <p style="font-weight: 600; color: #2c3e50; margin-bottom: 8px;">1. Supervisor Approval</p>
+                        <p style="margin-bottom: 5px;"><span style="font-weight: 600;">Status:</span> <span class="${getStatusClass(request['Supervisor Approval'] || 'Pending')}">${request['Supervisor Approval'] || 'Pending'}</span></p>
+                        ${request['Supervisor Name'] ? `<p style="margin-bottom: 5px;"><span style="font-weight: 600;">Approved by:</span> ${request['Supervisor Name']}</p>` : ''}
+                        ${request['Supervisor Approval Date'] ? `<p style="margin-bottom: 5px;"><span style="font-weight: 600;">Date:</span> ${formatDate(request['Supervisor Approval Date'])}</p>` : ''}
+                    </div>
+
+                    <div style="
+                        background: white;
+                        border-left: 4px solid ${request['Director Approval'] === 'Approved' ? '#27ae60' : request['Director Approval'] === 'Rejected' ? '#e74c3c' : '#f39c12'};
+                        padding: 15px;
+                        border-radius: 5px;
+                    ">
+                        <p style="font-weight: 600; color: #2c3e50; margin-bottom: 8px;">2. Director Approval (Final)</p>
+                        <p style="margin-bottom: 5px;"><span style="font-weight: 600;">Status:</span> <span class="${getStatusClass(request['Director Approval'] || 'Pending')}">${request['Director Approval'] || 'Pending'}</span></p>
+                        ${request['Director Name'] ? `<p style="margin-bottom: 5px;"><span style="font-weight: 600;">Approved by:</span> ${request['Director Name']}</p>` : ''}
+                        ${request['Director Approval Date'] ? `<p style="margin-bottom: 5px;"><span style="font-weight: 600;">Date:</span> ${formatDate(request['Director Approval Date'])}</p>` : ''}
+                    </div>
+                </div>
+
+                ${request.Photos && request.Photos.length > 0 ? `
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: 600; color: #666; margin-bottom: 10px;">Attached Photos:</p>
+                    <div style="
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                        gap: 15px;
+                    ">
+                        ${request.Photos.map(photoURL => `
+                            <div style="
+                                position: relative;
+                                border-radius: 8px;
+                                overflow: hidden;
+                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                                cursor: pointer;
+                                transition: transform 0.2s ease;
+                            "
+                            onmouseover="this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.transform='scale(1)'"
+                            onclick="window.open('${photoURL}', '_blank')">
+                                <img src="${photoURL}"
+                                    style="
+                                        width: 100%;
+                                        height: 150px;
+                                        object-fit: cover;
+                                        display: block;
+                                    "
+                                    alt="Request Photo"
+                                    onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22%3E%3Crect fill=%22%23ddd%22 width=%22150%22 height=%22150%22/%3E%3Ctext fill=%22%23999%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImage Error%3C/text%3E%3C/svg%3E'">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <p style="font-size: 12px; color: #999; margin-top: 8px; font-style: italic;">Click on any image to view full size</p>
+                </div>
+                ` : ''}
+
+                ${getApprovalButtons(request)}
+
+            </div>
+        </div>
+    `;
+
+            // ✅ ADD body.modal-open class
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            document.body.classList.add('modal-open');
+
+            // ✅ UPDATED: Remove body class when clicking outside
+            document.getElementById('requestModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+        };
+
+        // ✅ NEW: Global closeModal function
+        window.closeModal = function () {
+            const modal = document.getElementById('requestModal');
+            if (modal) {
+                modal.remove();
+            }
+            document.body.classList.remove('modal-open');
+        };
+        
+
+
+        window.handleSupervisorApproval = async function (requestNumber) {
+            const supervisorName = document.getElementById('supervisorName')?.value.trim();
+            if (!supervisorName) {
+                alert('Please enter supervisor name');
+                return;
+            }
+
+            if (!confirm('Approve this request as supervisor?')) {
+                return;
+            }
+
+            try {
+                const requestsRef = collection(db, 'Requests');
+                const q = query(requestsRef);
+                const querySnapshot = await getDocs(q);
+
+                let docId = null;
+                querySnapshot.forEach((docSnap) => {
+                    if (docSnap.data()['Request Number'] === requestNumber) {
+                        docId = docSnap.id;
+                    }
+                });
+
+                if (docId) {
+                    await updateDoc(doc(db, 'Requests', docId), {
+                        'Supervisor Approval': 'Approved',
+                        'Supervisor Name': supervisorName,
+                        'Supervisor Approval Date': serverTimestamp()
+                    });
+
+                    alert('Supervisor approval granted! Waiting for Director approval.');
+                    document.getElementById('requestModal').remove();
+                    loadRequests();
+                } else {
+                    alert('Error: Request not found in database');
+                }
+
+            } catch (error) {
+                console.error('Error approving request:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+
+        window.handleDirectorApproval = async function (requestNumber) {
+            const directorName = document.getElementById('directorName')?.value.trim();
+
+            if (!directorName) {
+                alert('Please enter director name');
+                return;
+            }
+
+            if (!confirm('Give final approval and set request to Processing?')) {
+                return;
+            }
+
+            try {
+                const requestsRef = collection(db, 'Requests');
+                const q = query(requestsRef);
+                const querySnapshot = await getDocs(q);
+
+                let docId = null;
+                querySnapshot.forEach((docSnap) => {
+                    if (docSnap.data()['Request Number'] === requestNumber) {
+                        docId = docSnap.id;
+                    }
+                });
+
+                if (docId) {
+                    await updateDoc(doc(db, 'Requests', docId), {
+                        'Director Approval': 'Approved',
+                        'Director Name': directorName,
+                        'Director Approval Date': serverTimestamp(),
+                        'Status': 'Processing'
+                    });
+
+                    const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
+                    if (request) {
+                        request.Status = 'Processing';
+                        request['Director Approval'] = 'Approved';
+                        localStorage.setItem('selectedRequestData', JSON.stringify(request));
+                    }
+
+                    alert('Director approval granted! Request is now Processing.');
+                    document.getElementById('requestModal').remove();
+                    window.location.href = 'job-description.html';
+                } else {
+                    alert('Error: Request not found in database');
+                }
+
+            } catch (error) {
+                console.error('Error approving request:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+
+        window.goToJobDescription = function (requestNumber) {
+            localStorage.setItem('selectedRequestNumber', requestNumber);
+
+            const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
+            if (request) {
+                localStorage.setItem('selectedRequestData', JSON.stringify(request));
+            }
+
+            window.location.href = 'job-description.html';
+        };
+
+        window.handleRejectRequest = async function (requestNumber, approvalLevel = 'Supervisor') {
+            if (!confirm(`Are you sure you want to reject this request at ${ approvalLevel } level ? `)) {
+                return;
+            }
+
+            try {
+                const requestsRef = collection(db, 'Requests');
+                const q = query(requestsRef);
+                const querySnapshot = await getDocs(q);
+
+                let docId = null;
+                querySnapshot.forEach((docSnap) => {
+                    if (docSnap.data()['Request Number'] === requestNumber) {
+                        docId = docSnap.id;
+                    }
+                });
+
+                if (docId) {
+                    const updateData = {
+                        Status: 'Rejected'
+                    };
+
+                    if (approvalLevel === 'Supervisor') {
+                        updateData['Supervisor Approval'] = 'Rejected';
+                        updateData['Supervisor Approval Date'] = serverTimestamp();
+                    } else if (approvalLevel === 'Director') {
+                        updateData['Director Approval'] = 'Rejected';
+                        updateData['Director Approval Date'] = serverTimestamp();
+                    }
+
+                    await updateDoc(doc(db, 'Requests', docId), updateData);
+
+                    alert('Request rejected.');
+                    document.getElementById('requestModal').remove();
+                    loadRequests();
+                } else {
+                    alert('Error: Request not found in database');
+                }
+            } catch (error) {
+                console.error('Error rejecting request:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+
+        window.updateOldStatuses = async function () {
+            if (!confirm('This will update all "In Progress" statuses to "Processing". Continue?')) {
+                return;
+            }
+
+            try {
+                const requestsRef = collection(db, 'Requests');
+                const q = query(requestsRef);
+                const querySnapshot = await getDocs(q);
+
+                let updateCount = 0;
+                const updatePromises = [];
+
+                querySnapshot.forEach((docSnap) => {
+                    if (docSnap.data().Status === 'In Progress') {
+                        updatePromises.push(
+                            updateDoc(doc(db, 'Requests', docSnap.id), {
+                                Status: 'Processing'
+                            })
+                        );
+                        updateCount++;
+                    }
+                });
+
+                await Promise.all(updatePromises);
+                alert(`Updated ${ updateCount } records from "In Progress" to "Processing"`);
+                loadRequests();
+
+            } catch (error) {
+                console.error('Error updating statuses:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+
+        window.filterByStatus = function (status) {
+            document.getElementById('filterStatus').value = status;
+
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            if (status === '') {
+                document.getElementById('card-total').classList.add('active');
+            } else if (status === 'Pending') {
+                document.getElementById('card-pending').classList.add('active');
+            } else if (status === 'Processing') {
+                document.getElementById('card-processing').classList.add('active');
+            } else if (status === 'waiting') {
+                document.getElementById('card-waiting').classList.add('active');
+            }
+
+            filterAndDisplayRequests();
+        };
+    </script>
+
+    <!-- Your existing account dropdown script -->
+    <script>
+        const accountIcon = document.getElementById('accountIcon');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        accountIcon.addEventListener('click', function (e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!accountIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('active');
+            }
+        });
+
+        // REMOVED the old logout handler - now using the global logout() function from auth script
+    </script>
+
+</body>
+
+</html>

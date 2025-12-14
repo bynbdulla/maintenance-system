@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Description - Day Work Form</title>
+    <link rel="icon" type="image/x-icon" href="images/tools.png" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: rgb(4, 4, 118);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 7.4rem;
+            position: relative;
+        }
+
+        #admin-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 15px;
+            margin-left: 3.5rem;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            padding-left: 3rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            margin-left: -50px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 600;
+            flex: 1;
+            margin: 0;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        .account-menu {
+            position: absolute;
+            top: 40px;
+            right: 34px;
+            z-index: 1000;
+        }
+
+        button[onclick="addMaterialRow()"]:hover {
+            background: rgb(20, 20, 160) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(4, 4, 118, 0.3);
+        }
+
+        button[onclick="addMaterialRow()"]:active {
+            transform: translateY(0);
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4A5568;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .account-icon img {
+            width: 50%;
+            object-fit: cover;
+        }
+
+        .account-icon:hover {
+            background-color: #f0f4f8;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .dropdown-header .admin-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .dropdown-header .admin-email {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-item .icon {
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 8px 0;
+        }
+
+        .dropdown-item.logout {
+            color: #d32f2f;
+        }
+
+        .dropdown-item.logout:hover {
+            background-color: #ffebee;
+        }
+
+        /* Form Container Styles */
+        .form-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, rgb(4, 4, 118) 0%, rgb(20, 20, 160) 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .form-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .form-header .university-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .form-header .university-info span {
+            font-size: 14px;
+        }
+
+        .form-body {
+            padding: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section-title {
+            background: #f0f4ff;
+            padding: 12px 20px;
+            border-left: 4px solid rgb(4, 4, 118);
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: rgb(4, 4, 118);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-row.three-cols {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .form-row.four-cols {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group label .arabic {
+            float: right;
+            color: #666;
+        }
+
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgb(4, 4, 118);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(4, 4, 118, 0.1);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Materials Table */
+        .materials-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .materials-table th,
+        .materials-table td {
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .materials-table th {
+            background: rgb(4, 4, 118);
+            color: white;
+            font-weight: 600;
+        }
+
+        .materials-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .materials-table .sn {
+            width: 50px;
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+
+        /* Labor Table */
+        .labor-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .labor-table th,
+        .labor-table td {
+            border: 1px solid #e0e0e0;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .labor-table th {
+            background: rgb(4, 4, 118);
+            color: white;
+            font-weight: 600;
+        }
+
+        .labor-table input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .labor-table .specialization {
+            text-align: left;
+            padding-left: 15px;
+            background: #f9f9f9;
+        }
+
+        /* Totals Section */
+        .totals-section {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .total-row:last-child {
+            border-bottom: none;
+        }
+
+        .total-row label {
+            font-weight: 600;
+            color: rgb(4, 4, 118);
+        }
+
+        .total-row .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: rgb(4, 4, 118);
+        }
+
+        /* Submit Button */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: rgb(4, 4, 118);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: rgb(20, 20, 160);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(4, 4, 118, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+
+        .material-select {
+            width: 85%;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="header-title">
+                <img src="images/back-button.png" alt="Back"
+                style="width:40px; height:40px; cursor:pointer;background-color: white;border-radius:50%; margin-left: 3.5rem;"
+                onclick="window.location.href='all-requests.html'">
+                <img id="admin-img" src="images/optimizing.png">
+                <h1>Job Description</h1>
+            </div>
+            <div class="account-menu">
+                <div class="account-icon" id="accountIcon">
+                    <img src="images/user.png" alt="User Account">
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="admin-name">Admin User</div>
+                        <div class="admin-email">admin@university.edu</div>
+                    </div>
+                    <a href="#" class="dropdown-item">
+                        <span class="icon">👤</span>
+                        <span>My Account</span>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout">
+                        <span class="icon">🚪</span>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="form-container">
+
+        <div class="form-card">
+            <div class="form-body">
+                <form id="dayWorkForm">
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <span>Basic Information</span>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Maintenance Request No.</label>
+                                <input type="text" id="requestNo" class="readonly-field" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Job Location</label>
+                                <input type="text" id="Location" class="readonly-field" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Dept./College/Deanship</label>
+                                <input type="text" id="college" class="readonly-field" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Required Materials Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <span>List of Required Materials</span>
+                        </div>
+
+                        <table class="materials-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">SN</th>
+                                    <th>Required Materials</th>
+                                    <th style="width: 80px;">Quantity</th>
+                                    <th style="width: 80px;">Estimated Unit Cost</th>
+                                    <th style="width: 80px;">Total Amount</th>
+                                    <th style="width: 80px;">Delete</th>
+                                </tr>
+
+                            </thead>
+                            <tbody id="materialsBody">
+                                <tr>
+                                    <td class="sn">1</td>
+                                    <td>
+                                        <select class="material-select" id="material-1"
+                                            onchange="handleMaterialSelection(1)">
+                                            <option value="">Select Material...</option>
+                                            <!-- Options will be populated from Firebase -->
+                                        </select>
+                                    </td>
+                                    <td><input type="number" name="qty1" min="0" value="0"
+                                            onchange="calculateMaterialTotal(1)">
+                                    </td>
+                                    <td><input type="number" id="unitBD1" class="price-field" readonly></td>
+                                    <td><input type="number" id="totalBD1" readonly></td>
+                                    <td>
+                                        <img src="images/bin.png" alt="Delete"
+                                            style="width:20px; height:20px; cursor:pointer;" onclick="deleteRow(this)">
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="sn">2</td>
+                                    <td>
+                                        <select class="material-select" id="material-2"
+                                            onchange="handleMaterialSelection(2)">
+                                            <option value="">Select Material...</option>
+                                            <!-- Options will be populated from Firebase -->
+                                        </select>
+                                    </td>
+                                    <td><input type="number" name="qty2" min="0" value="0"
+                                            onchange="calculateMaterialTotal(2)">
+                                    </td>
+                                    <td><input type="number" id="unitBD2" class="price-field" readonly></td>
+                                    <td><input type="number" id="totalBD2" readonly></td>
+                                    <td>
+                                        <img src="images/bin.png" alt="Delete"
+                                            style="width:20px; height:20px; cursor:pointer;" onclick="deleteRow(this)">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 15px; background: #f9f9f9;">
+                                        <button type="button" onclick="addMaterialRow()" style="background: rgb(4, 4, 118); 
+                           color: white; 
+                           border: none; 
+                           padding: 10px 25px; 
+                           border-radius: 6px; 
+                           font-size: 14px; 
+                           font-weight: 600; 
+                           cursor: pointer;
+                           display: inline-flex;
+                           align-items: center;
+                           gap: 8px;
+                           transition: all 0.3s ease;">
+                                            <span style="font-size: 18px;">+</span>
+                                            Add
+                                        </button>
+                                    </td>
+                                </tr>
+
+
+                            </tbody>
+                            <tfoot>
+                                <tr style="background: #f0f4ff; font-weight: bold;">
+                                    <td colspan="4" style="text-align: right; padding-right: 20px;">Estimated Grand
+                                        Total </td>
+                                    <td colspan="2"><input type="number" id="materialsGrandTotalBD" readonly
+                                            style="font-weight: bold;"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Required Labor Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <span>Required Labor</span>
+                        </div>
+
+                        <table class="labor-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 180px;">Technician Specialization</th>
+                                    <th rowspan="2" style="width: 60px;">No.</th>
+                                    <th colspan="2">Duration </th>
+                                    <th colspan="2">Worker Salary</th>
+                                    <th colspan="2">Total Amount</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 60px;">Days</th>
+                                    <th style="width: 60px;">Hr.</th>
+                                    <th style="width: 60px;">BD</th>
+                                    <th style="width: 60px;">Fils</th>
+                                    <th style="width: 60px;">BD</th>
+                                    <th style="width: 60px;">Fils</th>
+                                </tr>
+                            </thead>
+                            <tbody id="laborBody">
+                                <tr>
+                                    <td class="specialization">Mason </td>
+                                    <td><input type="number" name="masonNo" min="0"
+                                            onchange="calculateLaborTotal('mason')">
+                                    </td>
+                                    <td><input type="number" name="masonDays" min="0"
+                                            onchange="calculateLaborTotal('mason')">
+                                    </td>
+                                    <td><input type="number" name="masonHrs" min="0"
+                                            onchange="calculateLaborTotal('mason')">
+                                    </td>
+                                    <td><input type="number" name="masonSalaryBD" min="0"
+                                            onchange="calculateLaborTotal('mason')"></td>
+                                    <td><input type="number" name="masonSalaryFils" min="0" max="999"
+                                            onchange="calculateLaborTotal('mason')"></td>
+                                    <td><input type="number" name="masonTotalBD" readonly></td>
+                                    <td><input type="number" name="masonTotalFils" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td class="specialization">Carpentry </td>
+                                    <td><input type="number" name="carpentryNo" min="0"
+                                            onchange="calculateLaborTotal('carpentry')"></td>
+                                    <td><input type="number" name="carpentryDays" min="0"
+                                            onchange="calculateLaborTotal('carpentry')"></td>
+                                    <td><input type="number" name="carpentryHrs" min="0"
+                                            onchange="calculateLaborTotal('carpentry')"></td>
+                                    <td><input type="number" name="carpentrySalaryBD" min="0"
+                                            onchange="calculateLaborTotal('carpentry')"></td>
+                                    <td><input type="number" name="carpentrySalaryFils" min="0" max="999"
+                                            onchange="calculateLaborTotal('carpentry')"></td>
+                                    <td><input type="number" name="carpentryTotalBD" readonly></td>
+                                    <td><input type="number" name="carpentryTotalFils" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td class="specialization">Painter </td>
+                                    <td><input type="number" name="painterNo" min="0"
+                                            onchange="calculateLaborTotal('painter')">
+                                    </td>
+                                    <td><input type="number" name="painterDays" min="0"
+                                            onchange="calculateLaborTotal('painter')"></td>
+                                    <td><input type="number" name="painterHrs" min="0"
+                                            onchange="calculateLaborTotal('painter')"></td>
+                                    <td><input type="number" name="painterSalaryBD" min="0"
+                                            onchange="calculateLaborTotal('painter')"></td>
+                                    <td><input type="number" name="painterSalaryFils" min="0" max="999"
+                                            onchange="calculateLaborTotal('painter')"></td>
+                                    <td><input type="number" name="painterTotalBD" readonly></td>
+                                    <td><input type="number" name="painterTotalFils" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td class="specialization">Electrician </td>
+                                    <td><input type="number" name="electricianNo" min="0"
+                                            onchange="calculateLaborTotal('electrician')"></td>
+                                    <td><input type="number" name="electricianDays" min="0"
+                                            onchange="calculateLaborTotal('electrician')"></td>
+                                    <td><input type="number" name="electricianHrs" min="0"
+                                            onchange="calculateLaborTotal('electrician')"></td>
+                                    <td><input type="number" name="electricianSalaryBD" min="0"
+                                            onchange="calculateLaborTotal('electrician')"></td>
+                                    <td><input type="number" name="electricianSalaryFils" min="0" max="999"
+                                            onchange="calculateLaborTotal('electrician')"></td>
+                                    <td><input type="number" name="electricianTotalBD" readonly></td>
+                                    <td><input type="number" name="electricianTotalFils" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td class="specialization">A/C Technician </td>
+                                    <td><input type="number" name="acNo" min="0" onchange="calculateLaborTotal('ac')">
+                                    </td>
+                                    <td><input type="number" name="acDays" min="0" onchange="calculateLaborTotal('ac')">
+                                    </td>
+                                    <td><input type="number" name="acHrs" min="0" onchange="calculateLaborTotal('ac')">
+                                    </td>
+                                    <td><input type="number" name="acSalaryBD" min="0"
+                                            onchange="calculateLaborTotal('ac')">
+                                    </td>
+                                    <td><input type="number" name="acSalaryFils" min="0" max="999"
+                                            onchange="calculateLaborTotal('ac')"></td>
+                                    <td><input type="number" name="acTotalBD" readonly></td>
+                                    <td><input type="number" name="acTotalFils" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td class="specialization">Plumber </td>
+                                    <td><input type="number" name="plumberNo" min="0"
+                                            onchange="calculateLaborTotal('plumber')">
+                                    </td>
+                                    <td><input type="number" name="plumberDays" min="0"
+                                            onchange="calculateLaborTotal('plumber')"></td>
+                                    <td><input type="number" name="plumberHrs" min="0"
+                                            onchange="calculateLaborTotal('plumber')"></td>
+                                    <td><input type="number" name="plumberSalaryBD" min="0"
+                                            onchange="calculateLaborTotal('plumber')"></td>
+                                    <td><input type="number" name="plumberSalaryFils" min="0" max="999"
+                                            onchange="calculateLaborTotal('plumber')"></td>
+                                    <td><input type="number" name="plumberTotalBD" readonly></td>
+                                    <td><input type="number" name="plumberTotalFils" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td class="specialization">Guardian </td>
+                                    <td><input type="number" name="guardianNo" min="0"
+                                            onchange="calculateLaborTotal('guardian')"></td>
+                                    <td><input type="number" name="guardianDays" min="0"
+                                            onchange="calculateLaborTotal('guardian')"></td>
+                                    <td><input type="number" name="guardianHrs" min="0"
+                                            onchange="calculateLaborTotal('guardian')"></td>
+                                    <td><input type="number" name="guardianSalaryBD" min="0"
+                                            onchange="calculateLaborTotal('guardian')"></td>
+                                    <td><input type="number" name="guardianSalaryFils" min="0" max="999"
+                                            onchange="calculateLaborTotal('guardian')"></td>
+                                    <td><input type="number" name="guardianTotalBD" readonly></td>
+                                    <td><input type="number" name="guardianTotalFils" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td class="specialization">Unskilled Workers </td>
+                                    <td><input type="number" name="unskilledNo" min="0"
+                                            onchange="calculateLaborTotal('unskilled')"></td>
+                                    <td><input type="number" name="unskilledDays" min="0"
+                                            onchange="calculateLaborTotal('unskilled')"></td>
+                                    <td><input type="number" name="unskilledHrs" min="0"
+                                            onchange="calculateLaborTotal('unskilled')"></td>
+                                    <td><input type="number" name="unskilledSalaryBD" min="0"
+                                            onchange="calculateLaborTotal('unskilled')"></td>
+                                    <td><input type="number" name="unskilledSalaryFils" min="0" max="999"
+                                            onchange="calculateLaborTotal('unskilled')"></td>
+                                    <td><input type="number" name="unskilledTotalBD" readonly></td>
+                                    <td><input type="number" name="unskilledTotalFils" readonly></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background: #f0f4ff; font-weight: bold;">
+                                    <td colspan="6" style="text-align: right; padding-right: 20px;">Grand Total </td>
+                                    <td><input type="number" id="laborGrandTotalBD" readonly style="font-weight: bold;">
+                                    </td>
+                                    <td><input type="number" id="laborGrandTotalFils" readonly
+                                            style="font-weight: bold;"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Totals & Dates Section -->
+                    <div class="form-section">
+                        <div class="totals-section">
+                            <div class="total-row">
+                                <label>Estimated Cost of Materials & Manpower</label>
+                                <div class="value"><span id="grandTotalDisplay">0.000</span> BD</div>
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label>Starting Date </label>
+                                <input type="date" id="startDate">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Supervisor Name </label>
+                                <select id="supervisorName">
+                                    <option value="">Select Supervisor...</option>
+                                    <option value="FAREED">FAREED</option>
+                                    <option value="AHMED">AHMED</option>
+                                    <option value="MOHAMMED">MOHAMMED</option>
+                                    <option value="ALI">ALI</option>
+                                    <option value="HUSSAIN">HUSSAIN</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+                        <button type="submit" class="btn btn-success">Submit Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // ============================================
+            // MATERIAL ROW MANAGEMENT
+            // ============================================
+            let materialRowCount = 2; // Start at 2 since you have rows 1 and 2
+
+            window.addMaterialRow = function () {
+                materialRowCount++;
+                const rowNumber = materialRowCount;
+
+                console.log('➕ Adding row', rowNumber);
+
+                const tbody = document.getElementById('materialsBody');
+                if (!tbody) {
+                    console.error('❌ Cannot find materialsBody');
+                    return;
+                }
+
+                // Create new row
+                const newRow = document.createElement('tr');
+                newRow.id = `material-row-${rowNumber}`;
+
+                newRow.innerHTML = `
+            <td class="sn">${rowNumber}</td>
+            <td>
+                <select class="material-select" id="material-${rowNumber}" 
+                        onchange="handleMaterialSelection(${rowNumber})">
+                    <option value="">Select Material...</option>
+                </select>
+            </td>
+            <td><input type="number" name="qty${rowNumber}" min="0" value="0" 
+                       onchange="calculateMaterialTotal(${rowNumber})"></td>
+            <td><input type="number" id="unitBD${rowNumber}" class="price-field" readonly></td>
+            <td><input type="number" id="totalBD${rowNumber}" readonly></td>
+            <td>
+                <img src="images/bin.png" alt="Delete"
+                style="width:20px; height:20px; cursor:pointer;" onclick="deleteRow(this)">
+            </td>
+        `;
+
+                // Insert before the button row
+                const buttonRow = tbody.querySelector('tr:last-child');
+                tbody.insertBefore(newRow, buttonRow);
+
+                console.log('✅ Row', rowNumber, 'added to DOM');
+
+                // Populate dropdown for new row
+                setTimeout(() => {
+                    const dropdown = document.getElementById(`material-${rowNumber}`);
+                    if (dropdown) {
+                        if (window.populateSingleDropdown) {
+                            console.log('🔄 Populating dropdown for row', rowNumber);
+                            window.populateSingleDropdown(dropdown);
+                            console.log('✅ Dropdown populated for row', rowNumber);
+                        } else {
+                            console.error('❌ populateSingleDropdown function not found');
+                        }
+                    }
+                }, 100);
+            };
+
+            // Account dropdown functionality
+            const accountIcon = document.getElementById('accountIcon');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+
+            if (accountIcon && dropdownMenu) {
+                accountIcon.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    dropdownMenu.classList.toggle('active');
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!accountIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                        dropdownMenu.classList.remove('active');
+                    }
+                });
+
+                document.querySelectorAll('.dropdown-item').forEach(item => {
+                    item.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const action = this.textContent.trim();
+                        if (action === 'Logout') {
+                            if (confirm('Are you sure you want to logout?')) {
+                                alert('Logging out...');
+                            }
+                        } else {
+                            alert(`Navigating to: ${action}`);
+                        }
+                        dropdownMenu.classList.remove('active');
+                    });
+                });
+            }
+
+            // ============================================
+            // LABOR CALCULATIONS
+            // ============================================
+            function calculateLaborTotal(type) {
+                const no = parseFloat(document.querySelector(`[name="${type}No"]`)?.value || 0);
+                const days = parseFloat(document.querySelector(`[name="${type}Days"]`)?.value || 0);
+                const hrs = parseFloat(document.querySelector(`[name="${type}Hrs"]`)?.value || 0);
+                const salaryBD = parseFloat(document.querySelector(`[name="${type}SalaryBD"]`)?.value || 0);
+                const salaryFils = parseFloat(document.querySelector(`[name="${type}SalaryFils"]`)?.value || 0);
+
+                const totalDays = days + (hrs / 8);
+                const dailySalaryInFils = (salaryBD * 1000) + salaryFils;
+                const totalInFils = no * totalDays * dailySalaryInFils;
+
+                const totalBD = Math.floor(totalInFils / 1000);
+                const totalFils = Math.round(totalInFils % 1000);
+
+                const totalBDEl = document.querySelector(`[name="${type}TotalBD"]`);
+                const totalFilsEl = document.querySelector(`[name="${type}TotalFils"]`);
+
+                if (totalBDEl && totalFilsEl) {
+                    totalBDEl.value = totalBD;
+                    totalFilsEl.value = totalFils.toString().padStart(3, '0');
+                }
+
+                calculateLaborGrandTotal();
+            }
+
+            function calculateLaborGrandTotal() {
+                const types = ['mason', 'carpentry', 'painter', 'electrician', 'ac', 'plumber', 'guardian', 'unskilled'];
+                let grandTotalFils = 0;
+
+                types.forEach(type => {
+                    const totalBD = parseFloat(document.querySelector(`[name="${type}TotalBD"]`)?.value || 0);
+                    const totalFils = parseFloat(document.querySelector(`[name="${type}TotalFils"]`)?.value || 0);
+                    grandTotalFils += (totalBD * 1000) + totalFils;
+                });
+
+                const grandBD = Math.floor(grandTotalFils / 1000);
+                const grandFils = Math.round(grandTotalFils % 1000);
+
+                const grandBDEl = document.getElementById('laborGrandTotalBD');
+                const grandFilsEl = document.getElementById('laborGrandTotalFils');
+
+                if (grandBDEl && grandFilsEl) {
+                    grandBDEl.value = grandBD;
+                    grandFilsEl.value = grandFils.toString().padStart(3, '0');
+                }
+
+                updateGrandTotal();
+            }
+
+            // ============================================
+            // GRAND TOTAL CALCULATION
+            // ============================================
+            function updateGrandTotal() {
+                const materialsBD = parseFloat(document.getElementById('materialsGrandTotalBD')?.value || 0);
+                const materialsFils = parseFloat(document.getElementById('materialsGrandTotalFils')?.value || 0);
+                const laborBD = parseFloat(document.getElementById('laborGrandTotalBD')?.value || 0);
+                const laborFils = parseFloat(document.getElementById('laborGrandTotalFils')?.value || 0);
+
+                const totalInFils = (materialsBD * 1000 + materialsFils) + (laborBD * 1000 + laborFils);
+                const grandTotal = totalInFils / 1000;
+
+                const displayEl = document.getElementById('grandTotalDisplay');
+                if (displayEl) {
+                    displayEl.textContent = grandTotal.toFixed(3);
+                }
+            }
+
+            // ============================================
+            // FORM FUNCTIONS
+            // ============================================
+            function resetForm() {
+                if (confirm('Are you sure you want to reset the form?')) {
+                    document.getElementById('dayWorkForm')?.reset();
+                    const fields = ['materialsGrandTotalBD', 'laborGrandTotalBD'];
+                    fields.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = '';
+                    });
+                    updateGrandTotal();
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.getElementById('dayWorkForm');
+                if (form) {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        if (confirm('Are you sure you want to submit this form?')) {
+                            alert('Form submitted successfully!');
+                        }
+                    });
+                }
+            });
+            function deleteRow(element) {
+                const row = element.closest('tr');
+                if (row) {
+                    row.remove();
+                    updateSerialNumbers(); // Optional: renumber rows
+                    updateGrandTotal();    // Optional: recalculate total
+                }
+            }
+        </script>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+            import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+                authDomain: "requests-ffdd6.firebaseapp.com",
+                projectId: "requests-ffdd6",
+                storageBucket: "requests-ffdd6.firebasestorage.app",
+                messagingSenderId: "316405880275",
+                appId: "1:316405880275:web:f4b271583e903ac639cb26"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            let materialsDatabase = [];
+
+            // Make globally accessible
+            window.materialsDatabase = materialsDatabase;
+
+            async function loadMaterials() {
+                try {
+                    console.log('🔄 Loading materials from Firebase...');
+                    const q = query(collection(db, 'Materials'), orderBy('materialNo'));
+                    const querySnapshot = await getDocs(q);
+
+                    materialsDatabase = [];
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        materialsDatabase.push({
+                            no: data.materialNo,
+                            name: data.materialName,
+                            unit: data.unit,
+                            price: data.price,
+                            category: data.category
+                        });
+                    });
+
+                    window.materialsDatabase = materialsDatabase;
+                    console.log('✅ Loaded', materialsDatabase.length, 'materials');
+                    populateMaterialDropdowns();
+                } catch (error) {
+                    console.error('❌ Error loading materials:', error);
+                    alert('Failed to load materials from database');
+                }
+            }
+
+            function populateMaterialDropdowns() {
+                const dropdowns = document.querySelectorAll('select[id^="material-"]');
+                console.log('🔄 Populating', dropdowns.length, 'dropdowns');
+
+                dropdowns.forEach(dropdown => {
+                    populateSingleDropdown(dropdown);
+                });
+            }
+
+            function populateSingleDropdown(dropdown) {
+                if (!materialsDatabase || materialsDatabase.length === 0) {
+                    console.log('⚠️ Materials not loaded yet');
+                    return;
+                }
+
+                dropdown.innerHTML = '<option value="">Select Material...</option>';
+
+                const categorized = {};
+                materialsDatabase.forEach(m => {
+                    if (!categorized[m.category]) categorized[m.category] = [];
+                    categorized[m.category].push(m);
+                });
+
+                Object.keys(categorized).sort().forEach(category => {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = category;
+
+                    categorized[category].forEach(material => {
+                        const option = document.createElement('option');
+                        option.value = JSON.stringify(material);
+                        option.textContent = `${material.name} - ${material.unit}`;
+                        optgroup.appendChild(option);
+                    });
+
+                    dropdown.appendChild(optgroup);
+                });
+            }
+
+            // Make globally accessible
+            window.populateSingleDropdown = populateSingleDropdown;
+
+            window.handleMaterialSelection = function (rowNumber) {
+                const dropdown = document.getElementById(`material-${rowNumber}`);
+                if (!dropdown || !dropdown.value) {
+                    console.log('No material selected for row', rowNumber)
+                    return;
+                }
+
+                const material = JSON.parse(dropdown.value);
+                console.log('📦 Row', rowNumber, '- Selected:', material.name, '- Price:', material.price, 'BD');
+
+                // Set quantity to 1
+                const quantityInput = document.querySelector(`[name="qty${rowNumber}"]`);
+                if (quantityInput) {
+                    quantityInput.value = 1;
+                }
+
+                const bdInput = document.getElementById(`unitBD${rowNumber}`);
+                if (bdInput) {
+                    bdInput.value = material.price.toFixed(3);
+                    console.log('💰 Price set:', material.price.toFixed(3), 'BD');
+                }
+
+                // Calculate total
+                calculateMaterialTotal(rowNumber);
+            };
+
+            window.calculateMaterialTotal = function (row) {
+                const qtyInput = document.querySelector(`[name="qty${row}"]`);
+                const bdInput = document.getElementById(`unitBD${row}`);
+
+                if (!qtyInput || !bdInput) {
+                    console.log('Missing inputs for row', row);
+                    return;
+                }
+
+                const qty = parseFloat(qtyInput.value || 0);
+                const unitPrice = parseFloat(bdInput.value || 0);
+
+                // Simple calculation: quantity × unit price
+                const total = qty * unitPrice;
+
+                const totalBDInput = document.getElementById(`totalBD${row}`);
+                if (totalBDInput) {
+                    totalBDInput.value = total.toFixed(3); // e.g., 30.000
+                    console.log(`Row ${row} Total:`, total.toFixed(3), 'BD');
+                }
+
+                calculateMaterialsGrandTotal();
+            };
+
+
+            window.calculateMaterialsGrandTotal = function () {
+                let grandTotalFils = 0;
+
+                for (let i = 1; i <= 100; i++) {
+                    const totalBDInput = document.getElementById(`totalBD${i}`);
+                    const totalFilsInput = document.getElementById(`totalFils${i}`);
+
+                    if (totalBDInput && totalFilsInput) {
+                        const totalBD = parseFloat(totalBDInput.value || 0);
+                        const totalFils = parseFloat(totalFilsInput.value || 0);
+                        grandTotalFils += (totalBD * 1000) + totalFils;
+                    }
+                }
+
+                const grandBD = Math.floor(grandTotalFils / 1000);
+                const grandFils = Math.round(grandTotalFils % 1000);
+
+                const grandBDElement = document.getElementById('materialsGrandTotalBD');
+                const grandFilsElement = document.getElementById('materialsGrandTotalFils');
+
+                if (grandBDElement && grandFilsElement) {
+                    grandBDElement.value = grandBD;
+                    grandFilsElement.value = grandFils.toString().padStart(3, '0');
+                    console.log('📊 Grand Total:', grandBD, 'BD');
+                }
+
+                if (typeof updateGrandTotal === 'function') {
+                    updateGrandTotal();
+                }
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadMaterials);
+            } else {
+                loadMaterials();
+            }
+
+
+        </script>
