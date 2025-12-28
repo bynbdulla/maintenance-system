@@ -1244,31 +1244,33 @@
             return urlParams.get('status');
         }
 
-        function applyURLFilter() {
-            const urlFilter = getFilterFromURL();
+       function applyURLFilter() {
+    const urlFilter = getFilterFromURL();
 
-            console.log('=== URL FILTER DEBUG ===');
-            console.log('URL:', window.location.href);
-            console.log('Filter:', urlFilter);
+    console.log('=== URL FILTER DEBUG ===');
+    console.log('URL:', window.location.href);
+    console.log('Filter:', urlFilter);
 
-            if (urlFilter) {
-                let statusValue = '';
+    if (urlFilter) {
+        let statusValue = '';
 
-                if (urlFilter === 'waiting') {
-                    // waiting Requests → waiting
-                    statusValue = 'waiting';
-                    console.log('Mapping: waiting → waiting');
+        if (urlFilter.toLowerCase() === 'waiting') {
+            statusValue = 'Waiting';
+            console.log('Mapping: waiting → Waiting');
 
-                    // } else if (urlFilter === 'waiting-approval') {
-                    //     // waiting for Approval → waiting (CHANGED!)
-                    //     statusValue = 'waiting';  // ← CHANGE THIS LINE
-                    //     console.log('Mapping: waiting-approval → waiting');
+        } else if (urlFilter.toLowerCase() === 'processing') {
+            // ADD THIS NEW CONDITION
+            statusValue = 'Processing';
+            console.log('Mapping: processing → Processing');
 
-                } else if (urlFilter === 'Approved') {
-                    // Approved Requests → Processing
-                    statusValue = 'Processing';
-                    console.log('Mapping: Approved → Processing');
-                }
+        } else if (urlFilter.toLowerCase() === 'approved') {
+            statusValue = 'Approved';
+            console.log('Mapping: approved → Approved');
+
+        } else if (urlFilter.toLowerCase() === 'rejected') {
+            statusValue = 'Rejected';
+            console.log('Mapping: rejected → Rejected');
+        }
 
                 if (statusValue) {
                     console.log('Setting filter dropdown to:', statusValue);
