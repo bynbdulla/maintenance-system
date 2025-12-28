@@ -454,7 +454,7 @@
                         <img src="images/fast-time.png" alt="Quick Access" style="width: 30px;">
                         Quick Access
                     </h2>
-                    
+
                 </div>
 
                 <div class="action-grid">
@@ -485,6 +485,38 @@
             </div>
         </div>
     </div>
+    <div class="chart">
+        <canvas id="myChart">
+        </canvas>
+    </div>
+    
+    <script>
+        // Get the canvas element
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        // Create the chart
+        const myChart = new Chart(ctx, {
+            type: 'bar', // Chart type: 'bar', 'line', 'pie', 'doughnut', etc.
+            data: {
+                labels: ['January', 'February', 'March', 'April'], // X-axis labels
+                datasets: [{
+                    label: 'Sales',
+                    data: [12, 19, 3, 5], // Your data values
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 
 
     <!-- Authentication & Navigation Scripts
@@ -569,7 +601,7 @@
             displayRequests(filteredRequests);
         });
 
-        
+
         // Navigation functions
         function viewWaitingRequests() {
             window.location.href = 'all-requests-d.html?status=waiting';

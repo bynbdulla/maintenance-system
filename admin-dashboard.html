@@ -169,8 +169,9 @@
 
         .dashboard-row {
             display: flex;
-            gap: 5rem;
+            gap: 12rem;
             margin: 0 1rem;
+            margin-right: 5rem;
         }
 
         /* Notifications Box */
@@ -191,6 +192,10 @@
             font-weight: bold;
             text-transform: uppercase;
             font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
         }
 
         .notification-card {
@@ -209,14 +214,14 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .notification-card.pending {
-            border-left-color: #e64d4d;
-            background-color: #fff3f3;
+        .notification-card.rejected {
+            border-left-color: #FFB74D;
+            background-color: #fff9e6;
         }
 
         .notification-card.waiting {
-            border-left-color: #FFB74D;
-            background-color: #fff9e6;
+            border-left-color: #e64d4d;
+            background-color: #fff3f3;
         }
 
         .notification-card.approved {
@@ -337,6 +342,7 @@
             font-weight: 700;
         }
 
+
         /* Responsive */
         @media (max-width: 1200px) {
             .dashboard-row {
@@ -369,22 +375,10 @@
             }
         }
 
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-        }
-
-        .chart-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        canvas {
-            width: 100% !important;
-            height: 300px !important;
+        .notification-img {
+            width: 25px;
+            height: 25px;
+            margin-right: 2px;
         }
     </style>
 </head>
@@ -394,7 +388,7 @@
         <div class="header-content">
             <div class="header-title">
                 <img id="admin-img" src="images/dashboard.png" alt="Dashboard">
-                <button onclick="window.location.href='admin-dashboard.html'"
+                <button onclick="window.location.href='Admin-dashboard.html'"
                     style="background: none; border: none; cursor: pointer; padding: 0;">
                     <h1>Admin Dashboard</h1>
                 </button>
@@ -408,17 +402,13 @@
                         <div class="admin-name">Admin User</div>
                         <div class="admin-email">admin@university.edu</div>
                     </div>
-                    <a href="#" class="dropdown-item">
+                    <a href="my-account.html" class="dropdown-item">
                         <span class="icon">👤</span>
                         <span>My Account</span>
                     </a>
-                    <a href="#" class="dropdown-item">
+                    <a href="settings.html" class="dropdown-item">
                         <span class="icon">⚙️</span>
                         <span>Settings</span>
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <span class="icon">❓</span>
-                        <span>Help & Support</span>
                     </a>
                     <div class="dropdown-divider"></div>
                     <a href="#" class="dropdown-item logout" onclick="logout(); return false;">
@@ -434,24 +424,23 @@
         <div class="dashboard-row">
             <!-- Notifications Section -->
             <div class="notification-box">
-                <h2>🔔 Notifications</h2>
-
-                <div class="notification-card pending" onclick="viewPendingRequests()">
-                    <h4>⚠️ Pending Requests</h4>
-                    <div class="notification-text">
-                        <p>You have <strong>3</strong> Requests</p>
-                    </div>
-                </div>
+                <h2><img src="images/bell.png" class="notification-img"> Notifications</h2>
 
                 <div class="notification-card waiting" onclick="viewWaitingRequests()">
-                    <h4>⏳ Waiting for Director Approval</h4>
+                    <h4><img src="images/hourglass.png" class="notification-img"> Waiting for Approval</h4>
                     <div class="notification-text">
                         <p>You have <strong>3</strong> Requests</p>
                     </div>
                 </div>
 
                 <div class="notification-card approved" onclick="viewApprovedRequests()">
-                    <h4>✅ Approved Requests</h4>
+                    <h4><img src="images/approved.png" class="notification-img"> Approved by Director</h4>
+                    <div class="notification-text">
+                        <p>You have <strong>3</strong> Requests</p>
+                    </div>
+                </div>
+                <div class="notification-card rejected" onclick="viewRejectedRequests()">
+                    <h4><img src="images/reject.png" class="notification-img"> Rejected Requests</h4>
                     <div class="notification-text">
                         <p>You have <strong>3</strong> requests</p>
                     </div>
@@ -465,13 +454,11 @@
                         <img src="images/fast-time.png" alt="Quick Access" style="width: 30px;">
                         Quick Access
                     </h2>
-                    <button class="new" onclick="addNewRequest()">
-                        <strong>+ Add New Request</strong>
-                    </button>
+                    
                 </div>
 
                 <div class="action-grid">
-                    <a href="all-requests.html" class="action-card">
+                    <a href="all-requests-d.html" class="action-card">
                         <div class="badge">10</div>
                         <img src="images/job-application.png" alt="Requests">
                         <h3>Requests</h3>
@@ -499,39 +486,6 @@
         </div>
     </div>
 
-    <!-- Optional: Add link to analytics page -->
-    <h2 class="section-title">Maintenance Dynamics</h2>
-    <canvas id="myChart" width="400" height="200"></canvas>
-    <script>
-        const ctx = document.getElementById('myChart');
-
-        new Chart(ctx, {
-            type: 'bar',  // bar, line, pie, doughnut...
-            data: {
-                labels: ['January', 'February', 'March', 'April'],
-                datasets: [{
-                    label: 'Sales',
-                    data: [10, 20, 15, 30],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-    </script>
-
-
-    <!-- <div style="text-align: center; margin: 2rem;">
-        <a href="analytics-dashboard-complete.html" 
-           style="background: rgb(4, 4, 118); color: white; padding: 15px 40px; 
-                  text-decoration: none; border-radius: 8px; font-weight: bold; 
-                  display: inline-block; transition: all 0.3s;">
-            📊 View Analytics Dashboard
-        </a>
-    </div> -->
 
     <!-- Authentication & Navigation Scripts
     <script type="module">
@@ -598,22 +552,38 @@
             }
         });
 
+        document.getElementById('this-month-box').addEventListener('click', () => {
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+            const formatDate = date => date.toISOString().split('T')[0];
+            const startDate = formatDate(firstDay);
+            const endDate = formatDate(lastDay);
+
+            const filteredRequests = allRequests.filter(req => {
+                const reqDate = formatDate(new Date(req.date));
+                return reqDate >= startDate && reqDate <= endDate;
+            });
+
+            displayRequests(filteredRequests);
+        });
+
+        
         // Navigation functions
-        function viewPendingRequests() {
-            window.location.href = 'all-requests.html?status=pending';
+        function viewWaitingRequests() {
+            window.location.href = 'all-requests-d.html?status=waiting';
         }
 
-        function viewWaitingRequests() {
-            window.location.href = 'all-requests.html?status=waiting-approval';
+        function viewRejectedRequests() {
+            window.location.href = 'all-requests-d.html?status=Rejected';
         }
 
         function viewApprovedRequests() {
-            window.location.href = 'all-requests.html?status=approved';
+            window.location.href = 'all-requests-d.html?status=approved';
         }
 
-        function addNewRequest() {
-            window.location.href = 'november.html?admin=true';
-        }
+
     </script>
 </body>
 

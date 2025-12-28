@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Director Dashboard - Maintenance Requests</title>
-    <link rel="icon" type="image/x-icon" href="images/dashboard.png">
+    <title>Settings</title>
+    <link rel="icon" type="image/x-icon" href="images/gear.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -342,7 +342,6 @@
             font-weight: 700;
         }
 
-
         /* Responsive */
         @media (max-width: 1200px) {
             .dashboard-row {
@@ -375,6 +374,24 @@
             }
         }
 
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 300px !important;
+        }
+
         .notification-img {
             width: 25px;
             height: 25px;
@@ -387,10 +404,10 @@
     <header class="admin-header">
         <div class="header-content">
             <div class="header-title">
-                <img id="admin-img" src="images/dashboard.png" alt="Dashboard">
-                <button onclick="window.location.href='Director-dashboard.html'"
+                <img id="admin-img" src="images/gear.png">
+                <button onclick="window.location.href='director-dashboard.html'"
                     style="background: none; border: none; cursor: pointer; padding: 0;">
-                    <h1>Director Dashboard</h1>
+                    <h1 style="color: white; margin: 0;">Settings</h1>
                 </button>
             </div>
             <div class="account-menu">
@@ -411,6 +428,7 @@
                         <span>Settings</span>
                     </a>
                     <div class="dropdown-divider"></div>
+                    <!-- ⬇️ UPDATED LOGOUT BUTTON ⬇️ -->
                     <a href="#" class="dropdown-item logout" onclick="logout(); return false;">
                         <span class="icon">🚪</span>
                         <span>Logout</span>
@@ -418,126 +436,9 @@
                 </div>
             </div>
         </div>
-    </header>
-
-    <div class="main-container">
-        <div class="dashboard-row">
-            <!-- Notifications Section -->
-            <div class="notification-box">
-                <h2><img src="images/bell.png" class="notification-img"> Notifications</h2>
-
-                <div class="notification-card waiting" onclick="viewWaitingRequests()">
-                    <h4><img src="images/hourglass.png" class="notification-img"> Waiting for Approval</h4>
-                    <div class="notification-text">
-                        <p>You have <strong>3</strong> Requests</p>
-                    </div>
-                </div>
-
-                <div class="notification-card approved" onclick="viewApprovedRequests()">
-                    <h4><img src="images/approved.png" class="notification-img"> Approved by Director</h4>
-                    <div class="notification-text">
-                        <p>You have <strong>3</strong> Requests</p>
-                    </div>
-                </div>
-                <div class="notification-card rejected" onclick="viewRejectedRequests()">
-                    <h4><img src="images/reject.png" class="notification-img"> Rejected Requests</h4>
-                    <div class="notification-text">
-                        <p>You have <strong>3</strong> requests</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <div class="add-new">
-                    <h2>
-                        <img src="images/fast-time.png" alt="Quick Access" style="width: 30px;">
-                        Quick Access
-                    </h2>
-                    
-                </div>
-
-                <div class="action-grid">
-                    <a href="all-requests-d.html" class="action-card">
-                        <div class="badge">10</div>
-                        <img src="images/job-application.png" alt="Requests">
-                        <h3>Requests</h3>
-                    </a>
-
-                    <a href="processing.html" class="action-card">
-                        <div class="badge">7</div>
-                        <img src="images/processing.png" alt="Processing">
-                        <h3>Processing</h3>
-                    </a>
-
-                    <a href="month.html" class="action-card">
-                        <div class="badge">20</div>
-                        <img src="images/calendar (1).png" alt="This Month">
-                        <h3>This Month</h3>
-                    </a>
-
-                    <a href="done.html" class="action-card">
-                        <div class="badge">7</div>
-                        <img src="images/checklist.png" alt="Done">
-                        <h3>Done</h3>
-                    </a>
-                </div>
-            </div>
         </div>
-    </div>
-
-
-    <!-- Authentication & Navigation Scripts
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
-            authDomain: "requests-ffdd6.firebaseapp.com",
-            projectId: "requests-ffdd6",
-            storageBucket: "requests-ffdd6.firebasestorage.app",
-            messagingSenderId: "316405880275",
-            appId: "1:316405880275:web:f4b271583e903ac639cb26"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        // Check authentication
-        const isAuthenticated = sessionStorage.getItem('isAuthenticated');
-        const userEmail = sessionStorage.getItem('userEmail');
-
-        if (isAuthenticated !== 'true' || !userEmail) {
-            console.log('❌ Not authenticated - redirecting to login');
-            window.location.replace('login.html');
-        } else {
-            console.log('✅ Authenticated as:', userEmail);
-            // Update UI
-            document.querySelector('.admin-email').textContent = userEmail;
-            document.querySelector('.admin-name').textContent = userEmail.split('@')[0];
-        }
-
-        // Global logout function
-        window.logout = async function () {
-            if (confirm('Are you sure you want to logout?')) {
-                try {
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    await signOut(auth);
-                    window.location.replace('login.html');
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    window.location.replace('login.html');
-                }
-            }
-        };
-    </script> -->
-
+    </header>
     <script>
-        // Account dropdown
         const accountIcon = document.getElementById('accountIcon');
         const dropdownMenu = document.getElementById('dropdownMenu');
 
@@ -551,38 +452,6 @@
                 dropdownMenu.classList.remove('active');
             }
         });
-
-        document.getElementById('this-month-box').addEventListener('click', () => {
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-            const formatDate = date => date.toISOString().split('T')[0];
-            const startDate = formatDate(firstDay);
-            const endDate = formatDate(lastDay);
-
-            const filteredRequests = allRequests.filter(req => {
-                const reqDate = formatDate(new Date(req.date));
-                return reqDate >= startDate && reqDate <= endDate;
-            });
-
-            displayRequests(filteredRequests);
-        });
-
-        
-        // Navigation functions
-        function viewWaitingRequests() {
-            window.location.href = 'all-requests-d.html?status=waiting';
-        }
-
-        function viewRejectedRequests() {
-            window.location.href = 'all-requests-d.html?status=Rejected';
-        }
-
-        function viewApprovedRequests() {
-            window.location.href = 'all-requests-d.html?status=approved';
-        }
-
 
     </script>
 </body>

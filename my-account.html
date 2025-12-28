@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account</title>
+    <link rel="icon" type="image/x-icon" href="images/user1.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .admin-header {
+            background: rgb(4, 4, 118);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 7.4rem;
+            position: relative;
+        }
+
+        #admin-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 15px;
+            margin-top: 9px;
+            background-color: white;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            padding-left: 10rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            margin-left: -50px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        /* Account Menu */
+        .account-menu {
+            position: absolute;
+            top: 40px;
+            right: 34px;
+            z-index: 1000;
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .account-icon img {
+            width: 50%;
+            object-fit: cover;
+        }
+
+        .account-icon:hover {
+            background-color: #f0f4f8;
+            transform: scale(1.05);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .dropdown-header .admin-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .dropdown-header .admin-email {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 8px 0;
+        }
+
+        .dropdown-item.logout {
+            color: #d32f2f;
+        }
+
+        .dropdown-item.logout:hover {
+            background-color: #ffebee;
+        }
+
+        /* Main Container */
+        .main-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 20px;
+            place-items: center;
+        }
+
+        .dashboard-row {
+            display: flex;
+            gap: 12rem;
+            margin: 0 1rem;
+            margin-right: 5rem;
+        }
+
+        /* Notifications Box */
+        .notification-box {
+            width: 350px;
+            max-width: 350px;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            border: 2px solid rgb(4, 4, 118);
+            border-radius: 8px;
+        }
+
+        .notification-box h2 {
+            color: rgb(4, 4, 118);
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .notification-card {
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            width: 270px;
+            border-left: 6px solid;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .notification-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification-card.rejected {
+            border-left-color: #FFB74D;
+            background-color: #fff9e6;
+        }
+
+        .notification-card.waiting {
+            border-left-color: #e64d4d;
+            background-color: #fff3f3;
+        }
+
+        .notification-card.approved {
+            border-left-color: #42794d;
+            background-color: #f0f9f0;
+        }
+
+        .notification-card h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .notification-text p {
+            margin: 4px 0;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            flex: 2;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            margin-top: 30px;
+        }
+
+        .add-new {
+            display: flex;
+            gap: 20rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .add-new h2 {
+            color: rgb(4, 4, 118);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button.new {
+            border: 1.5px solid #7e7509;
+            padding: 4px;
+            border-radius: 6px;
+            height: 2.3rem;
+            width: 10rem;
+            background: #ffe9c1;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button.new:hover {
+            background: #e3e2e7;
+            transform: translateY(-2px);
+        }
+
+        .action-grid {
+            display: grid;
+            gap: 20px;
+            padding: 10px;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .action-card {
+            background: #f3f3f3;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            width: 100%;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            border: 2px solid rgb(4, 4, 118);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #b08d57;
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .action-card img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .action-card h3 {
+            font-size: 1.2rem;
+            color: rgb(4, 4, 118);
+            margin-top: 1rem;
+        }
+
+        /* Section Title */
+        .section-title {
+            margin: 4rem 0 2rem 5rem;
+            color: rgb(4, 4, 118);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-row {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .notification-box {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                padding-left: 30px;
+            }
+
+            .header-title {
+                margin-left: 0;
+            }
+        }
+
+        .notification-img {
+            width: 25px;
+            height: 25px;
+            margin-right: 2px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .admin-header {
+            background: rgb(4, 4, 118);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 7.4rem;
+            position: relative;
+        }
+
+        #admin-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 15px;
+            margin-top: 9px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            padding-left: 10rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            margin-left: -50px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 600;
+            flex: 1;
+            margin: 0;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        .account-menu {
+            position: absolute;
+            top: 40px;
+            right: 34px;
+            z-index: 1000;
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4A5568;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+
+
+        .account-icon:hover {
+            background-color: #f0f4f8;
+            transform: scale(1.05);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 30px;
+            align-items: center;
+
+        }
+
+        .account-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            width: 70%;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, rgb(4, 4, 118), rgb(30, 30, 150));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .card-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Profile Image Section */
+        .profile-image-section {
+            text-align: center;
+            padding: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .profile-image-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+            width: 120px;
+            height: 120px;
+        }
+
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid rgb(4, 4, 118);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-overlay {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgb(4, 4, 118);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            place-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-overlay:hover {
+            background: rgb(30, 30, 150);
+            transform: scale(1.1);
+        }
+
+        .upload-overlay::before {
+            content: '📷';
+            font-size: 20px;
+        }
+
+        #imageUpload {
+            display: none;
+        }
+
+        .image-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .image-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn {
+            border: 3px solid rgb(4, 4, 118);
+            color: black;
+        }
+
+        .upload-btn:hover {
+            background: rgb(185, 213, 255);
+            transform: translateY(-2px);
+        }
+
+        .remove-btn {
+            border: 3px solid #e74c3c;
+            color: black;
+        }
+
+        .remove-btn:hover {
+            background: #ffcdc7;
+            transform: translateY(-2px);
+        }
+
+        /* Form Section */
+        .form-section {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: rgb(4, 4, 118);
+            box-shadow: 0 0 0 3px rgba(4, 4, 118, 0.1);
+        }
+
+        .form-group input:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #d4b484;
+            color: rgb(0, 0, 0);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Password Section */
+        .password-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .password-section h3 {
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .password-hint {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .password-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .password-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .password-group input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 1px solid #d0d0d0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .password-group input:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #999;
+            user-select: none;
+            z-index: 10;
+        }
+
+        .toggle-password:hover {
+            color: #4A90E2;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-cancel {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .btn-cancel:hover {
+            background: #bdc3c7;
+            transform: translateY(-2px);
+        }
+
+        .btn-save {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-logout {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Success Message */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 30px;
+            border-radius: 8px;
+            display: none;
+            border-left: 4px solid #28a745;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Error Message */
+        .error-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px 30px;
+            border-radius: 8px;
+            display: none;
+            border-left: 4px solid #dc3545;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid rgb(4, 4, 118);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 15px;
+                margin: 20px auto;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .header-content {
+                padding-left: 30px;
+            }
+
+            .header-title {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <!-- Error and Success Messages - Fixed at top -->
+    <div class="success-message" id="successMessage"></div>
+    <div class="error-message" id="errorMessage">
+        ❌ <span id="errorText"></span>
+    </div>
+
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="header-title">
+                <img id="admin-img" src="images/2user.png">
+                <h1 style="color: white; margin: 0;">My Account</h1>
+            </div>
+            <div class="account-menu">
+                <div class="account-icon" id="accountIcon">
+                    <img src="images/user.png" alt="User Account" id="headerProfileImage">
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="admin-name">Admin User</div>
+                        <div class="admin-email">admin@university.edu</div>
+                    </div>
+                    <a href="my-account.html" class="dropdown-item">
+                        <span class="icon">👤</span>
+                        <span>My Account</span>
+                    </a>
+                    <a href="settings.html" class="dropdown-item">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <!-- ⬇️ UPDATED LOGOUT BUTTON ⬇️ -->
+                    <a href="#" class="dropdown-item logout" onclick="logout(); return false;">
+                        <span class="icon">🚪</span>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="account-card">
+            <!-- Card Header -->
+
+
+            <!-- Profile Image Section -->
+            <div class="profile-image-section">
+                <div class="profile-image-container">
+                    <img src="images/user.png" alt="Profile" class="profile-image" id="profileImage">
+                    <input type="file" id="imageUpload" accept="image/*">
+                </div>
+                <div class="image-buttons">
+                    <button class="image-btn upload-btn" onclick="document.getElementById('imageUpload').click()"
+                        style="width: 10rem;">
+                        Upload image
+                    </button>
+                    <button class="image-btn remove-btn" onclick="removeProfileImage()" style="width: 10rem;">
+                        Remove
+                    </button>
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <div class="form-section">
+                <form id="accountForm">
+                    <!-- Role -->
+                    <div class="form-group">
+                        <label>Role</label>
+                        <span class="role-badge" id="userRole">Director</span>
+                    </div>
+
+                    <!-- Email (Read-only) -->
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="userEmail" disabled value="director@university.edu">
+                    </div>
+
+                    <!-- Name -->
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="userName" placeholder="Enter your full name" required>
+                    </div>
+
+                    <!-- Password Section -->
+                    <h3 style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 650; font-size: 14px;">
+                        Change Password</h3>
+                    <div class="password-section">
+                        <div class="password-group">
+                            <label>Current Password <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <input type="password" id="currentPassword" placeholder="••••••••••">
+                                <span class="toggle-password" onclick="togglePassword('currentPassword')"><img src="images/show.png" style="width:20PX ;"></span>
+                            </div>
+                        </div>
+
+                        <div class="password-group">
+                            <label>New Password <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <input type="password" id="newPassword" placeholder="Enter new password"
+                                    onkeyup="checkPasswordStrength()">
+                                <span class="toggle-password" onclick="togglePassword('newPassword')"><img src="images/show.png" style="width:20PX ;"></span>
+                            </div>
+                        </div>
+
+                        <div class="password-group" style="position: relative;">
+                            <label>Confirm New Password <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <input type="password" id="confirmPassword" placeholder="Confirm new password"
+                                    onkeyup="checkPasswordMatch()">
+                                <span class="toggle-password" onclick="togglePassword('confirmPassword')"><img src="images/show.png" style="width:18PX ;"></span>
+                            </div>
+                        </div>
+
+                        <!-- Password Strength Bars -->
+                        <div class="password-strength">
+                            <div class="strength-bars">
+                                <div class="strength-bar" id="bar1"></div>
+                                <div class="strength-bar" id="bar2"></div>
+                                <div class="strength-bar" id="bar3"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-save" id="saveBtn">
+                            Save Changes
+                            <div class="loading-spinner" id="loadingSpinner"></div>
+                        </button>
+                        <button type="button" class="btn btn-cancel" onclick="cancelChanges()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import {
+            getAuth,
+            updatePassword,
+            reauthenticateWithCredential,
+            EmailAuthProvider,
+            signOut
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            updateDoc
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import {
+            getStorage,
+            ref,
+            uploadBytes,
+            getDownloadURL
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+            authDomain: "requests-ffdd6.firebaseapp.com",
+            databaseURL: "https://requests-ffdd6-default-rtdb.firebaseio.com",
+            projectId: "requests-ffdd6",
+            storageBucket: "requests-ffdd6.firebasestorage.app",
+            messagingSenderId: "316405880275",
+            appId: "1:316405880275:web:f4b271583e903ac639cb26",
+            measurementId: "G-L0LR313Q4D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let originalData = {};
+        let currentImageFile = null;
+
+        window.addEventListener('load', async function () {
+            const userEmail = sessionStorage.getItem('userEmail');
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('userEmail').value = userEmail;
+
+            try {
+                const userDocRef = doc(db, 'Users', userEmail);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    document.getElementById('userName').value = userData.name || '';
+                    document.getElementById('userRole').textContent = userData.role || 'Director';
+
+                    if (userData.photoURL) {
+                        document.getElementById('profileImage').src = userData.photoURL;
+                        document.getElementById('headerProfileImage').src = userData.photoURL;
+                    }
+
+                    originalData = {
+                        name: userData.name || '',
+                        photoURL: userData.photoURL || 'images/user.png'
+                    };
+                } else {
+                    await setDoc(userDocRef, {
+                        email: userEmail,
+                        name: userEmail.split('@')[0],
+                        role: 'Director',
+                        photoURL: '',
+                        createdAt: new Date().toISOString()
+                    });
+
+                    document.getElementById('userName').value = userEmail.split('@')[0];
+                    originalData = {
+                        name: userEmail.split('@')[0],
+                        photoURL: 'images/user.png'
+                    };
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showError('Failed to load user data');
+            }
+        });
+
+        document.getElementById('imageUpload').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showError('Image size must be less than 5MB');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    document.getElementById('profileImage').src = event.target.result;
+                    document.getElementById('headerProfileImage').src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+                currentImageFile = file;
+            }
+        });
+
+        window.removeProfileImage = function () {
+            if (confirm('Are you sure you want to remove your profile photo?')) {
+                document.getElementById('profileImage').src = 'images/user.png';
+                document.getElementById('headerProfileImage').src = 'images/user.png';
+                currentImageFile = null;
+                document.getElementById('imageUpload').value = '';
+            }
+        };
+
+        document.getElementById('accountForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const saveBtn = document.getElementById('saveBtn');
+            const spinner = document.getElementById('loadingSpinner');
+
+            saveBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                const userEmail = sessionStorage.getItem('userEmail');
+                const userName = document.getElementById('userName').value.trim();
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (!userName) {
+                    throw new Error('Please enter your full name');
+                }
+
+                const isChangingPassword = newPassword || confirmPassword;
+
+                if (isChangingPassword) {
+                    if (!currentPassword) {
+                        throw new Error('Please enter your current password to change your password');
+                    }
+                    if (!newPassword) {
+                        throw new Error('Please enter a new password');
+                    }
+                    if (newPassword.length < 8) {
+                        throw new Error('New password must be at least 8 characters');
+                    }
+                    if (newPassword !== confirmPassword) {
+                        throw new Error('New passwords do not match');
+                    }
+
+                    try {
+                        const user = auth.currentUser;
+                        const credential = EmailAuthProvider.credential(userEmail, currentPassword);
+                        await reauthenticateWithCredential(user, credential);
+                        await updatePassword(user, newPassword);
+                        console.log('✅ Password changed successfully');
+                    } catch (authError) {
+                        console.error('Authentication error:', authError);
+                        if (authError.code === 'auth/wrong-password' || authError.code === 'auth/invalid-credential') {
+                            throw new Error('Current password is incorrect. Please try again.');
+                        } else if (authError.code === 'auth/too-many-requests') {
+                            throw new Error('Too many failed attempts. Please try again later.');
+                        } else {
+                            throw new Error('Failed to verify current password: ' + authError.message);
+                        }
+                    }
+                }
+
+                let photoURL = originalData.photoURL;
+                if (currentImageFile) {
+                    const storageRef = ref(storage, `profile-images/${userEmail}`);
+                    await uploadBytes(storageRef, currentImageFile);
+                    photoURL = await getDownloadURL(storageRef);
+                }
+
+                const userDocRef = doc(db, 'Users', userEmail);
+                await updateDoc(userDocRef, {
+                    name: userName,
+                    photoURL: photoURL,
+                    updatedAt: new Date().toISOString()
+                });
+
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                resetPasswordStrength();
+
+                originalData = {
+                    name: userName,
+                    photoURL: photoURL
+                };
+
+                currentImageFile = null;
+
+                if (isChangingPassword) {
+                    showSuccess('✅ All changes saved successfully! Password updated.');
+                } else {
+                    showSuccess('✅ Profile updated successfully!');
+                }
+
+            } catch (error) {
+                console.error('Error saving changes:', error);
+                showError(error.message);
+            } finally {
+                saveBtn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        });
+
+        window.cancelChanges = function () {
+            if (confirm('Discard all changes?')) {
+                document.getElementById('userName').value = originalData.name;
+                document.getElementById('profileImage').src = originalData.photoURL;
+                document.getElementById('headerProfileImage').src = originalData.photoURL;
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                resetPasswordStrength();
+                currentImageFile = null;
+                document.getElementById('imageUpload').value = '';
+            }
+        };
+
+        window.logout = async function () {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    await signOut(auth);
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    showError('Logout failed');
+                }
+            }
+        };
+
+        function showSuccess(message = '✅ Changes saved successfully!') {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.textContent = message;
+            successMsg.classList.add('show');
+
+            // Scroll to top smoothly to show the message
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 3000);
+        }
+
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorMsg.classList.add('show');
+
+            // Scroll to top smoothly to show the message
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            setTimeout(() => {
+                errorMsg.classList.remove('show');
+            }, 5000);
+        }
+
+        window.showSuccess = showSuccess;
+        window.showError = showError;
+    </script>
+
+    <script>
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const type = field.getAttribute('type') === 'password' ? 'text' : 'password';
+            field.setAttribute('type', type);
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const bar1 = document.getElementById('bar1');
+            const bar2 = document.getElementById('bar2');
+            const bar3 = document.getElementById('bar3');
+            const strengthText = document.getElementById('strengthText');
+            const clearBtn = document.getElementById('clearBtn');
+
+            // Show/hide clear button
+            if (password || document.getElementById('confirmPassword').value) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+
+            // Check requirements
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasLength = password.length >= 8;
+
+            // Update requirement checkboxes
+            updateRequirement('req-uppercase', hasUppercase);
+            updateRequirement('req-number', hasNumber);
+            updateRequirement('req-length', hasLength);
+
+            // Reset bars
+            bar1.className = 'strength-bar';
+            bar2.className = 'strength-bar';
+            bar3.className = 'strength-bar';
+
+            if (password.length === 0) {
+                strengthText.textContent = 'Weak password. Must contain;';
+                return;
+            }
+
+            // Calculate strength
+            let strength = 0;
+            if (hasLength) strength++;
+            if (hasUppercase) strength++;
+            if (hasNumber) strength++;
+            if (password.length >= 12) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            // Update bars
+            if (strength >= 1) {
+                bar1.classList.add('weak');
+                strengthText.textContent = 'Weak password. Must contain;';
+            }
+            if (strength >= 3) {
+                bar1.classList.remove('weak');
+                bar1.classList.add('medium');
+                bar2.classList.add('medium');
+                strengthText.textContent = 'Medium password';
+            }
+            if (strength >= 4) {
+                bar1.classList.remove('medium');
+                bar2.classList.remove('medium');
+                bar1.classList.add('strong');
+                bar2.classList.add('strong');
+                bar3.classList.add('strong');
+                strengthText.textContent = 'Strong password';
+            }
+        }
+
+        function updateRequirement(id, isValid) {
+            const element = document.getElementById(id);
+            const icon = element.querySelector('.check-icon');
+
+            if (isValid) {
+                element.classList.add('valid');
+                icon.textContent = '✓';
+            } else {
+                element.classList.remove('valid');
+                icon.textContent = '✗';
+            }
+        }
+
+        function checkPasswordMatch() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const clearBtn = document.getElementById('clearBtn');
+
+            if (newPassword || confirmPassword) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+        }
+
+        function clearPasswords() {
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('clearBtn').style.display = 'none';
+            resetPasswordStrength();
+        }
+
+        function resetPasswordStrength() {
+            document.getElementById('bar1').className = 'strength-bar';
+            document.getElementById('bar2').className = 'strength-bar';
+            document.getElementById('bar3').className = 'strength-bar';
+            document.getElementById('strengthText').textContent = 'Weak password. Must contain;';
+            updateRequirement('req-uppercase', false);
+            updateRequirement('req-number', false);
+            updateRequirement('req-length', false);
+        }
+
+        window.togglePassword = togglePassword;
+        window.checkPasswordStrength = checkPasswordStrength;
+        window.checkPasswordMatch = checkPasswordMatch;
+        window.clearPasswords = clearPasswords;
+    </script>
+
+    <script>
+        const accountIcon = document.getElementById('accountIcon');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        accountIcon.addEventListener('click', function (e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!accountIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('active');
+            }
+        });
+    </script>
+
+</body>
+
+</html>

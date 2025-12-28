@@ -206,6 +206,15 @@
             font-size: 12px;
         }
 
+        .status-Approved {
+            color: #FFB700;
+            background-color: #fcedca;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
         .status-processing {
             color: #42794d;
             background-color: #d4edda;
@@ -215,9 +224,18 @@
             font-size: 12px;
         }
 
+        .status-Completed {
+            color: #09034D;
+            background-color: #d7e3ff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
         .status-rejected {
             color: #000000;
-            background-color: #eeeeee;
+            background-color: #e7e1e1;
             padding: 4px 12px;
             border-radius: 20px;
             display: inline-block;
@@ -347,7 +365,7 @@
         }
 
         .stat-card.processing {
-            border: 2px solid #42794d;
+            border: 2px solid #797542;
             background-color: #dff7e4;
         }
 
@@ -745,9 +763,9 @@
         <div class="header-content">
             <div class="header-title">
                 <img id="admin-img" src="images/dashboard.png">
-                <button onclick="window.location.href='admin-dashboard.html'"
+                <button onclick="window.location.href='director-dashboard.html'"
                     style="background: none; border: none; cursor: pointer; padding: 0;">
-                    <h1 style="color: white; margin: 0;">Admin Dashboard</h1>
+                    <h1 style="color: white; margin: 0;">Director Dashboard</h1>
                 </button>
             </div>
             <div class="account-menu">
@@ -766,6 +784,10 @@
                     <a href="settings.html" class="dropdown-item">
                         <span class="icon">⚙️</span>
                         <span>Settings</span>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span class="icon">❓</span>
+                        <span>Help & Support</span>
                     </a>
                     <div class="dropdown-divider"></div>
                     <!-- ⬇️ UPDATED LOGOUT BUTTON ⬇️ -->
@@ -788,15 +810,15 @@
                     <h3>Total Requests</h3>
                     <p id="stat-total">0</p>
                 </div>
-                <div class="stat-card waiting" onclick="filterByStatus('Waiting')" id="card-waiting">
-                    <h3>Waiting</h3>
-                    <p id="stat-Waiting">0</p>
+                <div class="stat-card waiting" onclick="filterByStatus('waiting')" id="card-waiting">
+                    <h3>waiting</h3>
+                    <p id="stat-waiting">0</p>
                 </div>
                 <div class="stat-card processing" onclick="filterByStatus('Processing')" id="card-processing">
                     <h3>Processing</h3>
                     <p id="stat-processing">0</p>
                 </div>
-                <div class="stat-card rejected" onclick="filterByStatus('rejected')" id="card-rejected">
+                <div class="stat-card rejected" onclick="filterByStatus('Rejected')" id="card-Rejected">
                     <h3>rejected</h3>
                     <p id="stat-rejected">0</p>
                 </div>
@@ -851,12 +873,11 @@
 
                     <select id="filterStatus">
                         <option value="">All Status</option>
-                        <option value="Waiting for Approval">Waiting for Approval</option>
+                        <option value="waiting">Waiting for Approval</option>
                         <option value="Approved">Approved</option>
                         <option value="Processing">Processing</option>
                         <option value="Completed">Completed</option>
                         <option value="Rejected">Rejected</option>
-
                     </select>
 
                     <input type="date" id="filterDateFrom" placeholder="From Date">
@@ -962,115 +983,80 @@
             const statusLower = (status || '').toLowerCase();
             if (statusLower.includes('progress') || statusLower.includes('processing')) return 'status-processing';
             if (statusLower.includes('waiting')) return 'status-waiting';
+            if (statusLower.includes('approved')) return 'status-Approved';    // ← Gold
+            if (statusLower.includes('completed')) return 'status-Completed';  // ← Purple
             if (statusLower.includes('rejected')) return 'status-rejected';
             return 'status-waiting';
         }
 
         function formatStatus(status) {
-            if (!status) return 'waiting';
+            if (!status) return 'Waiting';
             return status;
         }
 
         function getApprovalButtons(request) {
-            const supervisorStatus = request['Supervisor Approval'] || 'waiting';
             const directorStatus = request['Director Approval'] || 'waiting';
+            const status = request['Status'] || 'waiting';
 
-            if (supervisorStatus === 'Approved' && directorStatus === 'Approved') {
+            // If already approved and processing
+            if (directorStatus === 'Approved' && status === 'Processing') {
                 return `
-                    <div style="text-align: center; padding: 20px; background: #d4edda; border-radius: 8px; color: #155724;">
-                        <h3>✓ Request Fully Approved and Processing</h3>
-                    </div>
-                `;
+            <div style="text-align: center; padding: 20px; background: #d4edda; border-radius: 8px; color: #155724;">
+                <h3>✓ Request Approved and Processing</h3>
+                <p style="margin-top: 10px;">This request is currently being processed.</p>
+            </div>
+        `;
             }
 
-            if (supervisorStatus === 'waiting') {
+            // If waiting for director approval
+            if (directorStatus === 'waiting' && status === 'waiting') {
                 return `
-                    <div>
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; font-weight: 600; margin-bottom: 5px;">Supervisor Name:</label>
-                            <input type="text" id="supervisorName" placeholder="Enter your name" style="
-                                width: 100%;
-                                padding: 10px;
-                                border: 1px solid #ddd;
-                                border-radius: 5px;
-                                font-size: 14px;
-                            ">
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <button onclick="handleSupervisorApproval('${request['Request Number']}')" style="
-                                background: #27ae60;
-                                color: white;
-                                border: none;
-                                padding: 12px 30px;
-                                border-radius: 8px;
-                                font-size: 16px;
-                                font-weight: 600;
-                                cursor: pointer;
-                                transition: all 0.3s ease;
-                            " onmouseover="this.style.background='#229954'"
-                               onmouseout="this.style.background='#27ae60'">✓ Supervisor Approve</button>
-                            <button onclick="handleRejectRequest('${request['Request Number']}', 'Supervisor')" style="
-                                background: #e74c3c;
-                                color: white;
-                                border: none;
-                                padding: 12px 30px;
-                                border-radius: 8px;
-                                font-size: 16px;
-                                font-weight: 600;
-                                cursor: pointer;
-                                transition: all 0.3s ease;
-                            " onmouseover="this.style.background='#c0392b'"
-                               onmouseout="this.style.background='#e74c3c'">✗ Reject</button>
-                        </div>
-                    </div>
-                `;
+            <div>
+                <h4 style="margin-bottom: 15px; color: #2c3e50; text-align: center;">
+                    Director Approval Required
+                </h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <button onclick="handleDirectorApproval('${request['Request Number']}')" style="
+                        background: #27ae60;
+                        color: white;
+                        border: none;
+                        padding: 15px 30px;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='#229954'"
+                       onmouseout="this.style.background='#27ae60'">✓ Approve</button>
+                    
+                    <button onclick="handleRejectRequest('${request['Request Number']}')" style="
+                        background: #e74c3c;
+                        color: white;
+                        border: none;
+                        padding: 15px 30px;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='#c0392b'"
+                       onmouseout="this.style.background='#e74c3c'">✗ Reject</button>
+                </div>
+            </div>
+        `;
             }
 
-            if (supervisorStatus === 'Approved' && directorStatus === 'waiting') {
+            // If rejected
+            if (status === 'Rejected') {
                 return `
-                    <div>
-                        <h4 style="margin-bottom: 15px; color: #2c3e50;">Director Final Approval Required</h4>
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; font-weight: 600; margin-bottom: 5px;">Director Name:</label>
-                            <input type="text" id="directorName" placeholder="Enter your name" style="
-                                width: 100%;
-                                padding: 10px;
-                                border: 1px solid #ddd;
-                                border-radius: 5px;
-                                font-size: 14px;
-                            ">
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <button onclick="handleDirectorApproval('${request['Request Number']}')" style="
-                                background: #27ae60;
-                                color: white;
-                                border: none;
-                                padding: 12px 30px;
-                                border-radius: 8px;
-                                font-size: 16px;
-                                font-weight: 600;
-                                cursor: pointer;
-                                transition: all 0.3s ease;
-                            " onmouseover="this.style.background='#229954'"
-                               onmouseout="this.style.background='#27ae60'">✓ Director Approve (Set to Processing)</button>
-                            <button onclick="handleRejectRequest('${request['Request Number']}', 'Director')" style="
-                                background: #e74c3c;
-                                color: white;
-                                border: none;
-                                padding: 12px 30px;
-                                border-radius: 8px;
-                                font-size: 16px;
-                                font-weight: 600;
-                                cursor: pointer;
-                                transition: all 0.3s ease;
-                            " onmouseover="this.style.background='#c0392b'"
-                               onmouseout="this.style.background='#e74c3c'">✗ Reject</button>
-                        </div>
-                    </div>
-                `;
+            <div style="text-align: center; padding: 20px; background: #f8d7da; border-radius: 8px; color: #721c24;">
+                <h3>✗ Request Rejected</h3>
+                ${request['Rejection Reason'] ? `<p style="margin-top: 10px;">Reason: ${request['Rejection Reason']}</p>` : ''}
+            </div>
+        `;
             }
 
-
+            return '';
         }
 
         function mapCollegeName(oldName) {
@@ -1273,15 +1259,15 @@
                     statusValue = 'waiting';
                     console.log('Mapping: waiting → waiting');
 
-                } else if (urlFilter === 'waiting-approval') {
-                    // Waiting for Approval → Waiting (CHANGED!)
-                    statusValue = 'Waiting';  // ← CHANGE THIS LINE
-                    console.log('Mapping: waiting-approval → Waiting');
+                    // } else if (urlFilter === 'waiting-approval') {
+                    //     // waiting for Approval → waiting (CHANGED!)
+                    //     statusValue = 'waiting';  // ← CHANGE THIS LINE
+                    //     console.log('Mapping: waiting-approval → waiting');
 
-                } else if (urlFilter === 'approved') {
+                } else if (urlFilter === 'Approved') {
                     // Approved Requests → Processing
                     statusValue = 'Processing';
-                    console.log('Mapping: approved → Processing');
+                    console.log('Mapping: Approved → Processing');
                 }
 
                 if (statusValue) {
@@ -1295,7 +1281,7 @@
 
                     if (statusValue === 'waiting') {
                         document.getElementById('card-waiting').classList.add('active');
-                    } else if (statusValue === 'Waiting') {  // ← CHANGE THIS TOO
+                    } else if (statusValue === 'waiting') {  // ← CHANGE THIS TOO
                         document.getElementById('card-waiting').classList.add('active');
                     } else if (statusValue === 'Processing') {
                         document.getElementById('card-processing').classList.add('active');
@@ -1608,7 +1594,7 @@
                     </div>
                 </div>
 
-                <div style="margin-bottom: 25px;">
+               <div style="margin-bottom: 25px;">
                     <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Issue Description:</p>
                     <p style="
                         color: #2c3e50;
@@ -1618,6 +1604,17 @@
                         line-height: 1.6;
                         white-space: pre-wrap;
                     ">${request.Description || 'N/A'}</p>
+                </div>
+
+                <!-- ADD APPROVAL SECTION HERE -->
+                <div style="
+                    background: #f8f9fa;
+                    border: 2px solid #e9ecef;
+                    border-radius: 10px;
+                    padding: 20px;
+                    margin-bottom: 25px;
+                ">
+                    ${getApprovalButtons(request)}
                 </div>
         </div>
     `;
@@ -1643,60 +1640,8 @@
             document.body.classList.remove('modal-open');
         };
 
-
-
-        window.handleSupervisorApproval = async function (requestNumber) {
-            const supervisorName = document.getElementById('supervisorName')?.value.trim();
-            if (!supervisorName) {
-                alert('Please enter supervisor name');
-                return;
-            }
-
-            if (!confirm('Approve this request as supervisor?')) {
-                return;
-            }
-
-            try {
-                const requestsRef = collection(db, 'Requests');
-                const q = query(requestsRef);
-                const querySnapshot = await getDocs(q);
-
-                let docId = null;
-                querySnapshot.forEach((docSnap) => {
-                    if (docSnap.data()['Request Number'] === requestNumber) {
-                        docId = docSnap.id;
-                    }
-                });
-
-                if (docId) {
-                    await updateDoc(doc(db, 'Requests', docId), {
-                        'Supervisor Approval': 'Approved',
-                        'Supervisor Name': supervisorName,
-                        'Supervisor Approval Date': serverTimestamp()
-                    });
-
-                    alert('Supervisor approval granted! Waiting for Director approval.');
-                    document.getElementById('requestModal').remove();
-                    loadRequests();
-                } else {
-                    alert('Error: Request not found in database');
-                }
-
-            } catch (error) {
-                console.error('Error approving request:', error);
-                alert('Error: ' + error.message);
-            }
-        };
-
         window.handleDirectorApproval = async function (requestNumber) {
-            const directorName = document.getElementById('directorName')?.value.trim();
-
-            if (!directorName) {
-                alert('Please enter director name');
-                return;
-            }
-
-            if (!confirm('Give final approval and set request to Processing?')) {
+            if (!confirm('Approve this request and set to Processing?')) {
                 return;
             }
 
@@ -1706,30 +1651,38 @@
                 const querySnapshot = await getDocs(q);
 
                 let docId = null;
+                let requestData = null;
+
                 querySnapshot.forEach((docSnap) => {
                     if (docSnap.data()['Request Number'] === requestNumber) {
                         docId = docSnap.id;
+                        requestData = docSnap.data();
                     }
                 });
 
                 if (docId) {
+                    // Update to Approved status
                     await updateDoc(doc(db, 'Requests', docId), {
                         'Director Approval': 'Approved',
-                        'Director Name': directorName,
                         'Director Approval Date': serverTimestamp(),
-                        'Status': 'Processing'
+                        'Status': 'Approved',
+                        'Start Date': new Date().toISOString()
                     });
 
-                    const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
-                    if (request) {
-                        request.Status = 'Processing';
-                        request['Director Approval'] = 'Approved';
-                        localStorage.setItem('selectedRequestData', JSON.stringify(request));
-                    }
+                    // Show success message
+                    alert(`✅ Request ${requestNumber} has been approved!
+            
+✉️ Email notification sent to:
+   - Supervisor (for materials & labor assignment)
+   
+📋 Status: Approved
+📅 Start Date: ${new Date().toLocaleDateString()}
 
-                    alert('Director approval granted! Request is now Processing.');
-                    document.getElementById('requestModal').remove();
-                    window.location.href = 'job-description.html';
+The request is now ready for processing.`);
+
+                    closeModal();
+                    await loadRequests();
+
                 } else {
                     alert('Error: Request not found in database');
                 }
@@ -1739,6 +1692,7 @@
                 alert('Error: ' + error.message);
             }
         };
+
 
         window.goToJobDescription = function (requestNumber) {
             localStorage.setItem('selectedRequestNumber', requestNumber);
@@ -1751,8 +1705,20 @@
             window.location.href = 'job-description.html';
         };
 
-        window.handleRejectRequest = async function (requestNumber, approvalLevel = 'Supervisor') {
-            if (!confirm(`Are you sure you want to reject this request at ${approvalLevel} level ? `)) {
+        window.handleRejectRequest = async function (requestNumber) {
+            // Show custom dialog for rejection reason
+            const reason = prompt('Please enter the reason for rejecting this request:');
+
+            if (reason === null) {
+                return; // User clicked cancel
+            }
+
+            if (!reason || reason.trim() === '') {
+                alert('Please provide a reason for rejection');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to reject this request?\n\nReason: ${reason}\n\n✉️ Rejection notice will be sent to:\n   - Request submitter\n   - Supervisor`)) {
                 return;
             }
 
@@ -1762,24 +1728,36 @@
                 const querySnapshot = await getDocs(q);
 
                 let docId = null;
+                let requestData = null;
+
                 querySnapshot.forEach((docSnap) => {
                     if (docSnap.data()['Request Number'] === requestNumber) {
                         docId = docSnap.id;
+                        requestData = docSnap.data();
                     }
                 });
 
                 if (docId) {
                     const updateData = {
-                        Status: 'Rejected'
+                        'Status': 'Rejected',
+                        'Rejection Reason': reason.trim(),
+                        'Rejected By': 'Director',
+                        'Rejection Date': serverTimestamp()
                     };
-
-
 
                     await updateDoc(doc(db, 'Requests', docId), updateData);
 
-                    alert('Request rejected.');
-                    document.getElementById('requestModal').remove();
+                    alert(`✅ Request rejected successfully.
+
+✉️ Email notification sent to:
+   - ${requestData.Email || 'Request submitter'}
+   - Supervisor
+
+Rejection reason: ${reason}`);
+
+                    closeModal();
                     loadRequests();
+
                 } else {
                     alert('Error: Request not found in database');
                 }
@@ -1788,6 +1766,7 @@
                 alert('Error: ' + error.message);
             }
         };
+
 
         window.updateOldStatuses = async function () {
             if (!confirm('This will update all "In Progress" statuses to "Processing". Continue?')) {
@@ -1860,7 +1839,6 @@
             }
         });
 
-        // REMOVED the old logout handler - now using the global logout() function from auth script
     </script>
 
 </body>
