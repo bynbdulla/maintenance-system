@@ -1268,20 +1268,22 @@
             if (urlFilter) {
                 let statusValue = '';
 
-                if (urlFilter === 'waiting') {
-                    // waiting Requests → waiting
-                    statusValue = 'waiting';
-                    console.log('Mapping: waiting → waiting');
+                if (urlFilter.toLowerCase() === 'waiting') {
+                    statusValue = 'Waiting';
+                    console.log('Mapping: waiting → Waiting');
 
-                } else if (urlFilter === 'waiting-approval') {
-                    // Waiting for Approval → Waiting (CHANGED!)
-                    statusValue = 'Waiting';  // ← CHANGE THIS LINE
-                    console.log('Mapping: waiting-approval → Waiting');
-
-                } else if (urlFilter === 'approved') {
-                    // Approved Requests → Processing
+                } else if (urlFilter.toLowerCase() === 'processing') {
+                    // ADD THIS NEW CONDITION
                     statusValue = 'Processing';
-                    console.log('Mapping: approved → Processing');
+                    console.log('Mapping: processing → Processing');
+
+                } else if (urlFilter.toLowerCase() === 'approved') {
+                    statusValue = 'Approved';
+                    console.log('Mapping: approved → Approved');
+
+                } else if (urlFilter.toLowerCase() === 'rejected') {
+                    statusValue = 'Rejected';
+                    console.log('Mapping: rejected → Rejected');
                 }
 
                 if (statusValue) {
