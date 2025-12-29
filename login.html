@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - UoB Maintenance System</title>
     <link rel="icon" type="image/x-icon" href="tools.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary-dark: #040476;
@@ -52,7 +55,9 @@
             pointer-events: none;
         }
 
-        h1, h2, h3 {
+        h1,
+        h2,
+        h3 {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
             line-height: 1.2;
@@ -96,6 +101,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -149,8 +155,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .form-group {
@@ -282,6 +295,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
         <div class="login-card">
@@ -296,24 +310,13 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        placeholder="admin@uob.edu.bh"
-                        required
-                        autocomplete="email"
-                    >
+                    <input type="email" id="email" placeholder="admin@uob.edu.bh" required autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        placeholder="Enter your password"
-                        required
-                        autocomplete="current-password"
-                    >
+                    <input type="password" id="password" placeholder="Enter your password" required
+                        autocomplete="current-password">
                     <span class="password-toggle" id="passwordToggle">👁</span>
                 </div>
 
@@ -390,7 +393,7 @@
         forgotPasswordLink.addEventListener('click', async (e) => {
             e.preventDefault();
             const email = emailInput.value.trim();
-            
+
             if (!email) {
                 showMessage('Please enter your email address first.', 'error');
                 emailInput.focus();
@@ -462,7 +465,7 @@
 
             } catch (error) {
                 console.error('❌ Login failed:', error.code, error.message);
-                
+
                 let errorMessage = 'Failed to sign in. Please try again.';
 
                 switch (error.code) {
@@ -499,6 +502,15 @@
                 loadingText.classList.remove('show');
             }
         });
+        
+        // After successful login in login.html
+        sessionStorage.setItem('isAuthenticated', 'true');
+        sessionStorage.setItem('userEmail', user.email);
+        sessionStorage.setItem('userName', user.displayName || user.email.split('@')[0]);
+
+        // Then redirect
+        window.location.replace('admin-dashboard.html');
     </script>
 </body>
+
 </html>

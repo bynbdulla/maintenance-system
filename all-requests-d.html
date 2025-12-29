@@ -769,32 +769,8 @@
                 </button>
             </div>
             <div class="account-menu">
-                <div class="account-icon" id="accountIcon">
+                <div class="account-icon" id="accountIcon" onclick="window.location.href='my-account.html'">
                     <img src="images/user.png" alt="User Account">
-                </div>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <div class="dropdown-header">
-                        <div class="admin-name">Admin User</div>
-                        <div class="admin-email">admin@university.edu</div>
-                    </div>
-                    <a href="my-account.html" class="dropdown-item">
-                        <span class="icon">👤</span>
-                        <span>My Account</span>
-                    </a>
-                    <a href="settings.html" class="dropdown-item">
-                        <span class="icon">⚙️</span>
-                        <span>Settings</span>
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <span class="icon">❓</span>
-                        <span>Help & Support</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <!-- ⬇️ UPDATED LOGOUT BUTTON ⬇️ -->
-                    <a href="#" class="dropdown-item logout" onclick="logout(); return false;">
-                        <span class="icon">🚪</span>
-                        <span>Logout</span>
-                    </a>
                 </div>
             </div>
         </div>
@@ -810,7 +786,7 @@
                     <h3>Total Requests</h3>
                     <p id="stat-total">0</p>
                 </div>
-                <div class="stat-card waiting" onclick="filterByStatus('waiting')" id="card-waiting">
+                <div class="stat-card waiting" onclick="filterByStatus('Waiting')" id="card-waiting">
                     <h3>waiting</h3>
                     <p id="stat-waiting">0</p>
                 </div>
@@ -818,7 +794,7 @@
                     <h3>Processing</h3>
                     <p id="stat-processing">0</p>
                 </div>
-                <div class="stat-card rejected" onclick="filterByStatus('Rejected')" id="card-Rejected">
+                <div class="stat-card rejected" onclick="filterByStatus('Rejected')" id="card-rejected">
                     <h3>rejected</h3>
                     <p id="stat-rejected">0</p>
                 </div>
@@ -873,7 +849,7 @@
 
                     <select id="filterStatus">
                         <option value="">All Status</option>
-                        <option value="waiting">Waiting for Approval</option>
+                        <option value="Waiting">Waiting for Approval</option>
                         <option value="Approved">Approved</option>
                         <option value="Processing">Processing</option>
                         <option value="Completed">Completed</option>
@@ -1244,33 +1220,38 @@
             return urlParams.get('status');
         }
 
-       function applyURLFilter() {
-    const urlFilter = getFilterFromURL();
+        function applyURLFilter() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlFilter = urlParams.get('status');
+            const dateFrom = urlParams.get('dateFrom');
+            const dateTo = urlParams.get('dateTo');
 
-    console.log('=== URL FILTER DEBUG ===');
-    console.log('URL:', window.location.href);
-    console.log('Filter:', urlFilter);
+            console.log('=== URL FILTER DEBUG ===');
+            console.log('URL:', window.location.href);
+            console.log('Status Filter:', urlFilter);
+            console.log('Date From:', dateFrom);
+            console.log('Date To:', dateTo);
 
-    if (urlFilter) {
-        let statusValue = '';
+            // Handle status filter
+            if (urlFilter) {
+                let statusValue = '';
 
-        if (urlFilter.toLowerCase() === 'waiting') {
-            statusValue = 'Waiting';
-            console.log('Mapping: waiting → Waiting');
-
-        } else if (urlFilter.toLowerCase() === 'processing') {
-            // ADD THIS NEW CONDITION
-            statusValue = 'Processing';
-            console.log('Mapping: processing → Processing');
-
-        } else if (urlFilter.toLowerCase() === 'approved') {
-            statusValue = 'Approved';
-            console.log('Mapping: approved → Approved');
-
-        } else if (urlFilter.toLowerCase() === 'rejected') {
-            statusValue = 'Rejected';
-            console.log('Mapping: rejected → Rejected');
-        }
+                if (urlFilter.toLowerCase() === 'waiting') {
+                    statusValue = 'Waiting';
+                    console.log('Mapping: waiting → Waiting');
+                } else if (urlFilter.toLowerCase() === 'processing') {
+                    statusValue = 'Processing';
+                    console.log('Mapping: processing → Processing');
+                } else if (urlFilter.toLowerCase() === 'approved') {
+                    statusValue = 'Approved';
+                    console.log('Mapping: approved → Approved');
+                } else if (urlFilter.toLowerCase() === 'rejected') {
+                    statusValue = 'Rejected';
+                    console.log('Mapping: rejected → Rejected');
+                } else if (urlFilter.toLowerCase() === 'completed') {
+                    statusValue = 'Completed';
+                    console.log('Mapping: completed → Completed');
+                }
 
                 if (statusValue) {
                     console.log('Setting filter dropdown to:', statusValue);
@@ -1281,20 +1262,33 @@
                         card.classList.remove('active');
                     });
 
-                    if (statusValue === 'waiting') {
-                        document.getElementById('card-waiting').classList.add('active');
-                    } else if (statusValue === 'waiting') {  // ← CHANGE THIS TOO
+                    if (statusValue === 'Waiting') {
                         document.getElementById('card-waiting').classList.add('active');
                     } else if (statusValue === 'Processing') {
                         document.getElementById('card-processing').classList.add('active');
+                    } else if (statusValue === 'Approved') {
+                        document.getElementById('card-approved')?.classList.add('active');
+                    } else if (statusValue === 'Rejected') {
+                        document.getElementById('card-rejected').classList.add('active');
                     }
-
-                    console.log('Calling filterAndDisplayRequests()...');
-                    filterAndDisplayRequests();
                 }
-            } else {
-                console.log('No filter in URL - showing all requests');
             }
+
+            // Handle date filters
+            if (dateFrom) {
+                console.log('Setting dateFrom filter to:', dateFrom);
+                document.getElementById('filterDateFrom').value = dateFrom;
+            }
+
+            if (dateTo) {
+                console.log('Setting dateTo filter to:', dateTo);
+                document.getElementById('filterDateTo').value = dateTo;
+            }
+
+            // Apply filters
+            console.log('Calling filterAndDisplayRequests()...');
+            filterAndDisplayRequests();
+
             console.log('========================');
         }
 
@@ -1479,14 +1473,139 @@
 
         document.getElementById('download').addEventListener('click', downloadPDF);
 
-        //viewRequestDetails function with closeModal
+        // ═══════════════════════════════════════════
+        // MODAL FUNCTIONS - DEFINE FIRST!
+        // ═══════════════════════════════════════════
+
+        // Close modal function
+        window.closeModal = function () {
+            console.log('🔴 Closing modal...');
+            const modal = document.getElementById('requestModal');
+            if (modal) {
+                modal.remove();
+                console.log('✅ Modal removed');
+            }
+            document.body.classList.remove('modal-open');
+        };
+
+        // Show rejection dialog
+        window.showRejectDialog = function (requestNumber) {
+            console.log('📝 Showing rejection dialog for:', requestNumber);
+            const rejectionSection = document.getElementById('rejectionSection');
+            if (rejectionSection) {
+                rejectionSection.style.display = 'block';
+                document.getElementById('rejectionReason').focus();
+            }
+        };
+
+        // Cancel rejection
+        window.cancelReject = function () {
+            console.log('❌ Canceling rejection');
+            const rejectionSection = document.getElementById('rejectionSection');
+            if (rejectionSection) {
+                rejectionSection.style.display = 'none';
+                document.getElementById('rejectionReason').value = '';
+            }
+        };
+
+        // Approve request (no confirmation)
+        window.approveRequest = async function (requestNumber) {
+            console.log('✅ Approving request:', requestNumber);
+            try {
+                const requestsRef = collection(db, 'Requests');
+                const q = query(requestsRef);
+                const querySnapshot = await getDocs(q);
+
+                let docId = null;
+                let requestData = null;
+
+                querySnapshot.forEach((docSnap) => {
+                    if (docSnap.data()['Request Number'] === requestNumber) {
+                        docId = docSnap.id;
+                        requestData = docSnap.data();
+                    }
+                });
+
+                if (docId) {
+                    await updateDoc(doc(db, 'Requests', docId), {
+                        'Director Approval': 'Approved',
+                        'Status': 'Approved',
+                        'Approved Date': serverTimestamp(),
+                        'Approved By': sessionStorage.getItem('userEmail') || 'Director'
+                    });
+
+                    alert(`✅ Request ${requestNumber} has been approved!\n\n📧 Notification sent to:\n   - Request submitter\n   - Maintenance team\n\n📋 Status: Approved`);
+
+                    closeModal();
+                    await loadRequests();
+                } else {
+                    alert('Error: Request not found in database');
+                }
+            } catch (error) {
+                console.error('❌ Error approving request:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+
+        // Confirm rejection with reason
+        window.confirmReject = async function (requestNumber) {
+            console.log('🚫 Confirming rejection for:', requestNumber);
+            const reason = document.getElementById('rejectionReason').value.trim();
+
+            if (!reason) {
+                alert('Please provide a reason for rejection');
+                document.getElementById('rejectionReason').focus();
+                return;
+            }
+
+            try {
+                const requestsRef = collection(db, 'Requests');
+                const q = query(requestsRef);
+                const querySnapshot = await getDocs(q);
+
+                let docId = null;
+                let requestData = null;
+
+                querySnapshot.forEach((docSnap) => {
+                    if (docSnap.data()['Request Number'] === requestNumber) {
+                        docId = docSnap.id;
+                        requestData = docSnap.data();
+                    }
+                });
+
+                if (docId) {
+                    await updateDoc(doc(db, 'Requests', docId), {
+                        'Status': 'Rejected',
+                        'Rejection Reason': reason,
+                        'Rejected By': sessionStorage.getItem('userEmail') || 'Director',
+                        'Rejection Date': serverTimestamp()
+                    });
+
+                    alert(`✅ Request ${requestNumber} has been rejected.\n\n📧 Notification sent to:\n   - ${requestData.Email || 'Request submitter'}\n\nRejection reason: ${reason}`);
+
+                    closeModal();
+                    await loadRequests();
+                } else {
+                    alert('Error: Request not found in database');
+                }
+            } catch (error) {
+                console.error('❌ Error rejecting request:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+
         window.viewRequestDetails = function (requestNumber) {
+            console.log('👁️ Viewing request details for:', requestNumber);
+
             const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
 
             if (!request) {
                 alert('Request not found');
                 return;
             }
+
+            const status = (request.Status || 'Waiting').toLowerCase();
+            const showApprovalButtons = status === 'waiting' || status.includes('waiting');
 
             const modalHTML = `
         <div id="requestModal" style="
@@ -1548,7 +1667,7 @@
                     </div>
                     <div>
                         <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Status:</p>
-                        <p><span class="${getStatusClass(request.Status)}" style="padding: 6px 12px; border-radius: 20px; display: inline-block;">${request.Status || 'waiting'}</span></p>
+                        <p><span class="${getStatusClass(request.Status)}" style="padding: 6px 12px; border-radius: 20px; display: inline-block;">${request.Status || 'Waiting'}</span></p>
                     </div>
                 </div>
 
@@ -1596,7 +1715,7 @@
                     </div>
                 </div>
 
-               <div style="margin-bottom: 25px;">
+                <div style="margin-bottom: 25px;">
                     <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Issue Description:</p>
                     <p style="
                         color: #2c3e50;
@@ -1608,24 +1727,109 @@
                     ">${request.Description || 'N/A'}</p>
                 </div>
 
-                <!-- ADD APPROVAL SECTION HERE -->
+                ${showApprovalButtons ? `
                 <div style="
                     background: #f8f9fa;
                     border: 2px solid #e9ecef;
                     border-radius: 10px;
                     padding: 20px;
-                    margin-bottom: 25px;
+                    margin-bottom: 20px;
                 ">
-                    ${getApprovalButtons(request)}
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <button onclick="approveRequest('${request['Request Number']}')" style="
+                            background: #27ae60;
+                            color: white;
+                            border: none;
+                            padding: 15px 30px;
+                            border-radius: 8px;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+                        " onmouseover="this.style.background='#229954'"
+                           onmouseout="this.style.background='#27ae60'">
+                            Approve 
+                        </button>
+                        
+                        <button onclick="showRejectDialog('${request['Request Number']}')" style="
+                            background: #e74c3c;
+                            color: white;
+                            border: none;
+                            padding: 15px 30px;
+                            border-radius: 8px;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+                        " onmouseover="this.style.background='#c0392b'"
+                           onmouseout="this.style.background='#e74c3c'">
+                            Reject 
+                        </button>
+                    </div>
+                    
+                    <div id="rejectionSection" style="display: none; margin-top: 15px;">
+                        <label style="
+                            display: block;
+                            font-weight: 600;
+                            color: #333;
+                            margin-bottom: 8px;
+                            font-size: 14px;
+                        ">Rejection Reason: <span style="color: #e74c3c;">*</span></label>
+                        <textarea id="rejectionReason" placeholder="Please provide a reason for rejection..." style="
+                            width: 100%;
+                            padding: 12px;
+                            border: 2px solid #e0e0e0;
+                            border-radius: 8px;
+                            font-size: 14px;
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            resize: vertical;
+                            min-height: 100px;
+                        "></textarea>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button onclick="confirmReject('${request['Request Number']}')" style="
+                                background: #e74c3c;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                border-radius: 8px;
+                                font-size: 14px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            ">Confirm Rejection</button>
+                            
+                            <button onclick="cancelReject()" style="
+                                background: #95a5a6;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                border-radius: 8px;
+                                font-size: 14px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            ">Cancel</button>
+                        </div>
+                    </div>
                 </div>
+                ` : ''}
+            </div>
         </div>
     `;
 
-            // ✅ ADD body.modal-open class
             document.body.insertAdjacentHTML('beforeend', modalHTML);
             document.body.classList.add('modal-open');
 
-            // ✅ UPDATED: Remove body class when clicking outside
+            // Click outside to close
             document.getElementById('requestModal').addEventListener('click', function (e) {
                 if (e.target === this) {
                     closeModal();
@@ -1633,14 +1837,136 @@
             });
         };
 
-        // ✅ NEW: Global closeModal function
+        // Close Modal 
         window.closeModal = function () {
+            console.log('Closing modal...');
             const modal = document.getElementById('requestModal');
             if (modal) {
                 modal.remove();
+                console.log('Modal removed');
             }
             document.body.classList.remove('modal-open');
         };
+
+        // Show rejection dialog
+        window.showRejectDialog = function (requestNumber) {
+            const rejectionSection = document.getElementById('rejectionSection');
+            if (rejectionSection) {
+                rejectionSection.style.display = 'block';
+                document.getElementById('rejectionReason').focus();
+            }
+        };
+
+        // Cancel rejection
+        window.cancelReject = function () {
+            const rejectionSection = document.getElementById('rejectionSection');
+            if (rejectionSection) {
+                rejectionSection.style.display = 'none';
+                document.getElementById('rejectionReason').value = '';
+            }
+        };
+
+        // Approve request
+        // Approve request
+        window.approveRequest = async function (requestNumber) {
+            try {
+                const requestsRef = collection(db, 'Requests');
+                const q = query(requestsRef);
+                const querySnapshot = await getDocs(q);
+
+                let docId = null;
+                let requestData = null;
+
+                querySnapshot.forEach((docSnap) => {
+                    if (docSnap.data()['Request Number'] === requestNumber) {
+                        docId = docSnap.id;
+                        requestData = docSnap.data();
+                    }
+                });
+
+                if (docId) {
+                    await updateDoc(doc(db, 'Requests', docId), {
+                        'Director Approval': 'Approved',
+                        'Status': 'Approved',
+                        'Approved Date': serverTimestamp(),
+                        'Approved By': sessionStorage.getItem('userEmail') || 'Director'
+                    });
+
+                    alert(`✅ Request ${requestNumber} has been approved!\n\n📧 Notification sent to:\n   - Request submitter\n   - Maintenance team\n\n📋 Status: Approved`);
+
+                    closeModal();
+                    await loadRequests();
+                } else {
+                    alert('Error: Request not found in database');
+                }
+            } catch (error) {
+                console.error('Error approving request:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+
+        // Confirm rejection with reason
+        window.confirmReject = async function (requestNumber) {
+            const reason = document.getElementById('rejectionReason').value.trim();
+
+            if (!reason) {
+                alert('Please provide a reason for rejection');
+                document.getElementById('rejectionReason').focus();
+                return;
+            }
+
+
+
+            try {
+                const requestsRef = collection(db, 'Requests');
+                const q = query(requestsRef);
+                const querySnapshot = await getDocs(q);
+
+                let docId = null;
+                let requestData = null;
+
+                querySnapshot.forEach((docSnap) => {
+                    if (docSnap.data()['Request Number'] === requestNumber) {
+                        docId = docSnap.id;
+                        requestData = docSnap.data();
+                    }
+                });
+
+                if (docId) {
+                    await updateDoc(doc(db, 'Requests', docId), {
+                        'Status': 'Rejected',
+                        'Rejection Reason': reason,
+                        'Rejected By': sessionStorage.getItem('userEmail') || 'Director',
+                        'Rejection Date': serverTimestamp()
+                    });
+
+                    alert(`✅ Request ${requestNumber} has been rejected.\n\n📧 Notification sent to:\n   - ${requestData.Email || 'Request submitter'}\n\nRejection reason: ${reason}`);
+
+                    closeModal();
+                    await loadRequests();
+                } else {
+                    alert('Error: Request not found in database');
+                }
+            } catch (error) {
+                console.error('Error rejecting request:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+
+
+
+        // ✅ ADD body.modal-open class
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        document.body.classList.add('modal-open');
+
+        // ✅ UPDATED: Remove body class when clicking outside
+        document.getElementById('requestModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        ;
+
 
         window.handleDirectorApproval = async function (requestNumber) {
             if (!confirm('Approve this request and set to Processing?')) {
@@ -1824,25 +2150,6 @@ Rejection reason: ${reason}`);
             filterAndDisplayRequests();
         };
     </script>
-
-    <!-- Your existing account dropdown script -->
-    <script>
-        const accountIcon = document.getElementById('accountIcon');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-
-        accountIcon.addEventListener('click', function (e) {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', function (e) {
-            if (!accountIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.classList.remove('active');
-            }
-        });
-
-    </script>
-
 </body>
 
 </html>

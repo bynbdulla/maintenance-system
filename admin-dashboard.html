@@ -169,9 +169,8 @@
 
         .dashboard-row {
             display: flex;
-            gap: 12rem;
-            margin: 0 1rem;
-            margin-right: 5rem;
+            gap: 10rem;
+            margin: 0 1.5rem;
         }
 
         /* Notifications Box */
@@ -252,7 +251,7 @@
 
         .add-new {
             display: flex;
-            gap: 20rem;
+            gap: 15rem;
             align-items: center;
             margin-bottom: 2rem;
         }
@@ -394,27 +393,8 @@
                 </button>
             </div>
             <div class="account-menu">
-                <div class="account-icon" id="accountIcon">
+                <div class="account-icon" id="accountIcon" onclick="window.location.href='my-account.html'">
                     <img src="images/user.png" alt="User Account">
-                </div>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <div class="dropdown-header">
-                        <div class="admin-name">Admin User</div>
-                        <div class="admin-email">admin@university.edu</div>
-                    </div>
-                    <a href="my-account.html" class="dropdown-item">
-                        <span class="icon">👤</span>
-                        <span>My Account</span>
-                    </a>
-                    <a href="settings.html" class="dropdown-item">
-                        <span class="icon">⚙️</span>
-                        <span>Settings</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item logout" onclick="logout(); return false;">
-                        <span class="icon">🚪</span>
-                        <span>Logout</span>
-                    </a>
                 </div>
             </div>
         </div>
@@ -454,11 +434,11 @@
                         <img src="images/fast-time.png" alt="Quick Access" style="width: 30px;">
                         Quick Access
                     </h2>
-                    
+                    <button class="new" onclick="window.location.href='request-form.html?mode=admin'">+ Add Request</button>
                 </div>
 
                 <div class="action-grid">
-                    <a href="all-requests-d.html" class="action-card">
+                    <a href="all-requests.html" class="action-card">
                         <div class="badge">10</div>
                         <img src="images/job-application.png" alt="Requests">
                         <h3>Requests</h3>
@@ -470,16 +450,16 @@
                         <h3>Processing</h3>
                     </a>
 
-                    <a href="month.html" class="action-card">
+                    <a href="#" onclick="goToThisMonth(); return false;" class="action-card">
                         <div class="badge">20</div>
                         <img src="images/calendar (1).png" alt="This Month">
                         <h3>This Month</h3>
                     </a>
 
-                    <a href="done.html" class="action-card">
+                    <a href="all-requests.html?status=completed" class="action-card">
                         <div class="badge">7</div>
                         <img src="images/checklist.png" alt="Done">
-                        <h3>Done</h3>
+                        <h3>Completed</h3>
                     </a>
                 </div>
             </div>
@@ -487,10 +467,9 @@
     </div>
 
 
-    <!-- Authentication & Navigation Scripts
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
@@ -504,38 +483,67 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Check authentication
-        const isAuthenticated = sessionStorage.getItem('isAuthenticated');
-        const userEmail = sessionStorage.getItem('userEmail');
+        console.log('🔍 Checking authentication...');
 
-        if (isAuthenticated !== 'true' || !userEmail) {
-            console.log('❌ Not authenticated - redirecting to login');
-            window.location.replace('login.html');
-        } else {
-            console.log('✅ Authenticated as:', userEmail);
-            // Update UI
-            document.querySelector('.admin-email').textContent = userEmail;
-            document.querySelector('.admin-name').textContent = userEmail.split('@')[0];
-        }
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                console.log('✅ Authenticated as:', user.email);
+
+                // Update UI with user info
+                const adminEmailElement = document.querySelector('.admin-email');
+                const adminNameElement = document.querySelector('.admin-name');
+
+                if (adminEmailElement) {
+                    adminEmailElement.textContent = user.email;
+                }
+
+                if (adminNameElement) {
+                    // Extract name from email (before @)
+                    const displayName = user.displayName || user.email.split('@')[0];
+                    adminNameElement.textContent = displayName;
+                }
+
+                // Also save to session storage for consistency
+                sessionStorage.setItem('isAuthenticated', 'true');
+                sessionStorage.setItem('userEmail', user.email);
+                sessionStorage.setItem('userName', user.displayName || user.email.split('@')[0]);
+
+            } else {
+                // User is not signed in - redirect to login
+                console.log('❌ Not authenticated - redirecting to login');
+                sessionStorage.clear();
+                window.location.replace('login.html');
+            }
+        });
 
         // Global logout function
         window.logout = async function () {
             if (confirm('Are you sure you want to logout?')) {
                 try {
+                    console.log('🚪 Logging out...');
+
+                    // Clear session
                     sessionStorage.clear();
                     localStorage.clear();
+
+                    // Sign out from Firebase
                     await signOut(auth);
+
+                    console.log('✅ Logged out successfully');
                     window.location.replace('login.html');
                 } catch (error) {
                     console.error('Logout error:', error);
+                    // Force logout even if Firebase fails
                     sessionStorage.clear();
                     localStorage.clear();
                     window.location.replace('login.html');
                 }
             }
         };
-    </script> -->
-
+    </script>
+    
     <script>
         // Account dropdown
         const accountIcon = document.getElementById('accountIcon');
@@ -569,20 +577,44 @@
             displayRequests(filteredRequests);
         });
 
-        
+
         // Navigation functions
         function viewWaitingRequests() {
-            window.location.href = 'all-requests-d.html?status=waiting';
+            window.location.href = 'all-requests.html?status=waiting';
         }
 
         function viewRejectedRequests() {
-            window.location.href = 'all-requests-d.html?status=Rejected';
+            window.location.href = 'all-requests.html?status=Rejected';
         }
 
         function viewApprovedRequests() {
-            window.location.href = 'all-requests-d.html?status=approved';
+            window.location.href = 'all-requests.html?status=approved';
         }
 
+
+        // Add this function to your existing script section
+        function goToThisMonth() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1; // Add 1 because getMonth() is 0-indexed (0=Jan, 11=Dec)
+
+            // Format month and day with leading zeros
+            const monthStr = String(month).padStart(2, '0');
+
+            // First day of current month (always day 1)
+            const firstDayStr = `${year}-${monthStr}-01`;
+
+            // Last day of current month
+            const lastDay = new Date(year, month, 0).getDate(); // Day 0 of next month = last day of current month
+            const lastDayStr = `${year}-${monthStr}-${String(lastDay).padStart(2, '0')}`;
+
+            console.log('This Month Filter:');
+            console.log('From:', firstDayStr);
+            console.log('To:', lastDayStr);
+
+            // Redirect with date filters
+            window.location.href = `all-requests.html?dateFrom=${firstDayStr}&dateTo=${lastDayStr}`;
+        }
 
     </script>
 </body>

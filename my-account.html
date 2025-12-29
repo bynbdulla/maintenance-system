@@ -976,7 +976,8 @@
                             <label>Current Password <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <input type="password" id="currentPassword" placeholder="••••••••••">
-                                <span class="toggle-password" onclick="togglePassword('currentPassword')"><img src="images/show.png" style="width:20PX ;"></span>
+                                <span class="toggle-password" onclick="togglePassword('currentPassword')"><img
+                                        src="images/show.png" style="width:20PX ;"></span>
                             </div>
                         </div>
 
@@ -985,7 +986,8 @@
                             <div class="input-wrapper">
                                 <input type="password" id="newPassword" placeholder="Enter new password"
                                     onkeyup="checkPasswordStrength()">
-                                <span class="toggle-password" onclick="togglePassword('newPassword')"><img src="images/show.png" style="width:20PX ;"></span>
+                                <span class="toggle-password" onclick="togglePassword('newPassword')"><img
+                                        src="images/show.png" style="width:20PX ;"></span>
                             </div>
                         </div>
 
@@ -994,7 +996,8 @@
                             <div class="input-wrapper">
                                 <input type="password" id="confirmPassword" placeholder="Confirm new password"
                                     onkeyup="checkPasswordMatch()">
-                                <span class="toggle-password" onclick="togglePassword('confirmPassword')"><img src="images/show.png" style="width:18PX ;"></span>
+                                <span class="toggle-password" onclick="togglePassword('confirmPassword')"><img
+                                        src="images/show.png" style="width:18PX ;"></span>
                             </div>
                         </div>
 
@@ -1072,6 +1075,7 @@
                 return;
             }
 
+
             document.getElementById('userEmail').value = userEmail;
 
             try {
@@ -1113,6 +1117,8 @@
             }
         });
 
+
+
         document.getElementById('imageUpload').addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
@@ -1143,26 +1149,45 @@
         document.getElementById('accountForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
+            console.log('🔵 Form submitted!');
+
             const saveBtn = document.getElementById('saveBtn');
             const spinner = document.getElementById('loadingSpinner');
 
             saveBtn.disabled = true;
             spinner.style.display = 'inline-block';
 
+            console.log('🔵 Button disabled, spinner shown');
+
             try {
                 const userEmail = sessionStorage.getItem('userEmail');
+                console.log('📧 User email from session:', userEmail);
+
                 const userName = document.getElementById('userName').value.trim();
+                console.log('👤 User name:', userName);
+
                 const currentPassword = document.getElementById('currentPassword').value;
                 const newPassword = document.getElementById('newPassword').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
+
+                console.log('🔑 Password fields:', {
+                    currentPassword: currentPassword ? '***filled***' : 'empty',
+                    newPassword: newPassword ? '***filled***' : 'empty',
+                    confirmPassword: confirmPassword ? '***filled***' : 'empty'
+                });
 
                 if (!userName) {
                     throw new Error('Please enter your full name');
                 }
 
                 const isChangingPassword = newPassword || confirmPassword;
+                console.log('🔄 Is changing password?', isChangingPassword);
+
+                let passwordChanged = false;
 
                 if (isChangingPassword) {
+                    console.log('🔐 Starting password change process...');
+
                     if (!currentPassword) {
                         throw new Error('Please enter your current password to change your password');
                     }
@@ -1177,42 +1202,70 @@
                     }
 
                     try {
+                        console.log('🔍 Getting current user from auth...');
                         const user = auth.currentUser;
+                        console.log('👤 Current user:', user);
+
+                        if (!user) {
+                            console.error('❌ No authenticated user found!');
+                            throw new Error('You must be logged in to change your password. Please log out and log in again.');
+                        }
+
+                        console.log('🔑 Creating credential...');
                         const credential = EmailAuthProvider.credential(userEmail, currentPassword);
+
+                        console.log('🔐 Re-authenticating...');
                         await reauthenticateWithCredential(user, credential);
+                        console.log('✅ Re-authentication successful');
+
+                        console.log('🔑 Updating password...');
                         await updatePassword(user, newPassword);
-                        console.log('✅ Password changed successfully');
+                        console.log('✅ Password updated successfully');
+
+                        passwordChanged = true;
                     } catch (authError) {
-                        console.error('Authentication error:', authError);
+                        console.error('❌ Authentication error:', authError);
+                        console.error('Error code:', authError.code);
+                        console.error('Error message:', authError.message);
+
                         if (authError.code === 'auth/wrong-password' || authError.code === 'auth/invalid-credential') {
                             throw new Error('Current password is incorrect. Please try again.');
                         } else if (authError.code === 'auth/too-many-requests') {
                             throw new Error('Too many failed attempts. Please try again later.');
                         } else {
-                            throw new Error('Failed to verify current password: ' + authError.message);
+                            throw new Error('Failed to change password: ' + authError.message);
                         }
                     }
                 }
 
+                // Upload photo if changed
+                console.log('📸 Checking for image upload...');
                 let photoURL = originalData.photoURL;
                 if (currentImageFile) {
+                    console.log('📤 Uploading new profile image...');
                     const storageRef = ref(storage, `profile-images/${userEmail}`);
                     await uploadBytes(storageRef, currentImageFile);
                     photoURL = await getDownloadURL(storageRef);
+                    console.log('✅ Image uploaded:', photoURL);
                 }
 
+                // Update Firestore
+                console.log('💾 Updating Firestore...');
                 const userDocRef = doc(db, 'Users', userEmail);
                 await updateDoc(userDocRef, {
                     name: userName,
                     photoURL: photoURL,
                     updatedAt: new Date().toISOString()
                 });
+                console.log('✅ Firestore updated');
 
+                // Clear password fields
                 document.getElementById('currentPassword').value = '';
                 document.getElementById('newPassword').value = '';
                 document.getElementById('confirmPassword').value = '';
                 resetPasswordStrength();
 
+                // Update original data
                 originalData = {
                     name: userName,
                     photoURL: photoURL
@@ -1220,16 +1273,28 @@
 
                 currentImageFile = null;
 
-                if (isChangingPassword) {
-                    showSuccess('✅ All changes saved successfully! Password updated.');
+                // Show success message
+                console.log('🎉 Showing success message...');
+                if (passwordChanged && currentImageFile) {
+                    showSuccess('✅ Profile updated and password changed successfully!');
+                } else if (passwordChanged) {
+                    showSuccess('✅ Password changed successfully!');
+                } else if (currentImageFile) {
+                    showSuccess('✅ Profile picture updated successfully!');
                 } else {
                     showSuccess('✅ Profile updated successfully!');
                 }
 
+                console.log('✅ All operations completed successfully!');
+
             } catch (error) {
-                console.error('Error saving changes:', error);
+                console.error('❌ Error in form submission:', error);
+                console.error('Error name:', error.name);
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
                 showError(error.message);
             } finally {
+                console.log('🔵 Re-enabling button, hiding spinner');
                 saveBtn.disabled = false;
                 spinner.style.display = 'none';
             }

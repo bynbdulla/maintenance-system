@@ -206,9 +206,27 @@
             font-size: 12px;
         }
 
+        .status-Approved {
+            color: #FFB700;
+            background-color: #fcedca;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
         .status-processing {
             color: #42794d;
             background-color: #d4edda;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .status-Completed {
+            color: #09034D;
+            background-color: #d7e3ff;
             padding: 4px 12px;
             border-radius: 20px;
             display: inline-block;
@@ -790,7 +808,7 @@
                 </div>
                 <div class="stat-card waiting" onclick="filterByStatus('Waiting')" id="card-waiting">
                     <h3>Waiting</h3>
-                    <p id="stat-Waiting">0</p>
+                    <p id="stat-waiting">0</p>
                 </div>
                 <div class="stat-card processing" onclick="filterByStatus('Processing')" id="card-processing">
                     <h3>Processing</h3>
@@ -851,7 +869,7 @@
 
                     <select id="filterStatus">
                         <option value="">All Status</option>
-                        <option value="Waiting for Approval">Waiting for Approval</option>
+                        <option value="Waiting">Waiting for Approval</option>
                         <option value="Approved">Approved</option>
                         <option value="Processing">Processing</option>
                         <option value="Completed">Completed</option>
@@ -962,6 +980,8 @@
             const statusLower = (status || '').toLowerCase();
             if (statusLower.includes('progress') || statusLower.includes('processing')) return 'status-processing';
             if (statusLower.includes('waiting')) return 'status-waiting';
+            if (statusLower.includes('approved')) return 'status-Approved';    // ← Gold
+            if (statusLower.includes('completed')) return 'status-Completed';  // ← Purple
             if (statusLower.includes('rejected')) return 'status-rejected';
             return 'status-waiting';
         }
@@ -1259,31 +1279,37 @@
         }
 
         function applyURLFilter() {
-            const urlFilter = getFilterFromURL();
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlFilter = urlParams.get('status');
+            const dateFrom = urlParams.get('dateFrom');
+            const dateTo = urlParams.get('dateTo');
 
             console.log('=== URL FILTER DEBUG ===');
             console.log('URL:', window.location.href);
-            console.log('Filter:', urlFilter);
+            console.log('Status Filter:', urlFilter);
+            console.log('Date From:', dateFrom);
+            console.log('Date To:', dateTo);
 
+            // Handle status filter
             if (urlFilter) {
                 let statusValue = '';
 
                 if (urlFilter.toLowerCase() === 'waiting') {
                     statusValue = 'Waiting';
                     console.log('Mapping: waiting → Waiting');
-
                 } else if (urlFilter.toLowerCase() === 'processing') {
-                    // ADD THIS NEW CONDITION
                     statusValue = 'Processing';
                     console.log('Mapping: processing → Processing');
-
                 } else if (urlFilter.toLowerCase() === 'approved') {
                     statusValue = 'Approved';
                     console.log('Mapping: approved → Approved');
-
                 } else if (urlFilter.toLowerCase() === 'rejected') {
                     statusValue = 'Rejected';
                     console.log('Mapping: rejected → Rejected');
+                }
+                else if (urlFilter.toLowerCase() === 'completed') {
+                    statusValue = 'Completed';
+                    console.log('Mapping: completed → Completed');
                 }
 
                 if (statusValue) {
@@ -1295,20 +1321,33 @@
                         card.classList.remove('active');
                     });
 
-                    if (statusValue === 'waiting') {
-                        document.getElementById('card-waiting').classList.add('active');
-                    } else if (statusValue === 'Waiting') {  // ← CHANGE THIS TOO
+                    if (statusValue === 'Waiting') {
                         document.getElementById('card-waiting').classList.add('active');
                     } else if (statusValue === 'Processing') {
                         document.getElementById('card-processing').classList.add('active');
+                    } else if (statusValue === 'Approved') {
+                        document.getElementById('card-approved')?.classList.add('active');
+                    } else if (statusValue === 'Rejected') {
+                        document.getElementById('card-rejected').classList.add('active');
                     }
-
-                    console.log('Calling filterAndDisplayRequests()...');
-                    filterAndDisplayRequests();
                 }
-            } else {
-                console.log('No filter in URL - showing all requests');
             }
+
+            // Handle date filters
+            if (dateFrom) {
+                console.log('Setting dateFrom filter to:', dateFrom);
+                document.getElementById('filterDateFrom').value = dateFrom;
+            }
+
+            if (dateTo) {
+                console.log('Setting dateTo filter to:', dateTo);
+                document.getElementById('filterDateTo').value = dateTo;
+            }
+
+            // Apply filters
+            console.log('Calling filterAndDisplayRequests()...');
+            filterAndDisplayRequests();
+
             console.log('========================');
         }
 
