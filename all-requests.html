@@ -1532,14 +1532,21 @@
 
         document.getElementById('download').addEventListener('click', downloadPDF);
 
+
+
         //viewRequestDetails function with closeModal
         window.viewRequestDetails = function (requestNumber) {
+
             const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
 
             if (!request) {
                 alert('Request not found');
                 return;
             }
+
+            // ✅ NEW: Check if request is approved
+            const status = (request.Status || 'Waiting').toLowerCase();
+            const showAssignMaterialsButton = status === 'approved';
 
             const modalHTML = `
         <div id="requestModal" style="
@@ -1660,6 +1667,48 @@
                         white-space: pre-wrap;
                     ">${request.Description || 'N/A'}</p>
                 </div>
+
+                ${showAssignMaterialsButton ? `
+                <!-- ✅ ASSIGN MATERIALS BUTTON FOR APPROVED REQUESTS -->
+                <div style="
+                    background: #FFF7E0;
+                    border: 1px solid #473400;
+                    border-radius: 10px;
+                    padding: 20px;
+                    margin-top: 20px;
+                    text-align: center;
+                ">
+                    <div style="margin-bottom: 15px;font-family:Serif;">
+                        <h3 style="color: black; margin-bottom: 8px; font-size: 18px;">
+                            <img src="images/like.png" style="width: 20px;"> Request Approved
+                        </h3>
+                        <p style="color: #6b7280; font-size: 14px; margin: 0;">
+                            This request has been approved by the director and is ready for material assignment.
+                        </p>
+                    </div>
+                    
+                    <button onclick="goToJobDescription('${request['Request Number']}')" style="
+                        background: #0b5fff;
+                        color: #000;
+                        border: none;
+                        padding: 15px 40px;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        font-weight: 700;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 10px;
+                        box-shadow: 0 6px 18px rgba(31,41,55,0.08)
+                    " onmouseover="this.style.background='#FFA000'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255, 183, 0, 0.4)'"
+                       onmouseout="this.style.background='#FFB700'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255, 183, 0, 0.3)'">
+                        Assign Materials & Labor
+                    </button>
+                </div>
+                ` : ''}
+            </div>
         </div>
     `;
 
@@ -1674,6 +1723,18 @@
                 }
             });
         };
+
+        // ✅ ADD body.modal-open class
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        document.body.classList.add('modal-open');
+
+        // ✅ UPDATED: Remove body class when clicking outside
+        document.getElementById('requestModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        ;
 
         // ✅ NEW: Global closeModal function
         window.closeModal = function () {

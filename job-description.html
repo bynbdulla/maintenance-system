@@ -33,7 +33,7 @@
             height: 50px;
             object-fit: contain;
             margin-right: 15px;
-            margin-left: 3.5rem;
+            margin-top: 9px;
         }
 
         .header-content {
@@ -48,13 +48,12 @@
             align-items: center;
             gap: 15px;
             margin-top: 10px;
-            margin-left: -50px;
+            margin-left: 4.5rem;
         }
 
         .header-title h1 {
             font-size: 28px;
             font-weight: 600;
-            flex: 1;
             margin: 0;
             font-family: Georgia, 'Times New Roman', Times, serif;
         }
@@ -468,35 +467,8 @@
     <header class="admin-header">
         <div class="header-content">
             <div class="header-title">
-                <img src="images/back-button.png" alt="Back"
-                style="width:40px; height:40px; cursor:pointer;background-color: white;border-radius:50%; margin-left: 3.5rem;"
-                onclick="window.location.href='all-requests.html'">
-                <img id="admin-img" src="images/optimizing.png">
+                <img id="admin-img" src="images/optimizing.png" alt="Dashboard">
                 <h1>Job Description</h1>
-            </div>
-            <div class="account-menu">
-                <div class="account-icon" id="accountIcon">
-                    <img src="images/user.png" alt="User Account">
-                </div>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <div class="dropdown-header">
-                        <div class="admin-name">Admin User</div>
-                        <div class="admin-email">admin@university.edu</div>
-                    </div>
-                    <a href="my-account.html" class="dropdown-item">
-                        <span class="icon">👤</span>
-                        <span>My Account</span>
-                    </a>
-                    <a href="settings.html" class="dropdown-item">
-                        <span class="icon">⚙️</span>
-                        <span>Settings</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item logout">
-                        <span class="icon">🚪</span>
-                        <span>Logout</span>
-                    </a>
-                </div>
             </div>
         </div>
     </header>

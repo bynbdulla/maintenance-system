@@ -545,20 +545,6 @@
     </script>
 
     <script>
-        // Account dropdown
-        const accountIcon = document.getElementById('accountIcon');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-
-        accountIcon.addEventListener('click', function (e) {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', function (e) {
-            if (!accountIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.classList.remove('active');
-            }
-        });
 
         document.getElementById('this-month-box').addEventListener('click', () => {
             const today = new Date();

@@ -218,9 +218,9 @@
             background-color: #fff9e6;
         }
 
-        .notification-card.waiting {
-            border-left-color: #e64d4d;
-            background-color: #fff3f3;
+        .notification-card.processing {
+            border-left-color: #071063;
+            background-color: #e9e8ff;
         }
 
         .notification-card.approved {
@@ -406,12 +406,7 @@
             <div class="notification-box">
                 <h2><img src="images/bell.png" class="notification-img"> Notifications</h2>
 
-                <div class="notification-card waiting" onclick="viewWaitingRequests()">
-                    <h4><img src="images/hourglass.png" class="notification-img"> Waiting for Approval</h4>
-                    <div class="notification-text">
-                        <p>You have <strong>3</strong> Requests</p>
-                    </div>
-                </div>
+
 
                 <div class="notification-card approved" onclick="viewApprovedRequests()">
                     <h4><img src="images/approved.png" class="notification-img"> Approved by Director</h4>
@@ -425,6 +420,12 @@
                         <p>You have <strong>3</strong> requests</p>
                     </div>
                 </div>
+                <div class="notification-card processing" onclick="viewProcessingRequests()">
+                    <h4><img src="images/processing.png" class="notification-img"> Processing Requests</h4>
+                    <div class="notification-text">
+                        <p>You have <strong>3</strong> Requests</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Quick Actions -->
@@ -434,7 +435,8 @@
                         <img src="images/fast-time.png" alt="Quick Access" style="width: 30px;">
                         Quick Access
                     </h2>
-                    <button class="new" onclick="window.location.href='request-form.html?mode=admin'">+ Add Request</button>
+                    <button class="new" onclick="window.location.href='request-form.html?mode=admin'">+ Add
+                        Request</button>
                 </div>
 
                 <div class="action-grid">
@@ -543,7 +545,7 @@
             }
         };
     </script>
-    
+
     <script>
         // Account dropdown
         const accountIcon = document.getElementById('accountIcon');
@@ -579,8 +581,8 @@
 
 
         // Navigation functions
-        function viewWaitingRequests() {
-            window.location.href = 'all-requests.html?status=waiting';
+        function viewProcessingRequests() {
+            window.location.href = 'all-requests.html?status=processing';
         }
 
         function viewRejectedRequests() {
