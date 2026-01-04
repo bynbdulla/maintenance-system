@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="images/worksheet.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; */
+            font-family: cinzyl;
+            background: rgb(4, 4, 118);
+            ;
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .container {
+            margin: 0 auto;
+            padding-top: 0px;
+            max-width: 80rem;
+            display: flex;
+            padding-left: 5rem;
+            gap: 5rem;
+            justify-content: center;
+        }
+
+        .maintenanceForm {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 580px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            margin-top: 3rem;
+            height: auto;
+
+        }
+
+        .header {
+            text-align: left;
+            padding-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            /* gap: 15px; */
+            margin-bottom: 30px;
+            justify-content: center;
+            margin-left: -20px;
+
+        }
+
+        .header img {
+            width: 60px;
+            height: 60px;
+            color: #667eea;
+            margin: 0 auto;
+            display: block;
+            margin-bottom: 5px;
+            margin: 2px;
+        }
+
+        .icon-wrapper {
+            display: inline-flex;
+            background: #e0e7ff;
+            padding: 16px;
+            border-radius: 50%;
+            margin-bottom: 16px;
+        }
+
+        .icon {
+            width: 48px;
+            height: 48px;
+            color: #4f46e5;
+        }
+
+        h1 {
+            color: #0e447e;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            margin-top: 0px;
+            /* Space between title and subtitle */
+            font-size: 16px;
+            /* Adjust font size */
+            color: #666;
+        }
+
+        .alert {
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .alert-success .alert-icon {
+            color: #16a34a;
+        }
+
+        .alert-error .alert-icon {
+            color: #dc2626;
+        }
+
+        .alert-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #166534;
+            margin-bottom: 8px;
+        }
+
+        .alert-error .alert-title {
+            color: #991b1b;
+        }
+
+        .alert-message {
+            font-size: 14px;
+            color: #15803d;
+        }
+
+        .alert-error .alert-message {
+            color: #b91c1c;
+        }
+
+        .request-details {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .detail-value {
+            color: #1f2937;
+            text-align: right;
+        }
+
+        .request-number {
+            color: #4f46e5;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+        }
+
+        .description-full {
+            padding-top: 8px;
+        }
+
+        .description-text {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 6px;
+            color: #1f2937;
+            margin-top: 8px;
+            white-space: pre-wrap;
+        }
+
+        .status-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            margin-left: 23px;
+
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 410px;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.2s;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            transition: background 0.2s;
+            width: 35%;
+            padding: 14px;
+            background: #d4b483;
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 60;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: #e5e7eb;
+            font-family: serif;
+            font-weight: bold;
+            margin-left: 23px;
+
+        }
+
+        button:hover:not(:disabled) {
+            background: #e3e2e7;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Drag and Drop Styles */
+        .drop-zone {
+            border: 2px dashed #d1d5db;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 410px;
+        }
+
+        .drop-zone:hover {
+            border-color: #4f46e5;
+            background: #f3f4f6;
+        }
+
+        .drop-zone.dragover {
+            border-color: #4f46e5;
+            background: #e0e7ff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            color: #9ca3af;
+            margin-bottom: 8px;
+            width: 40px;
+            height: 40px;
+        }
+
+        .drop-zone-text {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .drop-zone-or {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 6px 0;
+        }
+
+        .browse-btn {
+            background: #4f46e5;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: auto;
+            margin: 0;
+        }
+
+        .browse-btn:hover {
+            background: #4338ca;
+        }
+
+        .file-list {
+            margin-top: 16px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            width: 410px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: #e0e7ff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4f46e5;
+            font-weight: bold;
+        }
+
+        .file-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .remove-file {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            padding: 0;
+            margin: 0;
+        }
+
+        .remove-file:hover {
+            background: #fecaca;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="maintenanceForm">
+        <form id="maintenanceForm" onsubmit="return submitForm(event);">
+            <!-- Header -->
+            <div class="header">
+                <img src="images/worksheet.png" alt="Worksheet">
+                <div class="header-container" style="padding-left: 2rem;">
+                    <h1>Maintenance Request</h1>
+                    <p class="subtitle">Submit your request and we'll get back to you soon</p>
+                </div>
+            </div>
+
+            <!-- Request Number -->
+            <div class="form-group">
+                <label for="request-number">Request Number <span class="required">*</span></label>
+                <input type="text" id="request-number" name="requestNumber"
+                    placeholder="Enter request number (e.g., RQ-2512993)" required style="width: 410px;">
+            </div>
+
+            <!-- Name -->
+            <div class="form-group">
+                <label for="name">Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+
+            <!-- Location Type -->
+            <div class="form-group">
+                <label for="locationType">Location Type</label>
+                <select id="locationType">
+                    <option value="">Select Location Type</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Building">Building</option>
+                    <option value="Gate">Gate</option>
+                </select>
+            </div>
+
+            <!-- Location (Hidden initially) -->
+            <div class="form-group" id="locationOptionsContainer" style="display: none;">
+                <label for="locationOptions">Location</label>
+                <select id="locationOptions">
+                    <option value="">Select Location</option>
+                </select>
+            </div>
+
+            <!-- Office/Room (Hidden initially) -->
+            <div class="form-group" id="officeRoomContainer" style="display: none;">
+                <label for="officeRoom">Office / Room Number</label>
+                <input type="text" id="officeRoom" name="officeRoom" placeholder="Enter office or room number">
+            </div>
+
+            <!-- College -->
+            <div class="form-group" id="collegeContainer" style="display: none;">
+                <label for="college">College / Center</label>
+                <select id="college">
+                    <option value="">Select College</option>
+                    <option value="College of Applied Studies">College of Applied Studies</option>
+                    <option value="College of Arts">College of Arts</option>
+                    <option value="College of Business Adminstration">College of Business Adminstration</option>
+                    <option value="College of Engineering">College of Engineering</option>
+                    <option value="College of Health & Sport Sciences">College of Health & Sport Sciences</option>
+                    <option value="College of Information Technology">College of Information Technology</option>
+                    <option value="College of Law">College of Law</option>
+                    <option value="College of Science">College of Science</option>
+                    <option value="Alumni Club">Alumni Club</option>
+                    <option value="Business Incubator Center">Business Incubator Center</option>
+                    <option value="Career Counselling Office">Career Counselling Office</option>
+                    <option value="Centre D'études Françaises">Centre D'études Françaises</option>
+                    <option value="Cloud Innovation Center">Cloud Innovation Center</option>
+                    <option value="Community Service and Continuing Education Center">Community Service and
+                        Continuing Education Center</option>
+                    <option value="Confucius Institiute">Confucius Institiute</option>
+                    <option value="E-Learning Center">E-Learning Center</option>
+                    <option value="English Language Center">English Language Center</option>
+                    <option value="Information Technology Center">Information Technology Center</option>
+                    <option value="Information and Follow-up Office">Information and Follow-up Office</option>
+                    <option value="King Sejong Institiute for Teaching Korean">King Sejong Institiute for Teaching
+                        Korean</option>
+                    <option value="Legal Clinic & Human Rights Centre">Legal Clinic & Human Rights Centre</option>
+                    <option value="Media Center">Media Center</option>
+                    <option value="Quality Assurance and Accrediation Centre">Quality Assurance and Accrediation
+                        Centre</option>
+                    <option value="Unit for Teaching Excellence and Leadership">Unit for Teaching Excellence and
+                        Leadership</option>
+                    <option value="Yunus Emre Institiute for Teaching Turkish">Yunus Emre Institiute for Teaching
+                        Turkish</option>
+                </select>
+            </div>
+
+            <!-- Department (Hidden initially) -->
+            <div class="form-group" id="departmentContainer" style="display: none;">
+                <label for="dept">Department</label>
+                <select id="dept">
+                    <option value="">Select Department</option>
+                </select>
+            </div>
+
+            <!-- Mobile Number -->
+            <div class="form-group">
+                <label for="number">Mobile Number <span class="required">*</span></label>
+                <input type="tel" id="number" name="number" maxlength="8" placeholder="Enter your mobile number"
+                    required>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email <span class="required">*</span></label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <!-- Issue Description -->
+            <div class="form-group">
+                <label for="description">Issue Description <span class="required">*</span></label>
+                <textarea id="description" name="description"
+                    placeholder="Please describe the maintenance issue in detail..." required></textarea>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        // Location data
+        const locationOptionsByTypeStandalone = {
+            Villa: [
+                "Villa - 840", "Villa - 842", "Villa - 843", "Villa - 844", "Villa - 845", "Villa - 846", "Villa - 847",
+                "Villa - 848", "Villa - 849", "Villa - 850", "Villa - 851", "Villa - 852", "Villa - 853", "Villa - 854",
+                "Villa - 855", "Villa - 856", "Villa - 857", "Villa - 858", "Villa - 859", "Villa - 860", "Villa - 861",
+                "Villa - 862", "Villa - 863", "Villa - 864", "Villa - 865", "Villa - 866", "Villa - 867", "Villa - 869",
+                "Villa - 871", "Villa - 873", "Villa - 875", "Villa - 877", "Villa - 879", "Villa - 880", "Villa - 881",
+                "Villa - 882", "Villa - 883", "Villa - 884", "Villa - 885", "Villa - 886", "Villa - 887", "Villa - 888",
+                "Villa - 889", "Villa - 890", "Villa - 891", "Villa - 892", "Villa - 893", "Villa - 894", "Villa - 896",
+                "Villa - 897", "Villa - 899", "Villa - 900", "Villa - 901", "Villa - 903", "Villa - 782", "Villa - 784",
+                "Villa - 785", "Villa - 925"
+            ],
+            Building: [
+                "Building - S13", "Building - S17", "Building - S18", "Building - S1A", "Building - S1B",
+                "Building - S2", "Building - S20", "Building - S20A", "Building - S20B,S20C", "Building - S21",
+                "Building - S22", "Building - S22A", "Building - S23", "Building - S24", "Building - S3",
+                "Building - S37", "Building - S38", "Building - S39", "Building - S39A", "Building - S4",
+                "Building - S40", "Building - S41", "Building - S42", "Building - S43", "Building - S44",
+                "Building - S45", "Building - S46", "Building - S47", "Building - S48", "Building - S49",
+                "Building - S50", "Building - S51", "Building - S52", "Building - S54", "Building - S56",
+                "Building - S57", "Building - S15", "Building - S6"
+            ],
+            Gate: [
+                "Gate 1-S55", "Gate 2-S55", "Gate 3-S55"
+            ]
+        };
+
+        // Department data
+        const departmentsByCollegeStandalone = {
+            'College of Applied Studies': ['Engineering Program', 'Administrative and Technical Programs'],
+            'College of Arts': ['Arabic and Islamic Studies', 'Mass Communication, Tourism, and Fine Arts', 'English Language and Literature', 'Psychology', 'Social Science'],
+            'College of Business Adminstration': ['Accounting', 'Economics and Finance', 'Management and Marketing', 'Islamic Banking'],
+            'College of Engineering': ['Civil Engineering', 'Architecture and Interior Design', 'Chemical Engineering', 'Electrical and Electronics Engineering', 'Mechanical Engineering'],
+            'College of Health & Sport Sciences': ['Nursing', 'Allied Health', 'Physical Education'],
+            'College of Information Technology': ['Computer Engineering', 'Computer Science', 'Information System'],
+            'College of Law': ['Public Law', 'Private Law', 'Legal clinic'],
+            'College of Science': ['Mathematics', 'Chemistry', 'Biology', 'Physics']
+        };
+
+        // Initialize dropdowns
+        function initializeDropdowns() {
+            const locationTypeSelect = document.getElementById('locationType');
+            if (locationTypeSelect) {
+                locationTypeSelect.addEventListener('change', function () {
+                    const selectedType = this.value;
+                    const locationContainer = document.getElementById('locationOptionsContainer');
+                    const locationSelect = document.getElementById('locationOptions');
+                    const officeRoomContainer = document.getElementById('officeRoomContainer');
+                    const collegeContainer = document.getElementById('collegeContainer');
+                    const departmentContainer = document.getElementById('departmentContainer');
+
+                    if (selectedType && locationOptionsByTypeStandalone[selectedType]) {
+                        locationContainer.style.display = 'block';
+                        locationSelect.innerHTML = '<option value="">Select Location</option>';
+
+                        locationOptionsByTypeStandalone[selectedType].forEach(location => {
+                            const option = document.createElement('option');
+                            option.value = location;
+                            option.textContent = location;
+                            locationSelect.appendChild(option);
+                        });
+
+                        if (selectedType === 'Villa' || selectedType === 'Building') {
+                            officeRoomContainer.style.display = 'block';
+                            collegeContainer.style.display = 'block';
+                        } else if (selectedType === 'Gate') {
+                            officeRoomContainer.style.display = 'none';
+                            collegeContainer.style.display = 'none';
+                            departmentContainer.style.display = 'none';
+                            document.getElementById('officeRoom').value = '';
+                            document.getElementById('college').value = '';
+                            document.getElementById('dept').value = '';
+                        }
+                    } else {
+                        locationContainer.style.display = 'none';
+                        locationSelect.innerHTML = '<option value="">Select Location</option>';
+                        officeRoomContainer.style.display = 'none';
+                        collegeContainer.style.display = 'none';
+                        departmentContainer.style.display = 'none';
+                        document.getElementById('officeRoom').value = '';
+                    }
+                });
+            }
+
+            const collegeSelect = document.getElementById('college');
+            if (collegeSelect) {
+                collegeSelect.addEventListener('change', function () {
+                    const selectedCollege = this.value;
+                    const deptContainer = document.getElementById('departmentContainer');
+                    const deptSelect = document.getElementById('dept');
+
+                    if (selectedCollege && departmentsByCollegeStandalone[selectedCollege]) {
+                        deptContainer.style.display = 'block';
+                        deptSelect.innerHTML = '<option value="">Select Department</option>';
+
+                        departmentsByCollegeStandalone[selectedCollege].forEach(dept => {
+                            const option = document.createElement('option');
+                            option.value = dept;
+                            option.textContent = dept;
+                            deptSelect.appendChild(option);
+                        });
+                    } else {
+                        deptContainer.style.display = 'none';
+                        deptSelect.innerHTML = '<option value="">Select Department</option>';
+                    }
+                });
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('📄 Admin request form loaded');
+            initializeDropdowns();
+        });
+    </script>
+
+    <script type="module">
+        // Firebase SDK
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+            authDomain: "requests-ffdd6.firebaseapp.com",
+            projectId: "requests-ffdd6",
+            storageBucket: "requests-ffdd6.firebasestorage.app",
+            messagingSenderId: "316405880275",
+            appId: "1:316405880275:web:f4b271583e903ac639cb26"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ============================================
+        // FORM SUBMISSION
+        // ============================================
+        window.submitForm = async function (event) {
+            event.preventDefault();
+
+            console.log('🚀 Form submission started...');
+
+            // Get values using CORRECT IDs from your HTML
+            const requestNumber = document.getElementById('request-number').value;
+            const name = document.getElementById('name').value.trim();
+            const college = document.getElementById('college').value;
+            const dept = document.getElementById('dept').value || 'N/A';
+            const locationType = document.getElementById('locationType').value;
+            const location = document.getElementById('locationOptions').value || 'N/A';
+            const officeRoom = document.getElementById('officeRoom').value.trim() || 'N/A';
+            const mobileNumber = document.getElementById('number').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const description = document.getElementById('description').value.trim();
+
+            console.log('📋 Form data collected:', {
+                requestNumber,
+                name,
+                college,
+                dept,
+                locationType,
+                location,
+                officeRoom,
+                mobileNumber,
+                email,
+                description
+            });
+
+            // Validate required fields
+            if (!requestNumber) {
+                alert('❌ Request Number is required');
+                return false;
+            }
+
+            if (!name) {
+                alert('❌ Name is required');
+                return false;
+            }
+
+            if (!mobileNumber) {
+                alert('❌ Mobile Number is required');
+                return false;
+            }
+
+            if (!email) {
+                alert('❌ Email is required');
+                return false;
+            }
+
+            if (!description) {
+                alert('❌ Issue Description is required');
+                return false;
+            }
+
+            // Validate that either Location Type OR College is filled
+            if (!locationType && !college) {
+                alert('❌ Please fill either Location Type or College / Center');
+                return false;
+            }
+
+            // If location type is selected, location must be selected
+            if (locationType && location === 'N/A') {
+                alert('❌ Please select a location');
+                return false;
+            }
+
+            try {
+                // Show loading state
+                const submitButton = document.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.textContent;
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
+                submitButton.style.backgroundColor = '#9ca3af';
+
+                console.log('💾 Saving to Firebase...');
+
+                // Prepare location string
+                let fullLocation = location;
+                if (officeRoom && officeRoom !== 'N/A') {
+                    fullLocation = `${location} - ${officeRoom}`;
+                }
+
+                const requestData = {
+                    "Request Number": requestNumber,
+                    "Status": "Waiting",
+                    "Request Date": serverTimestamp(),
+                    "Name": name,
+                    "College": college || 'N/A',
+                    "Department": dept,
+                    "Location": fullLocation,
+                    "Mobile Number": mobileNumber,
+                    "Email": email,
+                    "Description": description,
+                    "approvedBy": null,
+                    "rejectedBy": null,
+                    "approvalDate": null,
+                    "rejectionDate": null,
+                    "rejectionReason": null
+                };
+
+                console.log('📤 Submitting data:', requestData);
+
+                const docRef = await addDoc(collection(db, 'Requests'), requestData);
+
+                console.log('✅ Document created with ID:', docRef.id);
+
+                alert(`✅ Request submitted successfully!\n\nRequest Number: ${requestNumber}\n\nYou will receive updates via email.`);
+
+                // Reset form
+                document.getElementById('maintenanceForm').reset();
+
+                // Generate new request number
+                const timestamp = Date.now().toString().slice(-6);
+                const randomNum = Math.floor(Math.random() * 1000);
+
+                // Hide conditional fields
+                document.getElementById('departmentContainer').style.display = 'none';
+                document.getElementById('locationOptionsContainer').style.display = 'none';
+                document.getElementById('officeRoomContainer').style.display = 'none';
+                document.getElementById('collegeContainer').style.display = 'none';
+
+                // Re-enable button
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+                submitButton.style.backgroundColor = '#d4b483';
+
+                console.log('🎉 Form reset successfully!');
+
+            } catch (error) {
+                console.error('❌ Error submitting request:', error);
+                alert(`❌ Failed to submit request.\n\nError: ${error.message}`);
+
+                // Re-enable button
+                const submitButton = document.querySelector('button[type="submit"]');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit';
+                submitButton.style.backgroundColor = '#d4b483';
+            }
+
+            return false;
+        };
+    </script>
+</body>
+
+</html>
