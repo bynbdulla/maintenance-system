@@ -472,9 +472,7 @@
             </div>
         </div>
     </header>
-
     <div class="form-container">
-
         <div class="form-card">
             <div class="form-body">
                 <form id="dayWorkForm">
@@ -593,6 +591,7 @@
                     </div>
 
                     <!-- Required Labor Section -->
+                    <!-- Required Labor Section -->
                     <div class="form-section">
                         <div class="form-section-title">
                             <span>Required Labor</span>
@@ -601,156 +600,120 @@
                         <table class="labor-table">
                             <thead>
                                 <tr>
-                                    <th rowspan="2" style="width: 180px;">Technician Specialization</th>
-                                    <th rowspan="2" style="width: 60px;">No.</th>
-                                    <th colspan="2">Duration </th>
-                                    <th colspan="2">Worker Salary</th>
-                                    <th colspan="2">Total Amount</th>
+                                    <th rowspan="2" style="width: 32%;">Technician Specialization</th>
+                                    <th rowspan="2" style="width: 12%;">No.</th>
+                                    <th colspan="2" style="width: 20%;">Duration</th>
+                                    <th rowspan="2" style="width: 18%;">Worker Salary </th>
+                                    <th rowspan="2" style="width: 18%;">Total Amount </th>
                                 </tr>
                                 <tr>
-                                    <th style="width: 60px;">Days</th>
-                                    <th style="width: 60px;">Hr.</th>
-                                    <th style="width: 60px;">BD</th>
-                                    <th style="width: 60px;">Fils</th>
-                                    <th style="width: 60px;">BD</th>
-                                    <th style="width: 60px;">Fils</th>
+                                    <th style="width: 10%;">Days</th>
+                                    <th style="width: 10%;">Hr.</th>
                                 </tr>
                             </thead>
                             <tbody id="laborBody">
                                 <tr>
-                                    <td class="specialization">Mason </td>
+                                    <td class="specialization">Mason</td>
                                     <td><input type="number" name="masonNo" min="0"
-                                            onchange="calculateLaborTotal('mason')">
-                                    </td>
+                                            onchange="calculateLaborTotal('mason')"></td>
                                     <td><input type="number" name="masonDays" min="0"
-                                            onchange="calculateLaborTotal('mason')">
-                                    </td>
+                                            onchange="calculateLaborTotal('mason')"></td>
                                     <td><input type="number" name="masonHrs" min="0"
-                                            onchange="calculateLaborTotal('mason')">
-                                    </td>
-                                    <td><input type="number" name="masonSalaryBD" min="0"
                                             onchange="calculateLaborTotal('mason')"></td>
-                                    <td><input type="number" name="masonSalaryFils" min="0" max="999"
-                                            onchange="calculateLaborTotal('mason')"></td>
+                                    <td><input type="number" name="masonSalaryBD" min="0" step="0.001" value="1.2"
+                                            readonly></td>
                                     <td><input type="number" name="masonTotalBD" readonly></td>
-                                    <td><input type="number" name="masonTotalFils" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td class="specialization">Carpentry </td>
+                                    <td class="specialization">Carpentry</td>
                                     <td><input type="number" name="carpentryNo" min="0"
                                             onchange="calculateLaborTotal('carpentry')"></td>
                                     <td><input type="number" name="carpentryDays" min="0"
                                             onchange="calculateLaborTotal('carpentry')"></td>
                                     <td><input type="number" name="carpentryHrs" min="0"
                                             onchange="calculateLaborTotal('carpentry')"></td>
-                                    <td><input type="number" name="carpentrySalaryBD" min="0"
-                                            onchange="calculateLaborTotal('carpentry')"></td>
-                                    <td><input type="number" name="carpentrySalaryFils" min="0" max="999"
-                                            onchange="calculateLaborTotal('carpentry')"></td>
+                                    <td><input type="number" name="carpentrySalaryBD" min="0" step="0.001" value="1.2"
+                                            readonly></td>
                                     <td><input type="number" name="carpentryTotalBD" readonly></td>
-                                    <td><input type="number" name="carpentryTotalFils" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td class="specialization">Painter </td>
+                                    <td class="specialization">Painter</td>
                                     <td><input type="number" name="painterNo" min="0"
-                                            onchange="calculateLaborTotal('painter')">
-                                    </td>
+                                            onchange="calculateLaborTotal('painter')"></td>
                                     <td><input type="number" name="painterDays" min="0"
                                             onchange="calculateLaborTotal('painter')"></td>
                                     <td><input type="number" name="painterHrs" min="0"
                                             onchange="calculateLaborTotal('painter')"></td>
-                                    <td><input type="number" name="painterSalaryBD" min="0"
-                                            onchange="calculateLaborTotal('painter')"></td>
-                                    <td><input type="number" name="painterSalaryFils" min="0" max="999"
-                                            onchange="calculateLaborTotal('painter')"></td>
+                                    <td><input type="number" name="painterSalaryBD" min="0" step="0.001" value="1"
+                                            readonly></td>
                                     <td><input type="number" name="painterTotalBD" readonly></td>
-                                    <td><input type="number" name="painterTotalFils" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td class="specialization">Electrician </td>
+                                    <td class="specialization">Electrician</td>
                                     <td><input type="number" name="electricianNo" min="0"
                                             onchange="calculateLaborTotal('electrician')"></td>
                                     <td><input type="number" name="electricianDays" min="0"
                                             onchange="calculateLaborTotal('electrician')"></td>
                                     <td><input type="number" name="electricianHrs" min="0"
                                             onchange="calculateLaborTotal('electrician')"></td>
-                                    <td><input type="number" name="electricianSalaryBD" min="0"
-                                            onchange="calculateLaborTotal('electrician')"></td>
-                                    <td><input type="number" name="electricianSalaryFils" min="0" max="999"
+                                    <td><input type="number" name="electricianSalaryBD" min="0" step="0.001"
                                             onchange="calculateLaborTotal('electrician')"></td>
                                     <td><input type="number" name="electricianTotalBD" readonly></td>
-                                    <td><input type="number" name="electricianTotalFils" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td class="specialization">A/C Technician </td>
+                                    <td class="specialization">A/C Technician</td>
                                     <td><input type="number" name="acNo" min="0" onchange="calculateLaborTotal('ac')">
                                     </td>
                                     <td><input type="number" name="acDays" min="0" onchange="calculateLaborTotal('ac')">
                                     </td>
                                     <td><input type="number" name="acHrs" min="0" onchange="calculateLaborTotal('ac')">
                                     </td>
-                                    <td><input type="number" name="acSalaryBD" min="0"
-                                            onchange="calculateLaborTotal('ac')">
-                                    </td>
-                                    <td><input type="number" name="acSalaryFils" min="0" max="999"
+                                    <td><input type="number" name="acSalaryBD" min="0" step="0.001"
                                             onchange="calculateLaborTotal('ac')"></td>
                                     <td><input type="number" name="acTotalBD" readonly></td>
-                                    <td><input type="number" name="acTotalFils" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td class="specialization">Plumber </td>
+                                    <td class="specialization">Plumber</td>
                                     <td><input type="number" name="plumberNo" min="0"
-                                            onchange="calculateLaborTotal('plumber')">
-                                    </td>
+                                            onchange="calculateLaborTotal('plumber')"></td>
                                     <td><input type="number" name="plumberDays" min="0"
                                             onchange="calculateLaborTotal('plumber')"></td>
                                     <td><input type="number" name="plumberHrs" min="0"
                                             onchange="calculateLaborTotal('plumber')"></td>
-                                    <td><input type="number" name="plumberSalaryBD" min="0"
-                                            onchange="calculateLaborTotal('plumber')"></td>
-                                    <td><input type="number" name="plumberSalaryFils" min="0" max="999"
-                                            onchange="calculateLaborTotal('plumber')"></td>
+                                    <td><input type="number" name="plumberSalaryBD" min="0" step="0.001" value="1.5"
+                                            readonly onchange="calculateLaborTotal('plumber')"></td>
                                     <td><input type="number" name="plumberTotalBD" readonly></td>
-                                    <td><input type="number" name="plumberTotalFils" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td class="specialization">Guardian </td>
+                                    <td class="specialization">Guardian</td>
                                     <td><input type="number" name="guardianNo" min="0"
                                             onchange="calculateLaborTotal('guardian')"></td>
                                     <td><input type="number" name="guardianDays" min="0"
                                             onchange="calculateLaborTotal('guardian')"></td>
                                     <td><input type="number" name="guardianHrs" min="0"
                                             onchange="calculateLaborTotal('guardian')"></td>
-                                    <td><input type="number" name="guardianSalaryBD" min="0"
-                                            onchange="calculateLaborTotal('guardian')"></td>
-                                    <td><input type="number" name="guardianSalaryFils" min="0" max="999"
+                                    <td><input type="number" name="guardianSalaryBD" min="0" step="0.001"
                                             onchange="calculateLaborTotal('guardian')"></td>
                                     <td><input type="number" name="guardianTotalBD" readonly></td>
-                                    <td><input type="number" name="guardianTotalFils" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td class="specialization">Unskilled Workers </td>
+                                    <td class="specialization">Unskilled Workers</td>
                                     <td><input type="number" name="unskilledNo" min="0"
                                             onchange="calculateLaborTotal('unskilled')"></td>
                                     <td><input type="number" name="unskilledDays" min="0"
                                             onchange="calculateLaborTotal('unskilled')"></td>
                                     <td><input type="number" name="unskilledHrs" min="0"
                                             onchange="calculateLaborTotal('unskilled')"></td>
-                                    <td><input type="number" name="unskilledSalaryBD" min="0"
-                                            onchange="calculateLaborTotal('unskilled')"></td>
-                                    <td><input type="number" name="unskilledSalaryFils" min="0" max="999"
+                                    <td><input type="number" name="unskilledSalaryBD" min="0" step="0.001"
                                             onchange="calculateLaborTotal('unskilled')"></td>
                                     <td><input type="number" name="unskilledTotalBD" readonly></td>
-                                    <td><input type="number" name="unskilledTotalFils" readonly></td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr style="background: #f0f4ff; font-weight: bold;">
-                                    <td colspan="6" style="text-align: right; padding-right: 20px;">Grand Total </td>
+                                    <td colspan="5" style="text-align: right; padding-right: 20px;">Grand Total</td>
                                     <td><input type="number" id="laborGrandTotalBD" readonly style="font-weight: bold;">
                                     </td>
-                                    <td><input type="number" id="laborGrandTotalFils" readonly
-                                            style="font-weight: bold;"></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -770,18 +733,6 @@
                                 <label>Starting Date </label>
                                 <input type="date" id="startDate">
                             </div>
-
-                            <div class="form-group">
-                                <label>Supervisor Name </label>
-                                <select id="supervisorName">
-                                    <option value="">Select Supervisor...</option>
-                                    <option value="FAREED">FAREED</option>
-                                    <option value="AHMED">AHMED</option>
-                                    <option value="MOHAMMED">MOHAMMED</option>
-                                    <option value="ALI">ALI</option>
-                                    <option value="HUSSAIN">HUSSAIN</option>
-                                </select>
-                            </div>
                         </div>
 
                     </div>
@@ -794,381 +745,600 @@
                 </form>
             </div>
         </div>
+    </div>
 
-        <script>
-            // ============================================
-            // MATERIAL ROW MANAGEMENT
-            // ============================================
-            let materialRowCount = 2; // Start at 2 since you have rows 1 and 2
+    <script>
+        // ============================================
+        // MATERIAL ROW MANAGEMENT
+        // ============================================
+        let materialRowCount = 2;
 
-            window.addMaterialRow = function () {
-                materialRowCount++;
-                const rowNumber = materialRowCount;
+        window.addMaterialRow = function () {
+            materialRowCount++;
+            const rowNumber = materialRowCount;
+            const tbody = document.getElementById('materialsBody');
+            if (!tbody) return;
 
-                console.log('➕ Adding row', rowNumber);
+            const newRow = document.createElement('tr');
+            newRow.id = `material-row-${rowNumber}`;
+            newRow.innerHTML = `
+        <td class="sn">${rowNumber}</td>
+        <td>
+            <select class="material-select" id="material-${rowNumber}" 
+                    onchange="handleMaterialSelection(${rowNumber})">
+                <option value="">Select Material...</option>
+            </select>
+        </td>
+        <td><input type="number" name="qty${rowNumber}" min="0" value="0" 
+                   onchange="calculateMaterialTotal(${rowNumber})"></td>
+        <td><input type="number" id="unitBD${rowNumber}" readonly></td>
+        <td><input type="number" id="totalBD${rowNumber}" readonly></td>
+        <td>
+            <img src="images/bin.png" alt="Delete"
+            style="width:20px; height:20px; cursor:pointer;" onclick="deleteRow(this)">
+        </td>
+    `;
 
-                const tbody = document.getElementById('materialsBody');
-                if (!tbody) {
-                    console.error('❌ Cannot find materialsBody');
-                    return;
+            const buttonRow = tbody.querySelector('tr:last-child');
+            tbody.insertBefore(newRow, buttonRow);
+
+            setTimeout(() => {
+                const dropdown = document.getElementById(`material-${rowNumber}`);
+                if (dropdown && window.populateSingleDropdown) {
+                    window.populateSingleDropdown(dropdown);
                 }
+            }, 100);
+        };
 
-                // Create new row
-                const newRow = document.createElement('tr');
-                newRow.id = `material-row-${rowNumber}`;
+        // ============================================
+        // LABOR CALCULATIONS (BD ONLY)
+        // ============================================
+        function calculateLaborTotal(type) {
+            console.log(`🔧 Calculating labor for: ${type}`);
 
-                newRow.innerHTML = `
-            <td class="sn">${rowNumber}</td>
-            <td>
-                <select class="material-select" id="material-${rowNumber}" 
-                        onchange="handleMaterialSelection(${rowNumber})">
-                    <option value="">Select Material...</option>
-                </select>
-            </td>
-            <td><input type="number" name="qty${rowNumber}" min="0" value="0" 
-                       onchange="calculateMaterialTotal(${rowNumber})"></td>
-            <td><input type="number" id="unitBD${rowNumber}" class="price-field" readonly></td>
-            <td><input type="number" id="totalBD${rowNumber}" readonly></td>
-            <td>
-                <img src="images/bin.png" alt="Delete"
-                style="width:20px; height:20px; cursor:pointer;" onclick="deleteRow(this)">
-            </td>
-        `;
+            const no = parseFloat(document.querySelector(`[name="${type}No"]`)?.value || 0);
+            const days = parseFloat(document.querySelector(`[name="${type}Days"]`)?.value || 0);
+            const hrs = parseFloat(document.querySelector(`[name="${type}Hrs"]`)?.value || 0);
+            const salaryBD = parseFloat(document.querySelector(`[name="${type}SalaryBD"]`)?.value || 0);
 
-                // Insert before the button row
-                const buttonRow = tbody.querySelector('tr:last-child');
-                tbody.insertBefore(newRow, buttonRow);
+            const totalDays = days + (hrs / 8);
+            const totalBD = no * totalDays * salaryBD;
 
-                console.log('✅ Row', rowNumber, 'added to DOM');
+            console.log(`   ${type}: ${no} workers × ${totalDays.toFixed(2)} days × ${salaryBD} BD = ${totalBD.toFixed(3)} BD`);
 
-                // Populate dropdown for new row
-                setTimeout(() => {
-                    const dropdown = document.getElementById(`material-${rowNumber}`);
-                    if (dropdown) {
-                        if (window.populateSingleDropdown) {
-                            console.log('🔄 Populating dropdown for row', rowNumber);
-                            window.populateSingleDropdown(dropdown);
-                            console.log('✅ Dropdown populated for row', rowNumber);
-                        } else {
-                            console.error('❌ populateSingleDropdown function not found');
-                        }
-                    }
-                }, 100);
-            };
-
-            // Account dropdown functionality
-            const accountIcon = document.getElementById('accountIcon');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-
-            if (accountIcon && dropdownMenu) {
-                accountIcon.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    dropdownMenu.classList.toggle('active');
-                });
-
-                document.addEventListener('click', function (e) {
-                    if (!accountIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                        dropdownMenu.classList.remove('active');
-                    }
-                });
-
-                document.querySelectorAll('.dropdown-item').forEach(item => {
-                    item.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const action = this.textContent.trim();
-                        if (action === 'Logout') {
-                            if (confirm('Are you sure you want to logout?')) {
-                                alert('Logging out...');
-                            }
-                        } else {
-                            alert(`Navigating to: ${action}`);
-                        }
-                        dropdownMenu.classList.remove('active');
-                    });
-                });
+            const totalBDEl = document.querySelector(`[name="${type}TotalBD"]`);
+            if (totalBDEl) {
+                totalBDEl.value = totalBD.toFixed(3);
             }
 
-            // ============================================
-            // LABOR CALCULATIONS
-            // ============================================
-            function calculateLaborTotal(type) {
-                const no = parseFloat(document.querySelector(`[name="${type}No"]`)?.value || 0);
-                const days = parseFloat(document.querySelector(`[name="${type}Days"]`)?.value || 0);
-                const hrs = parseFloat(document.querySelector(`[name="${type}Hrs"]`)?.value || 0);
-                const salaryBD = parseFloat(document.querySelector(`[name="${type}SalaryBD"]`)?.value || 0);
-                const salaryFils = parseFloat(document.querySelector(`[name="${type}SalaryFils"]`)?.value || 0);
+            calculateLaborGrandTotal();
+        }
 
-                const totalDays = days + (hrs / 8);
-                const dailySalaryInFils = (salaryBD * 1000) + salaryFils;
-                const totalInFils = no * totalDays * dailySalaryInFils;
+        function calculateLaborGrandTotal() {
+            console.log('🔧 Calculating labor grand total...');
 
-                const totalBD = Math.floor(totalInFils / 1000);
-                const totalFils = Math.round(totalInFils % 1000);
+            const types = ['mason', 'carpentry', 'painter', 'electrician', 'ac', 'plumber', 'guardian', 'unskilled'];
+            let grandTotal = 0;
 
-                const totalBDEl = document.querySelector(`[name="${type}TotalBD"]`);
-                const totalFilsEl = document.querySelector(`[name="${type}TotalFils"]`);
+            types.forEach(type => {
+                const totalBD = parseFloat(document.querySelector(`[name="${type}TotalBD"]`)?.value || 0);
+                grandTotal += totalBD;
 
-                if (totalBDEl && totalFilsEl) {
-                    totalBDEl.value = totalBD;
-                    totalFilsEl.value = totalFils.toString().padStart(3, '0');
-                }
-
-                calculateLaborGrandTotal();
-            }
-
-            function calculateLaborGrandTotal() {
-                const types = ['mason', 'carpentry', 'painter', 'electrician', 'ac', 'plumber', 'guardian', 'unskilled'];
-                let grandTotalFils = 0;
-
-                types.forEach(type => {
-                    const totalBD = parseFloat(document.querySelector(`[name="${type}TotalBD"]`)?.value || 0);
-                    const totalFils = parseFloat(document.querySelector(`[name="${type}TotalFils"]`)?.value || 0);
-                    grandTotalFils += (totalBD * 1000) + totalFils;
-                });
-
-                const grandBD = Math.floor(grandTotalFils / 1000);
-                const grandFils = Math.round(grandTotalFils % 1000);
-
-                const grandBDEl = document.getElementById('laborGrandTotalBD');
-                const grandFilsEl = document.getElementById('laborGrandTotalFils');
-
-                if (grandBDEl && grandFilsEl) {
-                    grandBDEl.value = grandBD;
-                    grandFilsEl.value = grandFils.toString().padStart(3, '0');
-                }
-
-                updateGrandTotal();
-            }
-
-            // ============================================
-            // GRAND TOTAL CALCULATION
-            // ============================================
-            function updateGrandTotal() {
-                const materialsBD = parseFloat(document.getElementById('materialsGrandTotalBD')?.value || 0);
-                const materialsFils = parseFloat(document.getElementById('materialsGrandTotalFils')?.value || 0);
-                const laborBD = parseFloat(document.getElementById('laborGrandTotalBD')?.value || 0);
-                const laborFils = parseFloat(document.getElementById('laborGrandTotalFils')?.value || 0);
-
-                const totalInFils = (materialsBD * 1000 + materialsFils) + (laborBD * 1000 + laborFils);
-                const grandTotal = totalInFils / 1000;
-
-                const displayEl = document.getElementById('grandTotalDisplay');
-                if (displayEl) {
-                    displayEl.textContent = grandTotal.toFixed(3);
-                }
-            }
-
-            // ============================================
-            // FORM FUNCTIONS
-            // ============================================
-            function resetForm() {
-                if (confirm('Are you sure you want to reset the form?')) {
-                    document.getElementById('dayWorkForm')?.reset();
-                    const fields = ['materialsGrandTotalBD', 'laborGrandTotalBD'];
-                    fields.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) el.value = '';
-                    });
-                    updateGrandTotal();
-                }
-            }
-
-            document.addEventListener('DOMContentLoaded', function () {
-                const form = document.getElementById('dayWorkForm');
-                if (form) {
-                    form.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                        if (confirm('Are you sure you want to submit this form?')) {
-                            alert('Form submitted successfully!');
-                        }
-                    });
+                if (totalBD > 0) {
+                    console.log(`   ${type}: ${totalBD.toFixed(3)} BD`);
                 }
             });
-            function deleteRow(element) {
-                const row = element.closest('tr');
-                if (row) {
-                    row.remove();
-                    updateSerialNumbers(); // Optional: renumber rows
-                    updateGrandTotal();    // Optional: recalculate total
+
+            console.log(`📊 Labor Grand Total: ${grandTotal.toFixed(3)} BD`);
+
+            const grandBDEl = document.getElementById('laborGrandTotalBD');
+            if (grandBDEl) {
+                grandBDEl.value = grandTotal.toFixed(3);
+            }
+
+            updateGrandTotal();
+        }
+
+        // ============================================
+        // GRAND TOTAL CALCULATION
+        // ============================================
+        function updateGrandTotal() {
+            console.log('🔄 Updating overall grand total...');
+
+            const materialsBD = parseFloat(document.getElementById('materialsGrandTotalBD')?.value || 0);
+            const laborBD = parseFloat(document.getElementById('laborGrandTotalBD')?.value || 0);
+            const totalBD = materialsBD + laborBD;
+
+            console.log('Materials:', materialsBD.toFixed(3), 'BD');
+            console.log('Labor:', laborBD.toFixed(3), 'BD');
+            console.log('Grand Total:', totalBD.toFixed(3), 'BD');
+
+            const displayEl = document.getElementById('grandTotalDisplay');
+            if (displayEl) {
+                displayEl.textContent = totalBD.toFixed(3);
+            }
+        }
+
+        // ============================================
+        // FORM FUNCTIONS
+        // ============================================
+        function resetForm() {
+            if (confirm('Are you sure you want to reset the form?')) {
+                document.getElementById('dayWorkForm')?.reset();
+                document.getElementById('materialsGrandTotalBD').value = '';
+                document.getElementById('laborGrandTotalBD').value = '';
+                updateGrandTotal();
+            }
+        }
+
+        function deleteRow(element) {
+            const row = element.closest('tr');
+            if (row) {
+                row.remove();
+                if (typeof window.calculateMaterialsGrandTotal === 'function') {
+                    window.calculateMaterialsGrandTotal();
                 }
             }
-        </script>
+        }
 
-        <script type="module">
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-            import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // ============================================
+        // FORM SUBMIT HANDLER - IMPORTANT!
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('dayWorkForm');
+            if (form) {
+                form.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    console.log('🚀 Form submit triggered!');
 
-            const firebaseConfig = {
-                apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
-                authDomain: "requests-ffdd6.firebaseapp.com",
-                projectId: "requests-ffdd6",
-                storageBucket: "requests-ffdd6.firebasestorage.app",
-                messagingSenderId: "316405880275",
-                appId: "1:316405880275:web:f4b271583e903ac639cb26"
-            };
+                    if (confirm('Are you sure you want to submit this job description?')) {
+                        // Call the Firebase submit function
+                        if (typeof window.submitJobDescription === 'function') {
+                            const success = await window.submitJobDescription();
+                            if (success) {
+                                console.log('✅ Form submitted successfully!');
+                            }
+                        } else {
+                            console.error('❌ submitJobDescription function not found!');
+                            alert('Error: Submit function not loaded. Please refresh the page.');
+                        }
+                    }
+                });
+            } else {
+                console.error('❌ Form not found!');
+            }
+        });
+    </script>
 
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            let materialsDatabase = [];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            query,
+            orderBy,
+            addDoc,
+            serverTimestamp,
+            where,
+            updateDoc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-            // Make globally accessible
-            window.materialsDatabase = materialsDatabase;
+        const firebaseConfig = {
+            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+            authDomain: "requests-ffdd6.firebaseapp.com",
+            projectId: "requests-ffdd6",
+            storageBucket: "requests-ffdd6.firebasestorage.app",
+            messagingSenderId: "316405880275",
+            appId: "1:316405880275:web:f4b271583e903ac639cb26"
+        };
 
-            async function loadMaterials() {
-                try {
-                    console.log('🔄 Loading materials from Firebase...');
-                    const q = query(collection(db, 'Materials'), orderBy('materialNo'));
-                    const querySnapshot = await getDocs(q);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        let materialsDatabase = [];
 
-                    materialsDatabase = [];
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        materialsDatabase.push({
-                            no: data.materialNo,
-                            name: data.materialName,
-                            unit: data.unit,
-                            price: data.price,
-                            category: data.category
-                        });
+        window.materialsDatabase = materialsDatabase;
+
+        async function loadMaterials() {
+            try {
+                console.log('🔄 Loading materials from Firebase...');
+                const q = query(collection(db, 'Materials'), orderBy('materialNo'));
+                const querySnapshot = await getDocs(q);
+
+                materialsDatabase = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    materialsDatabase.push({
+                        no: data.materialNo,
+                        name: data.materialName,
+                        unit: data.unit,
+                        price: data.price,
+                        category: data.category
                     });
-
-                    window.materialsDatabase = materialsDatabase;
-                    console.log('✅ Loaded', materialsDatabase.length, 'materials');
-                    populateMaterialDropdowns();
-                } catch (error) {
-                    console.error('❌ Error loading materials:', error);
-                    alert('Failed to load materials from database');
-                }
-            }
-
-            function populateMaterialDropdowns() {
-                const dropdowns = document.querySelectorAll('select[id^="material-"]');
-                console.log('🔄 Populating', dropdowns.length, 'dropdowns');
-
-                dropdowns.forEach(dropdown => {
-                    populateSingleDropdown(dropdown);
-                });
-            }
-
-            function populateSingleDropdown(dropdown) {
-                if (!materialsDatabase || materialsDatabase.length === 0) {
-                    console.log('⚠️ Materials not loaded yet');
-                    return;
-                }
-
-                dropdown.innerHTML = '<option value="">Select Material...</option>';
-
-                const categorized = {};
-                materialsDatabase.forEach(m => {
-                    if (!categorized[m.category]) categorized[m.category] = [];
-                    categorized[m.category].push(m);
                 });
 
-                Object.keys(categorized).sort().forEach(category => {
-                    const optgroup = document.createElement('optgroup');
-                    optgroup.label = category;
+                window.materialsDatabase = materialsDatabase;
+                console.log('✅ Loaded', materialsDatabase.length, 'materials');
+                populateMaterialDropdowns();
+            } catch (error) {
+                console.error('❌ Error loading materials:', error);
+                alert('Failed to load materials from database');
+            }
+        }
 
-                    categorized[category].forEach(material => {
-                        const option = document.createElement('option');
-                        option.value = JSON.stringify(material);
-                        option.textContent = `${material.name} - ${material.unit}`;
-                        optgroup.appendChild(option);
-                    });
+        function populateMaterialDropdowns() {
+            const dropdowns = document.querySelectorAll('select[id^="material-"]');
+            console.log('🔄 Populating', dropdowns.length, 'dropdowns');
 
-                    dropdown.appendChild(optgroup);
-                });
+            dropdowns.forEach(dropdown => {
+                populateSingleDropdown(dropdown);
+            });
+        }
+
+        function populateSingleDropdown(dropdown) {
+            if (!materialsDatabase || materialsDatabase.length === 0) {
+                console.log('⚠️ Materials not loaded yet');
+                return;
             }
 
-            // Make globally accessible
-            window.populateSingleDropdown = populateSingleDropdown;
+            dropdown.innerHTML = '<option value="">Select Material...</option>';
 
-            window.handleMaterialSelection = function (rowNumber) {
-                const dropdown = document.getElementById(`material-${rowNumber}`);
-                if (!dropdown || !dropdown.value) {
-                    console.log('No material selected for row', rowNumber)
-                    return;
-                }
+            const categorized = {};
+            materialsDatabase.forEach(m => {
+                if (!categorized[m.category]) categorized[m.category] = [];
+                categorized[m.category].push(m);
+            });
 
-                const material = JSON.parse(dropdown.value);
-                console.log('📦 Row', rowNumber, '- Selected:', material.name, '- Price:', material.price, 'BD');
+            Object.keys(categorized).sort().forEach(category => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = category;
 
-                // Set quantity to 1
-                const quantityInput = document.querySelector(`[name="qty${rowNumber}"]`);
-                if (quantityInput) {
-                    quantityInput.value = 1;
-                }
+                categorized[category].forEach(material => {
+                    const option = document.createElement('option');
+                    option.value = JSON.stringify(material);
+                    option.textContent = `${material.name} - ${material.unit}`;
+                    optgroup.appendChild(option);
+                });
 
-                const bdInput = document.getElementById(`unitBD${rowNumber}`);
-                if (bdInput) {
-                    bdInput.value = material.price.toFixed(3);
-                    console.log('💰 Price set:', material.price.toFixed(3), 'BD');
-                }
+                dropdown.appendChild(optgroup);
+            });
+        }
 
-                // Calculate total
-                calculateMaterialTotal(rowNumber);
-            };
+        window.populateSingleDropdown = populateSingleDropdown;
 
-            window.calculateMaterialTotal = function (row) {
-                const qtyInput = document.querySelector(`[name="qty${row}"]`);
-                const bdInput = document.getElementById(`unitBD${row}`);
+        window.handleMaterialSelection = function (rowNumber) {
+            const dropdown = document.getElementById(`material-${rowNumber}`);
+            if (!dropdown || !dropdown.value) return;
 
-                if (!qtyInput || !bdInput) {
-                    console.log('Missing inputs for row', row);
-                    return;
-                }
+            const material = JSON.parse(dropdown.value);
+            console.log('📦 Row', rowNumber, '- Selected:', material.name);
 
-                const qty = parseFloat(qtyInput.value || 0);
-                const unitPrice = parseFloat(bdInput.value || 0);
+            const quantityInput = document.querySelector(`[name="qty${rowNumber}"]`);
+            if (quantityInput) quantityInput.value = 1;
 
-                // Simple calculation: quantity × unit price
-                const total = qty * unitPrice;
+            const bdInput = document.getElementById(`unitBD${rowNumber}`);
+            if (bdInput) bdInput.value = material.price.toFixed(3);
 
-                const totalBDInput = document.getElementById(`totalBD${row}`);
+            calculateMaterialTotal(rowNumber);
+        };
+
+        window.calculateMaterialTotal = function (row) {
+            const qtyInput = document.querySelector(`[name="qty${row}"]`);
+            const bdInput = document.getElementById(`unitBD${row}`);
+            if (!qtyInput || !bdInput) return;
+
+            const qty = parseFloat(qtyInput.value || 0);
+            const unitPrice = parseFloat(bdInput.value || 0);
+            const total = qty * unitPrice;
+
+            const totalBDInput = document.getElementById(`totalBD${row}`);
+            if (totalBDInput) {
+                totalBDInput.value = total.toFixed(3);
+            }
+
+            calculateMaterialsGrandTotal();
+        };
+
+        window.calculateMaterialsGrandTotal = function () {
+            let grandTotal = 0;
+
+            for (let i = 1; i <= 100; i++) {
+                const totalBDInput = document.getElementById(`totalBD${i}`);
                 if (totalBDInput) {
-                    totalBDInput.value = total.toFixed(3); // e.g., 30.000
-                    console.log(`Row ${row} Total:`, total.toFixed(3), 'BD');
+                    grandTotal += parseFloat(totalBDInput.value || 0);
+                }
+            }
+
+            const grandBDElement = document.getElementById('materialsGrandTotalBD');
+            if (grandBDElement) {
+                grandBDElement.value = grandTotal.toFixed(3);
+            }
+
+            if (typeof updateGrandTotal === 'function') {
+                updateGrandTotal();
+            }
+        };
+
+        // ============================================
+        // UPDATE REQUEST STATUS IN REQUESTS COLLECTION
+        // ============================================
+        async function updateRequestStatus(requestNumber, newStatus) {
+            try {
+                console.log(`🔄 Updating request ${requestNumber} status to: ${newStatus}`);
+
+                const requestsRef = collection(db, 'Requests');
+                const q = query(requestsRef, where('Request Number', '==', requestNumber));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    console.warn('⚠️ No request found with number:', requestNumber);
+                    return;
                 }
 
-                calculateMaterialsGrandTotal();
-            };
+                const updatePromises = [];
+                querySnapshot.forEach((doc) => {
+                    console.log('📝 Updating document:', doc.id);
+                    const updatePromise = updateDoc(doc.ref, {
+                        Status: newStatus,
+                        updatedAt: serverTimestamp()
+                    });
+                    updatePromises.push(updatePromise);
+                });
 
+                await Promise.all(updatePromises);
+                console.log('✅ Request status updated successfully!');
 
-            window.calculateMaterialsGrandTotal = function () {
-                let grandTotalFils = 0;
+            } catch (error) {
+                console.error('❌ Error updating request status:', error);
+                console.warn('⚠️ Job Description saved, but request status update failed');
+            }
+        }
 
+        // ============================================
+        // SUBMIT TO FIREBASE
+        // ============================================
+        window.submitJobDescription = async function () {
+            console.log('📤 FIREBASE SUBMIT FUNCTION CALLED!');
+
+            try {
+                const requestNo = document.getElementById('requestNo').value;
+                const location = document.getElementById('Location').value;
+                const college = document.getElementById('college').value;
+                const startDate = document.getElementById('startDate').value;
+
+                if (!requestNo || !startDate) {
+                    alert('⚠️ Request Number and Starting Date are required!');
+                    return false;
+                }
+
+                // Collect materials
+                const materials = [];
                 for (let i = 1; i <= 100; i++) {
+                    const dropdown = document.getElementById(`material-${i}`);
+                    const qtyInput = document.querySelector(`[name="qty${i}"]`);
+                    const unitBDInput = document.getElementById(`unitBD${i}`);
                     const totalBDInput = document.getElementById(`totalBD${i}`);
-                    const totalFilsInput = document.getElementById(`totalFils${i}`);
 
-                    if (totalBDInput && totalFilsInput) {
-                        const totalBD = parseFloat(totalBDInput.value || 0);
-                        const totalFils = parseFloat(totalFilsInput.value || 0);
-                        grandTotalFils += (totalBD * 1000) + totalFils;
+                    if (dropdown && dropdown.value && qtyInput && parseFloat(qtyInput.value) > 0) {
+                        const materialData = JSON.parse(dropdown.value);
+                        materials.push({
+                            serialNo: i,
+                            materialName: materialData.name,
+                            quantity: parseFloat(qtyInput.value),
+                            unitCost: parseFloat(unitBDInput.value || 0),
+                            totalCost: parseFloat(totalBDInput.value || 0)
+                        });
                     }
                 }
 
-                const grandBD = Math.floor(grandTotalFils / 1000);
-                const grandFils = Math.round(grandTotalFils % 1000);
+                // Collect labor
+                const laborTypes = ['mason', 'carpentry', 'painter', 'electrician', 'ac', 'plumber', 'guardian', 'unskilled'];
+                const labor = [];
 
-                const grandBDElement = document.getElementById('materialsGrandTotalBD');
-                const grandFilsElement = document.getElementById('materialsGrandTotalFils');
+                laborTypes.forEach(type => {
+                    const no = parseFloat(document.querySelector(`[name="${type}No"]`)?.value || 0);
+                    const days = parseFloat(document.querySelector(`[name="${type}Days"]`)?.value || 0);
+                    const hrs = parseFloat(document.querySelector(`[name="${type}Hrs"]`)?.value || 0);
+                    const salaryBD = parseFloat(document.querySelector(`[name="${type}SalaryBD"]`)?.value || 0);
+                    const totalBD = parseFloat(document.querySelector(`[name="${type}TotalBD"]`)?.value || 0);
 
-                if (grandBDElement && grandFilsElement) {
-                    grandBDElement.value = grandBD;
-                    grandFilsElement.value = grandFils.toString().padStart(3, '0');
-                    console.log('📊 Grand Total:', grandBD, 'BD');
+                    if (no > 0 || days > 0 || hrs > 0) {
+                        labor.push({
+                            specialization: type.charAt(0).toUpperCase() + type.slice(1),
+                            numberOfWorkers: no,
+                            days: days,
+                            hours: hrs,
+                            dailySalary: salaryBD,
+                            totalCost: totalBD
+                        });
+                    }
+                });
+
+                const materialsTotalBD = parseFloat(document.getElementById('materialsGrandTotalBD')?.value || 0);
+                const laborTotalBD = parseFloat(document.getElementById('laborGrandTotalBD')?.value || 0);
+                const grandTotal = parseFloat(document.getElementById('grandTotalDisplay')?.textContent || 0);
+
+                // Determine status based on start date
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const selectedDate = new Date(startDate);
+                selectedDate.setHours(0, 0, 0, 0);
+
+                let jobStatus = 'Approved';
+                if (selectedDate.getTime() === today.getTime()) {
+                    jobStatus = 'Processing';
+                    console.log('📅 Start date is TODAY - Status set to Processing');
+                } else if (selectedDate < today) {
+                    jobStatus = 'Processing';
+                    console.log('📅 Start date is in the PAST - Status set to Processing');
+                } else {
+                    console.log('📅 Start date is in the FUTURE - Status set to Approved');
                 }
 
-                if (typeof updateGrandTotal === 'function') {
-                    updateGrandTotal();
-                }
-            };
+                const jobDescription = {
+                    requestNumber: requestNo,
+                    location: location,
+                    college: college,
+                    startingDate: startDate,
+                    materials: materials,
+                    materialsGrandTotal: materialsTotalBD,
+                    labor: labor,
+                    laborGrandTotal: laborTotalBD,
+                    estimatedTotalCost: grandTotal,
+                    status: jobStatus,
+                    createdAt: serverTimestamp()
+                };
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', loadMaterials);
-            } else {
-                loadMaterials();
+                console.log('📋 Saving to Firestore:', jobDescription);
+
+                // Save Job Description
+                const docRef = await addDoc(collection(db, 'JobDescriptions'), jobDescription);
+                console.log('✅ Job Description saved! Document ID:', docRef.id);
+
+                // Update Request status
+                await updateRequestStatus(requestNo, jobStatus);
+
+                // Show success message
+                alert(`✅ Job Description submitted successfully!\n\nDocument ID: ${docRef.id}\nStatus: ${jobStatus}`);
+
+                // Clear localStorage
+                localStorage.removeItem('selectedRequestData');
+                localStorage.removeItem('selectedRequestNumber');
+
+                // Redirect to all-requests page
+                setTimeout(() => {
+                    window.location.href = 'all-requests.html';
+                }, 1000);
+
+                return true;
+
+            } catch (error) {
+                console.error('❌ ERROR:', error);
+                alert(`❌ Error: ${error.message}`);
+                return false;
             }
+        };
 
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadMaterials);
+        } else {
+            loadMaterials();
+        }
+    </script>
+    <script>
+        // ✅ AUTO-FILL FORM FROM REQUEST DATA
+        window.addEventListener('DOMContentLoaded', function () {
+            console.log('🔄 Checking for request data...');
 
-        </script>
+            // Get the stored request data
+            const requestData = localStorage.getItem('selectedRequestData');
+            const requestNumber = localStorage.getItem('selectedRequestNumber');
+
+            if (requestData && requestNumber) {
+                console.log('✅ Found request data, auto-filling form...');
+
+                try {
+                    const request = JSON.parse(requestData);
+                    console.log('📦 Request data:', request);
+
+                    // Auto-fill Request Number (assuming you have an input with id="requestNumber")
+                    const requestNumField = document.getElementById('requestNumber');
+                    if (requestNumField) {
+                        requestNumField.value = requestNumber;
+                        console.log('✅ Filled Request Number:', requestNumber);
+                    }
+
+                    // Auto-fill College (assuming you have an input/select with id="college")
+                    const collegeField = document.getElementById('college');
+                    if (collegeField) {
+                        collegeField.value = request.College || '';
+                        console.log('✅ Filled College:', request.College);
+                    }
+
+                    // Auto-fill Location (assuming you have an input with id="location")
+                    const locationField = document.getElementById('location');
+                    if (locationField) {
+                        locationField.value = request.Location || '';
+                        console.log('✅ Filled Location:', request.Location);
+                    }
+
+                    // Optional: Fill other fields if needed
+                    const departmentField = document.getElementById('department');
+                    if (departmentField) {
+                        departmentField.value = request.Department || '';
+                    }
+
+                    const descriptionField = document.getElementById('description');
+                    if (descriptionField) {
+                        descriptionField.value = request.Description || '';
+                    }
+
+                    console.log('✅ Auto-fill complete!');
+
+                    // Optional: Clear localStorage after filling to prevent re-filling on refresh
+                    // localStorage.removeItem('selectedRequestData');
+                    // localStorage.removeItem('selectedRequestNumber');
+
+                } catch (error) {
+                    console.error('❌ Error parsing request data:', error);
+                }
+            } else {
+                console.log('ℹ️ No request data found - user came directly to page');
+            }
+        });
+    </script>
+    <script>
+        // ✅ AUTO-FILL FORM FROM REQUEST DATA
+        window.addEventListener('DOMContentLoaded', function () {
+            console.log('🔄 Checking for request data...');
+
+            // Get the stored request data
+            const requestData = localStorage.getItem('selectedRequestData');
+            const requestNumber = localStorage.getItem('selectedRequestNumber');
+
+            if (requestData && requestNumber) {
+                console.log('✅ Found request data, auto-filling form...');
+
+                try {
+                    const request = JSON.parse(requestData);
+                    console.log('📦 Request data:', request);
+
+                    // ✅ Auto-fill Request Number → id="requestNo"
+                    const requestNoField = document.getElementById('requestNo');
+                    if (requestNoField) {
+                        requestNoField.value = requestNumber;
+                        console.log('✅ Filled Request Number:', requestNumber);
+                    }
+
+                    // ✅ Auto-fill Job Location → id="Location"
+                    const locationField = document.getElementById('Location');
+                    if (locationField) {
+                        locationField.value = request.Location || 'N/A';
+                        console.log('✅ Filled Job Location:', request.Location);
+                    }
+
+                    // ✅ Auto-fill College → id="college"
+                    const collegeField = document.getElementById('college');
+                    if (collegeField) {
+                        collegeField.value = request.College || 'N/A';
+                        console.log('✅ Filled Dept./College/Deanship:', request.College);
+                    }
+
+                    console.log('✅ Auto-fill complete!');
+
+                    // Optional: Clear localStorage after successful fill
+                    // localStorage.removeItem('selectedRequestData');
+                    // localStorage.removeItem('selectedRequestNumber');
+
+                } catch (error) {
+                    console.error('❌ Error parsing request data:', error);
+                }
+            } else {
+                console.log('ℹ️ No request data found - user came directly to page');
+            }
+        });
+    </script>
+</body>
+
+</html>

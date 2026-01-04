@@ -759,8 +759,8 @@
     <script type="module">
         // Firebase SDK
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, Timestamp, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
@@ -774,152 +774,17 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const storage = getStorage(app);
 
-        // Department data
-        const departmentsByCollege = {
-            'College of Applied Studies': ['Engineering Program', 'Administrative and Technical Programs'],
-            'College of Arts': ['Arabic and Islamic Studies', 'Mass Communication, Tourism, and Fine Arts', 'English Language and Literature', 'Psychology', 'Social Science'],
-            'College of Business Adminstration': ['Accounting', 'Economics and Finance', 'Management and Marketing', 'Islamic Banking'],
-            'College of Engineering': ['Civil Engineering', 'Architecture and Interior Design', 'Chemical Engineering', 'Electrical and Electronics Engineering', 'Mechanical Engineering'],
-            'College of Health & Sport Sciences': ['Nursing', 'Allied Health', 'Physical Education'],
-            'College of Information Technology': ['Computer Engineering', 'Computer Science', 'Information System'],
-            'College of Law': ['Public Law', 'Private Law', 'Legal clinic'],
-            'College of Science': ['Mathematics', 'Chemistry', 'Biology', 'Physics']
-        };
-
-
-        // Location data
-        const locationOptionsByType = {
-            Villa: [
-                "Villa - 840", "Villa - 842", "Villa - 843", "Villa - 844", "Villa - 845", "Villa - 846", "Villa - 847",
-                "Villa - 848", "Villa - 849", "Villa - 850", "Villa - 851", "Villa - 852", "Villa - 853", "Villa - 854",
-                "Villa - 855", "Villa - 856", "Villa - 857", "Villa - 858", "Villa - 859", "Villa - 860", "Villa - 861",
-                "Villa - 862", "Villa - 863", "Villa - 864", "Villa - 865", "Villa - 866", "Villa - 867", "Villa - 869",
-                "Villa - 871", "Villa - 873", "Villa - 875", "Villa - 877", "Villa - 879", "Villa - 880", "Villa - 881",
-                "Villa - 882", "Villa - 883", "Villa - 884", "Villa - 885", "Villa - 886", "Villa - 887", "Villa - 888",
-                "Villa - 889", "Villa - 890", "Villa - 891", "Villa - 892", "Villa - 893", "Villa - 894", "Villa - 896",
-                "Villa - 897", "Villa - 899", "Villa - 900", "Villa - 901", "Villa - 903", "Villa - 782", "Villa - 784",
-                "Villa - 785", "Villa - 925"
-            ],
-            Building: [
-                "Building - S13", "Building - S17", "Building - S18", "Building - S1A", "Building - S1B",
-                "Building - S2", "Building - S20", "Building - S20A", "Building - S20B,S20C", "Building - S21",
-                "Building - S22", "Building - S22A", "Building - S23", "Building - S24", "Building - S3",
-                "Building - S37", "Building - S38", "Building - S39", "Building - S39A", "Building - S4",
-                "Building - S40", "Building - S41", "Building - S42", "Building - S43", "Building - S44",
-                "Building - S45", "Building - S46", "Building - S47", "Building - S48", "Building - S49",
-                "Building - S50", "Building - S51", "Building - S52", "Building - S54", "Building - S56",
-                "Building - S57", "Building - S15", "Building - S6"
-            ],
-
-            Gate: [
-                "Gate 1-S55", "Gate 2-S55", "Gate 3-S55"
-            ]
-        };
-
-        // Generate request number
-        function generateRequestNumber() {
-            const now = new Date();
-            const year = now.getFullYear().toString().slice(-2); // Last 2 digits of year
-            const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Month (01-12)
-            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0'); // Random 3 digits (000-999)
-            return `RQ-${year}${month}${random}`;
-        }
-
-
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            const requestNumberField = document.getElementById('requestNumber');
-            if (requestNumberField) {
-                requestNumberField.value = generateRequestNumber();
-                console.log('Request number set:', requestNumberField.value);
-            }
-
-            // College change handler
-            document.getElementById('college').addEventListener('change', function () {
-                const selectedCollege = this.value;
-                const deptContainer = document.getElementById('departmentContainer');
-                const deptSelect = document.getElementById('dept');
-
-                if (selectedCollege && departmentsByCollege[selectedCollege]) {
-                    // Show and populate department dropdown
-                    deptContainer.style.display = 'block';
-                    deptSelect.innerHTML = '<option value="">Select Department</option>';
-
-                    departmentsByCollege[selectedCollege].forEach(dept => {
-                        const option = document.createElement('option');
-                        option.value = dept;
-                        option.textContent = dept;
-                        deptSelect.appendChild(option);
-                    });
-                } else {
-                    deptContainer.style.display = 'none';
-                    deptSelect.innerHTML = '<option value="">Select Department</option>';
-                }
-            });
-
-            // Location Type change handler
-            document.getElementById('locationType').addEventListener('change', function () {
-                const selectedType = this.value;
-                const locationContainer = document.getElementById('locationOptionsContainer');
-                const locationSelect = document.getElementById('locationOptions');
-                const officeRoomContainer = document.getElementById('officeRoomContainer');
-                const collegeContainer = document.getElementById('collegeContainer');
-                const departmentContainer = document.getElementById('departmentContainer');
-
-                if (selectedType && locationOptionsByType[selectedType]) {
-                    // Show and populate location dropdown
-                    locationContainer.style.display = 'block';
-                    locationSelect.innerHTML = '<option value="">Select Location</option>';
-
-                    locationOptionsByType[selectedType].forEach(location => {
-                        const option = document.createElement('option');
-                        option.value = location;
-                        option.textContent = location;
-                        locationSelect.appendChild(option);
-                    });
-
-                    // Show office/room field and College/Department for Villa and Building, hide for Gate
-                    if (selectedType === 'Villa' || selectedType === 'Building') {
-                        officeRoomContainer.style.display = 'block';
-                        collegeContainer.style.display = 'block';
-                    } else if (selectedType === 'Gate') {
-                        // For Gate, only show location dropdown, hide everything else
-                        officeRoomContainer.style.display = 'none';
-                        collegeContainer.style.display = 'none';
-                        departmentContainer.style.display = 'none';
-                        document.getElementById('officeRoom').value = '';
-                        document.getElementById('college').value = '';
-                        document.getElementById('dept').value = '';
-                    } else {
-                        // For Others (if any), same as Gate
-                        officeRoomContainer.style.display = 'none';
-                        collegeContainer.style.display = 'none';
-                        departmentContainer.style.display = 'none';
-                        document.getElementById('officeRoom').value = '';
-                        document.getElementById('college').value = '';
-                        document.getElementById('dept').value = '';
-                    }
-                } else {
-                    // When no location type is selected, hide location-related fields
-                    locationContainer.style.display = 'none';
-                    locationSelect.innerHTML = '<option value="">Select Location</option>';
-                    officeRoomContainer.style.display = 'none';
-                    collegeContainer.style.display = 'none';
-                    departmentContainer.style.display = 'none';
-                    document.getElementById('officeRoom').value = '';
-                    document.getElementById('college').value = '';
-                    document.getElementById('dept').value = '';
-                }
-            });
-        });
-
+        // ============================================
+        // FORM SUBMISSION
+        // ============================================
         window.submitForm = async function (event) {
             event.preventDefault();
 
-            const requestNumber = document.getElementById('requestNumber').value;
+            console.log('🚀 Form submission started...');
+
+            // Get values using CORRECT IDs from your HTML
+            const requestNumber = document.getElementById('request-number').value;
             const name = document.getElementById('name').value.trim();
             const college = document.getElementById('college').value;
             const dept = document.getElementById('dept').value || 'N/A';
@@ -930,83 +795,160 @@
             const email = document.getElementById('email').value.trim();
             const description = document.getElementById('description').value.trim();
 
+            console.log('📋 Form data collected:', {
+                requestNumber,
+                name,
+                college,
+                dept,
+                locationType,
+                location,
+                officeRoom,
+                mobileNumber,
+                email,
+                description
+            });
+
+            // Validate required fields
+            if (!requestNumber) {
+                alert('❌ Request Number is required');
+                return false;
+            }
+
+            if (!name) {
+                alert('❌ Name is required');
+                return false;
+            }
+
+            if (!mobileNumber) {
+                alert('❌ Mobile Number is required');
+                return false;
+            }
+
+            if (!email) {
+                alert('❌ Email is required');
+                return false;
+            }
+
+            if (!description) {
+                alert('❌ Issue Description is required');
+                return false;
+            }
+
             // Validate that either Location Type OR College is filled
             if (!locationType && !college) {
-                alert('Please fill either Location Type or College / Center');
-                return;
+                alert('❌ Please fill either Location Type or College / Center');
+                return false;
             }
 
             // If location type is selected, location must be selected
-            if (locationType && !location) {
-                alert('Please select a location');
-                return;
+            if (locationType && location === 'N/A') {
+                alert('❌ Please select a location');
+                return false;
             }
 
-
-
             try {
-                // Show loading message
+                // Show loading state
                 const submitButton = document.querySelector('button[type="submit"]');
                 const originalButtonText = submitButton.textContent;
                 submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
+                submitButton.style.backgroundColor = '#9ca3af';
 
+                console.log('💾 Saving to Firebase...');
 
-
-                submitButton.textContent = 'Submitting request...';
+                // Prepare location string
+                let fullLocation = location;
+                if (officeRoom && officeRoom !== 'N/A') {
+                    fullLocation = `${location} - ${officeRoom}`;
+                }
 
                 const requestData = {
                     "Request Number": requestNumber,
-                    "Status": "waiting",  // Overall status
-                    "Supervisor Approval Date": null,
-                    "Director Approval Date": null,
-                    "Date": serverTimestamp(),  // Request submission date
-                    "Submitted by": name,
+                    "Status": "Waiting",
+                    "Request Date": serverTimestamp(),
+                    "Name": name,
                     "College": college || 'N/A',
                     "Department": dept,
-                    "Location Type": locationType || 'N/A',
-                    "Location": location,
-                    "Office/Room": officeRoom,
+                    "Location": fullLocation,
                     "Mobile Number": mobileNumber,
                     "Email": email,
                     "Description": description,
+                    "approvedBy": null,
+                    "rejectedBy": null,
+                    "approvalDate": null,
+                    "rejectionDate": null,
+                    "rejectionReason": null
                 };
 
-                await addDoc(collection(db, 'Requests'), requestData);
-                alert('Request submitted successfully! Request Number: ' + requestNumber);
+                console.log('📤 Submitting data:', requestData);
+
+                const docRef = await addDoc(collection(db, 'Requests'), requestData);
+
+                console.log('✅ Document created with ID:', docRef.id);
+
+                alert(`✅ Request submitted successfully!\n\nRequest Number: ${requestNumber}\n\nYou will receive updates via email.`);
 
                 // Reset form
                 document.getElementById('maintenanceForm').reset();
-                document.getElementById('requestNumber').value = generateRequestNumber();
+
+                // Generate new request number
+                const timestamp = Date.now().toString().slice(-6);
+                const randomNum = Math.floor(Math.random() * 1000);
+                const newRequestNumber = `RQ-${timestamp}${randomNum}`;
+                document.getElementById('request-number').value = newRequestNumber;
+
+                // Hide conditional fields
                 document.getElementById('departmentContainer').style.display = 'none';
                 document.getElementById('locationOptionsContainer').style.display = 'none';
                 document.getElementById('officeRoomContainer').style.display = 'none';
+                document.getElementById('collegeContainer').style.display = 'none';
 
                 // Re-enable button
                 submitButton.disabled = false;
                 submitButton.textContent = originalButtonText;
+                submitButton.style.backgroundColor = '#d4b483';
+
+                console.log('🎉 Form reset successfully!');
 
             } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to submit request. Error: ' + error.message);
+                console.error('❌ Error submitting request:', error);
+                alert(`❌ Failed to submit request.\n\nError: ${error.message}`);
 
                 // Re-enable button
                 const submitButton = document.querySelector('button[type="submit"]');
                 submitButton.disabled = false;
                 submitButton.textContent = 'Submit';
+                submitButton.style.backgroundColor = '#d4b483';
             }
+
+            return false;
         };
 
-        // Backup: Set request number immediately if DOM is already loaded
-        if (document.readyState === 'loading') {
-            // DOM is still loading
-        } else {
-            // DOM is already loaded
-            const requestNumberField = document.getElementById('requestNumber');
-            if (requestNumberField && !requestNumberField.value) {
-                requestNumberField.value = generateRequestNumber();
-            }
-        }
+        // ============================================
+        // INITIALIZE REQUEST NUMBER ON PAGE LOAD
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('📄 Page loaded - initializing...');
 
+            const requestNumberField = document.getElementById('request-number');
+
+            if (requestNumberField) {
+                // Check if in admin mode
+                const urlParams = new URLSearchParams(window.location.search);
+                const mode = urlParams.get('mode');
+
+                if (mode !== 'admin' && !requestNumberField.value) {
+                    // Generate request number for regular users
+                    const timestamp = Date.now().toString().slice(-6);
+                    const randomNum = Math.floor(Math.random() * 1000);
+                    const requestNumber = `RQ-${timestamp}${randomNum}`;
+                    requestNumberField.value = requestNumber;
+                    console.log('🎫 Generated request number:', requestNumber);
+                }
+            } else {
+                console.error('❌ Request number field not found!');
+            }
+        });
     </script>
 </body>
 

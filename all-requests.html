@@ -400,7 +400,7 @@
         }
 
         .search-bar input {
-            width: 97%;
+            width: 100%;
             padding: 10px 40px 10px 40px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
@@ -426,7 +426,7 @@
 
         .clear-search {
             position: absolute;
-            right: 10px;
+            right: 5%;
             top: 50%;
             transform: translateY(-50%);
             background: #e0e0e0;
@@ -456,7 +456,7 @@
 
         .filters {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -492,6 +492,8 @@
             border: 2px solid #414082;
             font-size: 13px;
             width: 200px;
+            margin-top: 10px;
+            height: 20%;
         }
 
         .clear-btn:hover {
@@ -829,7 +831,7 @@
                     </div>
                 </div>
                 <div class="filters">
-                    <select id="filterCollege">
+                    <select id="filterCollege" style="width: 32%;">
                         <option value="">All Colleges</option>
                         <option value="College of Applied Studies">College of Applied Studies</option>
                         <option value="College of Arts">College of Arts</option>
@@ -867,7 +869,7 @@
                         </option>
                     </select>
 
-                    <select id="filterStatus">
+                    <select id="filterStatus" style="width: 23.8%;">
                         <option value="">All Status</option>
                         <option value="Waiting">Waiting for Approval</option>
                         <option value="Approved">Approved</option>
@@ -880,8 +882,9 @@
                     <input type="date" id="filterDateFrom" placeholder="From Date">
                     <input type="date" id="filterDateTo" placeholder="To Date">
 
-                    <button id="clearFilters" class="clear-btn">Clear Filters</button>
+
                 </div>
+                <button id="clearFilters" class="clear-btn">Clear Filters</button>
             </div>
         </div>
 
@@ -1534,209 +1537,7 @@
 
 
 
-        //viewRequestDetails function with closeModal
-        window.viewRequestDetails = function (requestNumber) {
-
-            const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
-
-            if (!request) {
-                alert('Request not found');
-                return;
-            }
-
-            // ✅ NEW: Check if request is approved
-            const status = (request.Status || 'Waiting').toLowerCase();
-            const showAssignMaterialsButton = status === 'approved';
-
-            const modalHTML = `
-        <div id="requestModal" style="
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        ">
-            <div style="
-                background: white;
-                border-radius: 12px;
-                padding: 30px;
-                max-width: 700px;
-                width: 90%;
-                max-height: 85vh;
-                overflow-y: auto;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-                position: relative;
-            ">
-                <button onclick="closeModal()" style="
-                    position: absolute;
-                    top: 15px;
-                    right: 15px;
-                    background: #e0e0e0;
-                    color: #333;
-                    border: none;
-                    width: 35px;
-                    height: 35px;
-                    border-radius: 50%;
-                    font-size: 20px;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 0;
-                " onmouseover="this.style.background='#d32f2f'; this.style.color='white'" 
-                   onmouseout="this.style.background='#e0e0e0'; this.style.color='#333'">×</button>
-
-                <h2 style="
-                    color: rgb(4, 4, 118);
-                    margin-bottom: 20px;
-                    font-size: 24px;
-                    border-bottom: 2px solid rgb(4, 4, 118);
-                    padding-bottom: 10px;
-                    padding-right: 40px;
-                ">Request Details</h2>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Request Number:</p>
-                        <p style="color: #667eea; font-weight: bold; font-size: 18px;">${request['Request Number']}</p>
-                    </div>
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Status:</p>
-                        <p><span class="${getStatusClass(request.Status)}" style="padding: 6px 12px; border-radius: 20px; display: inline-block;">${request.Status || 'waiting'}</span></p>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Date:</p>
-                        <p style="color: #2c3e50;">${formatDate(request.Date)}</p>
-                    </div>
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Submitted by:</p>
-                        <p style="color: #2c3e50;">${request['Submitted by'] || 'N/A'}</p>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">College:</p>
-                        <p style="color: #2c3e50;">${mapCollegeName(request.College) || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Department:</p>
-                        <p style="color: #2c3e50;">${request.Department || 'N/A'}</p>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Location Type:</p>
-                        <p style="color: #2c3e50;">${request['Location Type'] || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Location:</p>
-                        <p style="color: #2c3e50;">${request.Location || 'N/A'}</p>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Mobile:</p>
-                        <p style="color: #2c3e50;">${request['Mobile Number'] || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Email:</p>
-                        <p style="color: #2c3e50;">${request.Email || 'N/A'}</p>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 25px;">
-                    <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Issue Description:</p>
-                    <p style="
-                        color: #2c3e50;
-                        background: #f5f5f5;
-                        padding: 15px;
-                        border-radius: 8px;
-                        line-height: 1.6;
-                        white-space: pre-wrap;
-                    ">${request.Description || 'N/A'}</p>
-                </div>
-
-                ${showAssignMaterialsButton ? `
-                <!-- ✅ ASSIGN MATERIALS BUTTON FOR APPROVED REQUESTS -->
-                <div style="
-                    background: #FFF7E0;
-                    border: 1px solid #473400;
-                    border-radius: 10px;
-                    padding: 20px;
-                    margin-top: 20px;
-                    text-align: center;
-                ">
-                    <div style="margin-bottom: 15px;font-family:Serif;">
-                        <h3 style="color: black; margin-bottom: 8px; font-size: 18px;">
-                            <img src="images/like.png" style="width: 20px;"> Request Approved
-                        </h3>
-                        <p style="color: #6b7280; font-size: 14px; margin: 0;">
-                            This request has been approved by the director and is ready for material assignment.
-                        </p>
-                    </div>
-                    
-                    <button onclick="goToJobDescription('${request['Request Number']}')" style="
-                        background: #0b5fff;
-                        color: #000;
-                        border: none;
-                        padding: 15px 40px;
-                        border-radius: 8px;
-                        font-size: 16px;
-                        font-weight: 700;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 10px;
-                        box-shadow: 0 6px 18px rgba(31,41,55,0.08)
-                    " onmouseover="this.style.background='#FFA000'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255, 183, 0, 0.4)'"
-                       onmouseout="this.style.background='#FFB700'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255, 183, 0, 0.3)'">
-                        Assign Materials & Labor
-                    </button>
-                </div>
-                ` : ''}
-            </div>
-        </div>
-    `;
-
-            // ✅ ADD body.modal-open class
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-            document.body.classList.add('modal-open');
-
-            // ✅ UPDATED: Remove body class when clicking outside
-            document.getElementById('requestModal').addEventListener('click', function (e) {
-                if (e.target === this) {
-                    closeModal();
-                }
-            });
-        };
-
-        // ✅ ADD body.modal-open class
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        document.body.classList.add('modal-open');
-
-        // ✅ UPDATED: Remove body class when clicking outside
-        document.getElementById('requestModal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-        ;
-
-        // ✅ NEW: Global closeModal function
+        // ✅ Define closeModal FIRST (OUTSIDE viewRequestDetails)
         window.closeModal = function () {
             const modal = document.getElementById('requestModal');
             if (modal) {
@@ -1744,6 +1545,185 @@
             }
             document.body.classList.remove('modal-open');
         };
+
+        // ✅ Define goToJobDescription SECOND (OUTSIDE viewRequestDetails)
+        window.goToJobDescription = function (requestNumber) {
+            console.log('📦 Navigating to job description for request:', requestNumber);
+
+            // Store request number
+            localStorage.setItem('selectedRequestNumber', requestNumber);
+
+            // Store full request data
+            const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
+            if (request) {
+                localStorage.setItem('selectedRequestData', JSON.stringify(request));
+                console.log('✅ Request data stored in localStorage');
+            }
+
+            // Close modal
+            closeModal();
+
+            // Redirect
+            console.log('🚀 Redirecting to job-description.html...');
+            window.location.href = 'job-description.html';
+        };
+
+        // ✅ THEN Define viewRequestDetails
+        window.viewRequestDetails = function (requestNumber) {
+            console.log('👁️ Viewing request:', requestNumber);
+
+            const request = window.allRequests.find(r => r['Request Number'] === requestNumber);
+
+            if (!request) {
+                console.error('Request not found:', requestNumber);
+                return;
+            }
+
+            console.log('📋 Request details:', request);
+
+            // Format dates
+            const requestDate = request['Request Date'] ? new Date(request['Request Date'].seconds * 1000).toLocaleDateString('en-GB') : 'N/A';
+            const approvalDate = request.approvalDate ? new Date(request.approvalDate.seconds * 1000).toLocaleDateString('en-GB') : 'N/A';
+            const rejectionDate = request.rejectionDate ? new Date(request.rejectionDate.seconds * 1000).toLocaleDateString('en-GB') : 'N/A';
+            const endDate = request.endDate ? new Date(request.endDate.seconds * 1000).toLocaleDateString('en-GB') : '';
+
+            // Conditional button for approved requests
+            const assignButton = request.Status === 'Approved' ? `
+        <button class="modal-action-btn assign-btn" onclick="goToJobDescription('${requestNumber}')">
+            <span style="font-size: 18px; margin-right: 5px;">📋</span>
+            Assign Materials & Labor
+        </button>
+    ` : '';
+
+            // Conditional End Date field for processing requests
+            const endDateSection = request.Status === 'Processing' ? `
+        <div class="detail-row">
+            <span class="detail-label">End Date:</span>
+            <input type="date" id="endDateInput" value="${request.endDate || ''}" 
+                   class="end-date-input" 
+                   onchange="updateEndDate('${requestNumber}', this.value)">
+        </div>
+    ` : '';
+
+            // Show End Date (read-only) for completed requests
+            const completedEndDate = request.Status === 'Completed' && request.endDate ? `
+        <div class="detail-row">
+            <span class="detail-label">End Date:</span>
+            <span class="detail-value">${endDate}</span>
+        </div>
+    ` : '';
+
+            const modalHTML = `
+        <div class="modal-overlay" id="requestModal" onclick="if(event.target === this) closeModal()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2>Request Details</h2>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-row">
+                        <span class="detail-label">Request Number:</span>
+                        <span class="detail-value">${request['Request Number']}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">College:</span>
+                        <span class="detail-value">${request.College}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Location:</span>
+                        <span class="detail-value">${request.Location}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Description:</span>
+                        <span class="detail-value">${request.Description}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Request Date:</span>
+                        <span class="detail-value">${requestDate}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value status-${request.Status.toLowerCase()}">${request.Status}</span>
+                    </div>
+                    ${request.Status === 'Approved' ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Approved By:</span>
+                            <span class="detail-value">${request.approvedBy || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Approval Date:</span>
+                            <span class="detail-value">${approvalDate}</span>
+                        </div>
+                    ` : ''}
+                    ${request.Status === 'Rejected' ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Rejected By:</span>
+                            <span class="detail-value">${request.rejectedBy || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Rejection Date:</span>
+                            <span class="detail-value">${rejectionDate}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Rejection Reason:</span>
+                            <span class="detail-value">${request.rejectionReason || 'N/A'}</span>
+                        </div>
+                    ` : ''}
+                    ${endDateSection}
+                    ${completedEndDate}
+                </div>
+                ${assignButton ? `
+                    <div class="modal-footer">
+                        ${assignButton}
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            const modal = document.getElementById('requestModal');
+            if (modal) {
+                setTimeout(() => modal.classList.add('active'), 10);
+            }
+        };
+
+
+
+        // ← This closes viewRequestDetails
+
+        // ✅ Global closeModal function - ADD THIS IF MISSING
+        window.closeModal = function () {
+            const modal = document.getElementById('requestModal');
+            if (modal) {
+                modal.remove();
+            }
+            document.body.classList.remove('modal-open');
+        };
+
+        // ✅ Global goToJobDescription function - MAKE SURE THIS EXISTS
+        window.goToJobDescription = function (requestNumber) {
+            console.log('📦 Navigating to job description for request:', requestNumber);
+
+            // Store request number
+            localStorage.setItem('selectedRequestNumber', requestNumber);
+
+            // Store full request data
+            const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
+            if (request) {
+                localStorage.setItem('selectedRequestData', JSON.stringify(request));
+                console.log('✅ Request data stored in localStorage');
+            }
+
+            // Close modal
+            closeModal();
+
+            // Redirect
+            console.log('🚀 Redirecting to job-description.html...');
+            window.location.href = 'job-description.html';
+        };
+
 
 
 
@@ -1843,13 +1823,23 @@
         };
 
         window.goToJobDescription = function (requestNumber) {
+            console.log('📦 Navigating to job description for request:', requestNumber);
+
+            // Store request number
             localStorage.setItem('selectedRequestNumber', requestNumber);
 
+            // Store full request data
             const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
             if (request) {
                 localStorage.setItem('selectedRequestData', JSON.stringify(request));
+                console.log('✅ Request data stored in localStorage');
             }
 
+            // Close modal
+            closeModal();
+
+            // Redirect
+            console.log('🚀 Redirecting to job-description.html...');
             window.location.href = 'job-description.html';
         };
 
