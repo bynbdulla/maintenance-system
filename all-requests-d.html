@@ -131,7 +131,8 @@
 
         .table-wrapper {
             background: white;
-            border-radius: 12px;
+            border-radius: 12px 12px 0 0;
+            /* ← Change this: top rounded, bottom flat */
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
@@ -681,6 +682,99 @@
             top: -15px;
             z-index: 1;
         }
+
+        /* ✅ PAGINATION STYLES */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: white;
+            border-top: 1px solid #e8eef3;
+            border-radius: 0 0 12px 12px;
+            /* Top flat, bottom rounded */
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            /* Matches table shadow */
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .pagination-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-number {
+            background: #f5f7fa;
+            color: #666;
+            border: 1px solid #e0e0e0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            min-width: 36px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .page-number:hover {
+            background: #e8eef3;
+            border-color: #667eea;
+        }
+
+        .page-number.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            font-weight: 600;
+        }
+
+        .rows-per-page {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rows-per-page select {
+            padding: 6px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+        }
     </style>
 </head>
 
@@ -890,103 +984,127 @@
                 </tbody>
             </table>
         </div>
-    </div>
+        <!-- ✅ PAGINATION CONTROLS -->
+        <div class="pagination-container" id="pagination-container" style="display: none;">
+            <div class="pagination-info">
+                <span id="pagination-info"></span>
+            </div>
+            <div class="pagination-controls">
+                <div class="rows-per-page">
+                    <label>Rows per page:</label>
+                    <select id="rowsPerPage" onchange="changeRowsPerPage()">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+                <button class="pagination-btn" id="prevBtn" onclick="prevPage()">← Previous</button>
+                <div class="page-numbers" id="pageNumbers"></div>
+                <button class="pagination-btn" id="nextBtn" onclick="nextPage()">Next →</button>
+            </div>
+        </div>
 
-    <!-- Firebase SDKs - YOUR EXISTING FIREBASE CODE -->
-    <script type="module">
-        // YOUR EXISTING FIREBASE CODE STAYS EXACTLY THE SAME
-        // I'm keeping all your existing code here...
+        <!-- Firebase SDKs - YOUR EXISTING FIREBASE CODE -->
+        <script type="module">
+            // YOUR EXISTING FIREBASE CODE STAYS EXACTLY THE SAME
+            // I'm keeping all your existing code here...
 
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, orderBy, query, updateDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+            import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+            import { getFirestore, collection, getDocs, orderBy, query, updateDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
-            authDomain: "requests-ffdd6.firebaseapp.com",
-            databaseURL: "https://requests-ffdd6-default-rtdb.firebaseio.com",
-            projectId: "requests-ffdd6",
-            storageBucket: "requests-ffdd6.firebasestorage.app",
-            messagingSenderId: "316405880275",
-            appId: "1:316405880275:web:f4b271583e903ac639cb26",
-            measurementId: "G-L0LR313Q4D"
-        };
+            const firebaseConfig = {
+                apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+                authDomain: "requests-ffdd6.firebaseapp.com",
+                databaseURL: "https://requests-ffdd6-default-rtdb.firebaseio.com",
+                projectId: "requests-ffdd6",
+                storageBucket: "requests-ffdd6.firebasestorage.app",
+                messagingSenderId: "316405880275",
+                appId: "1:316405880275:web:f4b271583e903ac639cb26",
+                measurementId: "G-L0LR313Q4D"
+            };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
 
-        // ALL YOUR EXISTING FUNCTIONS REMAIN THE SAME
-        // (keeping all your existing JavaScript code...)
+            // ALL YOUR EXISTING FUNCTIONS REMAIN THE SAME
+            // (keeping all your existing JavaScript code...)
 
-        let allRequestsData = [];
+            let allRequestsData = [];
 
-        function formatDate(dateValue) {
-            if (!dateValue) return 'N/A';
+            // ✅ PAGINATION VARIABLES
+            let currentPage = 1;
+            let rowsPerPage = 20;
+            let filteredRequests = [];
 
-            try {
-                if (dateValue.toDate) {
-                    const date = dateValue.toDate();
-                    return date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
+            function formatDate(dateValue) {
+                if (!dateValue) return 'N/A';
+
+                try {
+                    if (dateValue.toDate) {
+                        const date = dateValue.toDate();
+                        return date.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+
+                    if (typeof dateValue === 'string') {
+                        return dateValue;
+                    }
+
+                    if (dateValue instanceof Date) {
+                        return dateValue.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error formatting date:', error);
                 }
 
-                if (typeof dateValue === 'string') {
-                    return dateValue;
-                }
-
-                if (dateValue instanceof Date) {
-                    return dateValue.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                }
-            } catch (error) {
-                console.error('Error formatting date:', error);
+                return 'N/A';
             }
 
-            return 'N/A';
-        }
+            function getStatusClass(status) {
+                const statusLower = (status || '').toLowerCase();
+                if (statusLower.includes('progress') || statusLower.includes('processing')) return 'status-processing';
+                if (statusLower.includes('waiting')) return 'status-waiting';
+                if (statusLower.includes('approved')) return 'status-Approved';    // ← Gold
+                if (statusLower.includes('completed')) return 'status-Completed';  // ← Purple
+                if (statusLower.includes('rejected')) return 'status-rejected';
+                return 'status-waiting';
+            }
 
-        function getStatusClass(status) {
-            const statusLower = (status || '').toLowerCase();
-            if (statusLower.includes('progress') || statusLower.includes('processing')) return 'status-processing';
-            if (statusLower.includes('waiting')) return 'status-waiting';
-            if (statusLower.includes('approved')) return 'status-Approved';    // ← Gold
-            if (statusLower.includes('completed')) return 'status-Completed';  // ← Purple
-            if (statusLower.includes('rejected')) return 'status-rejected';
-            return 'status-waiting';
-        }
+            function formatStatus(status) {
+                if (!status) return 'Waiting';
+                return status;
+            }
 
-        function formatStatus(status) {
-            if (!status) return 'Waiting';
-            return status;
-        }
+            function getApprovalButtons(request) {
+                const directorStatus = request['Director Approval'] || 'waiting';
+                const status = request['Status'] || 'waiting';
 
-        function getApprovalButtons(request) {
-            const directorStatus = request['Director Approval'] || 'waiting';
-            const status = request['Status'] || 'waiting';
-
-            // If already approved and processing
-            if (directorStatus === 'Approved' && status === 'Processing') {
-                return `
+                // If already approved and processing
+                if (directorStatus === 'Approved' && status === 'Processing') {
+                    return `
             <div style="text-align: center; padding: 20px; background: #d4edda; border-radius: 8px; color: #155724;">
                 <h3>✓ Request Approved and Processing</h3>
                 <p style="margin-top: 10px;">This request is currently being processed.</p>
             </div>
         `;
-            }
+                }
 
-            // If waiting for director approval
-            if (directorStatus === 'waiting' && status === 'waiting') {
-                return `
+                // If waiting for director approval
+                if (directorStatus === 'waiting' && status === 'waiting') {
+                    return `
             <div>
                 <h4 style="margin-bottom: 15px; color: #2c3e50; text-align: center;">
                     Director Approval Required
@@ -1020,594 +1138,725 @@
                 </div>
             </div>
         `;
-            }
+                }
 
-            // If rejected
-            if (status === 'Rejected') {
-                return `
+                // If rejected
+                if (status === 'Rejected') {
+                    return `
             <div style="text-align: center; padding: 20px; background: #f8d7da; border-radius: 8px; color: #721c24;">
                 <h3>✗ Request Rejected</h3>
                 ${request['Rejection Reason'] ? `<p style="margin-top: 10px;">Reason: ${request['Rejection Reason']}</p>` : ''}
             </div>
         `;
-            }
-
-            return '';
-        }
-
-        function mapCollegeName(oldName) {
-            const collegeMapping = {
-                'Applied': 'College of Applied Studies',
-                'Arts': 'College of Arts',
-                'Business': 'College of Business Adminstration',
-                'Engineering': 'College of Engineering',
-                'Health': 'College of Health & Sport Sciences',
-                'IT': 'College of Information Technology',
-                'Law': 'College of Law',
-                'Science': 'College of Science',
-                'Alumni': 'Alumni Club',
-                'BIC': 'Business Incubator Center',
-                'Counselling': 'Career Counselling Office',
-                'French': 'Centre D\'études Françaises',
-                'Cloud': 'Cloud Innovation Center',
-                'CI': 'Confucius Institiute',
-                'E-Learning': 'E-Learning Center',
-                'English': 'English Language Center',
-                'ITC': 'Information Technology Center',
-                'Follow-up': 'Information and Follow-up Office',
-                'Korean': 'King Sejong Institiute for Teaching Korean',
-                'Legal': 'Legal Clinic & Human Rights Centre',
-                'Media': 'Media Center',
-                'QA': 'Quality Assurance and Accrediation Centre',
-                'Teaching': 'Unit for Teaching Excellence and Leadership',
-                'Turkish': 'Yunus Emre Institiute for Teaching Turkish'
-            };
-
-            return collegeMapping[oldName] || oldName;
-        }
-
-        function updateStats(requests) {
-            const stats = {
-                total: requests.length,
-                waiting: 0,
-                inProgress: 0,
-                rejected: 0
-            };
-
-            requests.forEach(req => {
-                const status = (req.Status || '').toLowerCase();
-                if (status.includes('progress') || status.includes('processing')) {
-                    stats.inProgress++;
-                } else if (status.includes('waiting') || status.includes('pending')) {
-                    stats.waiting++;
-                } else if (status.includes('rejected')) {
-                    stats.rejected++;
-                }
-            });
-
-            // Add null checks to prevent errors
-            const totalElement = document.getElementById('stat-total');
-            const waitingElement = document.getElementById('stat-waiting');
-            const processingElement = document.getElementById('stat-processing');
-            const rejectedElement = document.getElementById('stat-rejected');
-
-            if (totalElement) totalElement.textContent = stats.total;
-            if (waitingElement) waitingElement.textContent = stats.waiting;
-            if (processingElement) processingElement.textContent = stats.inProgress;
-            if (rejectedElement) rejectedElement.textContent = stats.rejected;
-        }
-
-        function filterAndDisplayRequests() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filterCollege = document.getElementById('filterCollege').value;
-            const filterStatus = document.getElementById('filterStatus').value;
-            const filterDateFrom = document.getElementById('filterDateFrom').value;
-            const filterDateTo = document.getElementById('filterDateTo').value;
-
-            const clearSearchBtn = document.getElementById('clearSearch');
-            if (searchTerm) {
-                clearSearchBtn.classList.add('visible');
-            } else {
-                clearSearchBtn.classList.remove('visible');
-            }
-
-            const tbody = document.getElementById("tickets-tbody");
-            const table = document.getElementById("requests-table");
-            tbody.innerHTML = "";
-
-            let filteredRequests = allRequestsData.filter(data => {
-                const matchesSearch = !searchTerm ||
-                    (data['Request Number'] || '').toLowerCase().includes(searchTerm) ||
-                    (data.Description || '').toLowerCase().includes(searchTerm) ||
-                    (data.Location || '').toLowerCase().includes(searchTerm) ||
-                    (data.College || '').toLowerCase().includes(searchTerm) ||
-                    (data.Department || '').toLowerCase().includes(searchTerm);
-
-                const matchesCollege = !filterCollege || mapCollegeName(data.College) === filterCollege;
-
-                const matchesStatus = !filterStatus || (() => {
-                    const dataStatus = (data.Status || 'waiting').trim().toLowerCase();
-                    const filterStatusLower = filterStatus.trim().toLowerCase();
-                    return dataStatus === filterStatusLower;
-                })();
-
-                let matchesDate = true;
-                if (filterDateFrom || filterDateTo) {
-                    const requestDate = data.Date?.toDate ? data.Date.toDate() : new Date(data.Date);
-                    const fromDate = filterDateFrom ? new Date(filterDateFrom) : null;
-                    const toDate = filterDateTo ? new Date(filterDateTo + 'T23:59:59') : null;
-
-                    if (fromDate && requestDate < fromDate) matchesDate = false;
-                    if (toDate && requestDate > toDate) matchesDate = false;
                 }
 
-                return matchesSearch && matchesCollege && matchesStatus && matchesDate;
-            });
-
-            if (filteredRequests.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No requests match your filters</td></tr>';
-                table.style.display = "table";
-                return;
+                return '';
             }
 
-            filteredRequests.forEach((data) => {
-                const status = formatStatus(data.Status);
-                const statusClass = getStatusClass(status);
+            function mapCollegeName(oldName) {
+                const collegeMapping = {
+                    'Applied': 'College of Applied Studies',
+                    'Arts': 'College of Arts',
+                    'Business': 'College of Business Adminstration',
+                    'Engineering': 'College of Engineering',
+                    'Health': 'College of Health & Sport Sciences',
+                    'IT': 'College of Information Technology',
+                    'Law': 'College of Law',
+                    'Science': 'College of Science',
+                    'Alumni': 'Alumni Club',
+                    'BIC': 'Business Incubator Center',
+                    'Counselling': 'Career Counselling Office',
+                    'French': 'Centre D\'études Françaises',
+                    'Cloud': 'Cloud Innovation Center',
+                    'CI': 'Confucius Institiute',
+                    'E-Learning': 'E-Learning Center',
+                    'English': 'English Language Center',
+                    'ITC': 'Information Technology Center',
+                    'Follow-up': 'Information and Follow-up Office',
+                    'Korean': 'King Sejong Institiute for Teaching Korean',
+                    'Legal': 'Legal Clinic & Human Rights Centre',
+                    'Media': 'Media Center',
+                    'QA': 'Quality Assurance and Accrediation Centre',
+                    'Teaching': 'Unit for Teaching Excellence and Leadership',
+                    'Turkish': 'Yunus Emre Institiute for Teaching Turkish'
+                };
 
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                <td><a href="#" class="request-link" onclick="viewRequestDetails('${data['Request Number']}'); return false;">${data['Request Number'] || 'N/A'}</a></td>
-                <td><span class="${statusClass}">${status}</span></td>
-                <td>${mapCollegeName(data.College) || 'N/A'}</td>
-                <td>${data.Department || 'N/A'}</td>
-                <td>${data.Location || 'N/A'}</td>
-                <td>${data.Description || data.Issue || 'N/A'}</td>
-                <td>${formatDate(data['Date'] || data['Submitted on'])}</td>
-            `;
-                tbody.appendChild(row);
-            });
+                return collegeMapping[oldName] || oldName;
+            }
 
-            table.style.display = "table";
-            updateStats(filteredRequests);
-        }
+            function updateStats(requests) {
+                const stats = {
+                    total: requests.length,
+                    waiting: 0,
+                    inProgress: 0,
+                    rejected: 0
+                };
 
-        async function loadRequests() {
-            const tbody = document.getElementById("tickets-tbody");
-            const loadingDiv = document.getElementById("loading");
-            const errorDiv = document.getElementById("error");
-            const table = document.getElementById("requests-table");
+                requests.forEach(req => {
+                    const status = (req.Status || '').toLowerCase();
+                    if (status.includes('progress') || status.includes('processing')) {
+                        stats.inProgress++;
+                    } else if (status.includes('waiting') || status.includes('pending')) {
+                        stats.waiting++;
+                    } else if (status.includes('rejected')) {
+                        stats.rejected++;
+                    }
+                });
 
-            try {
+                // Add null checks to prevent errors
+                const totalElement = document.getElementById('stat-total');
+                const waitingElement = document.getElementById('stat-waiting');
+                const processingElement = document.getElementById('stat-processing');
+                const rejectedElement = document.getElementById('stat-rejected');
+
+                if (totalElement) totalElement.textContent = stats.total;
+                if (waitingElement) waitingElement.textContent = stats.waiting;
+                if (processingElement) processingElement.textContent = stats.inProgress;
+                if (rejectedElement) rejectedElement.textContent = stats.rejected;
+            }
+
+            function filterAndDisplayRequests() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const filterCollege = document.getElementById('filterCollege').value;
+                const filterStatus = document.getElementById('filterStatus').value;
+                const filterDateFrom = document.getElementById('filterDateFrom').value;
+                const filterDateTo = document.getElementById('filterDateTo').value;
+
+                const clearSearchBtn = document.getElementById('clearSearch');
+                if (searchTerm) {
+                    clearSearchBtn.classList.add('visible');
+                } else {
+                    clearSearchBtn.classList.remove('visible');
+                }
+
+                const tbody = document.getElementById("tickets-tbody");
+                const table = document.getElementById("requests-table");
                 tbody.innerHTML = "";
-                loadingDiv.style.display = "block";
-                errorDiv.style.display = "none";
-                table.style.display = "none";
 
-                const q = query(collection(db, "Requests"), orderBy("Date", "desc"));
-                const requestsSnapshot = await getDocs(q);
+                // ✅ Use module-level filteredRequests variable
+                filteredRequests = allRequestsData.filter(data => {
+                    const matchesSearch = !searchTerm ||
+                        (data['Request Number'] || '').toLowerCase().includes(searchTerm) ||
+                        (data.Description || '').toLowerCase().includes(searchTerm) ||
+                        (data.Location || '').toLowerCase().includes(searchTerm) ||
+                        (data.College || '').toLowerCase().includes(searchTerm) ||
+                        (data.Department || '').toLowerCase().includes(searchTerm);
 
-                loadingDiv.style.display = "none";
+                    const matchesCollege = !filterCollege || mapCollegeName(data.College) === filterCollege;
 
-                if (requestsSnapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No requests found</td></tr>';
+                    const matchesStatus = !filterStatus || (() => {
+                        const dataStatus = (data.Status || 'Waiting').trim().toLowerCase();
+                        const filterStatusLower = filterStatus.trim().toLowerCase();
+                        return dataStatus === filterStatusLower;
+                    })();
+
+                    let matchesDate = true;
+                    if (filterDateFrom || filterDateTo) {
+                        const requestDate = data['Request Date']?.toDate ? data['Request Date'].toDate() :
+                            data.Date?.toDate ? data.Date.toDate() :
+                                new Date(data['Request Date'] || data.Date);
+                        const fromDate = filterDateFrom ? new Date(filterDateFrom) : null;
+                        const toDate = filterDateTo ? new Date(filterDateTo + 'T23:59:59') : null;
+
+                        if (fromDate && requestDate < fromDate) matchesDate = false;
+                        if (toDate && requestDate > toDate) matchesDate = false;
+                    }
+
+                    return matchesSearch && matchesCollege && matchesStatus && matchesDate;
+                });
+
+                if (filteredRequests.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No requests match your filters</td></tr>';
                     table.style.display = "table";
+                    document.getElementById('pagination-container').style.display = 'none';
                     return;
                 }
 
-                allRequestsData = [];
-                requestsSnapshot.forEach((doc) => {
-                    allRequestsData.push(doc.data());
+                // ✅ CALCULATE PAGINATION
+                const totalPages = Math.ceil(filteredRequests.length / rowsPerPage);
+                const startIndex = (currentPage - 1) * rowsPerPage;
+                const endIndex = startIndex + rowsPerPage;
+                const paginatedRequests = filteredRequests.slice(startIndex, endIndex);
+
+                // ✅ DISPLAY PAGINATED REQUESTS
+                paginatedRequests.forEach((data) => {
+                    const status = formatStatus(data.Status);
+                    const statusClass = getStatusClass(status);
+
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+            <td><a href="#" class="request-link" onclick="viewRequestDetails('${data['Request Number']}'); return false;">${data['Request Number'] || 'N/A'}</a></td>
+            <td><span class="${statusClass}">${status}</span></td>
+            <td>${mapCollegeName(data.College) || 'N/A'}</td>
+            <td>${data.Department || 'N/A'}</td>
+            <td>${data.Location || 'N/A'}</td>
+            <td>${data.Description || data.Issue || 'N/A'}</td>
+            <td>${formatDate(data['Request Date'] || data['Date'])}</td>
+        `;
+                    tbody.appendChild(row);
                 });
 
-                filterAndDisplayRequests();
+                table.style.display = "table";
+                updateStats(filteredRequests);
 
-            } catch (error) {
-                console.error("Error loading requests:", error);
-                loadingDiv.style.display = "none";
-                errorDiv.textContent = `Error loading requests: ${error.message}`;
-                errorDiv.style.display = "block";
+                // ✅ UPDATE PAGINATION UI
+                updatePaginationUI(totalPages, startIndex, endIndex);
             }
-        }
 
-        loadRequests();
-        setInterval(loadRequests, 100000);
+            // ✅ UPDATE PAGINATION UI
+            function updatePaginationUI(totalPages, startIndex, endIndex) {
+                const paginationContainer = document.getElementById('pagination-container');
+                const paginationInfo = document.getElementById('pagination-info');
+                const pageNumbers = document.getElementById('pageNumbers');
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
 
-        // ═══════════════════════════════════════════
-        // URL FILTER - READ ?status= FROM URL
-        // ═══════════════════════════════════════════
-        function getFilterFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('status');
-        }
-
-        function applyURLFilter() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlFilter = urlParams.get('status');
-            const dateFrom = urlParams.get('dateFrom');
-            const dateTo = urlParams.get('dateTo');
-
-            console.log('=== URL FILTER DEBUG ===');
-            console.log('URL:', window.location.href);
-            console.log('Status Filter:', urlFilter);
-            console.log('Date From:', dateFrom);
-            console.log('Date To:', dateTo);
-
-            // Handle status filter
-            if (urlFilter) {
-                let statusValue = '';
-
-                if (urlFilter.toLowerCase() === 'waiting') {
-                    statusValue = 'Waiting';
-                    console.log('Mapping: waiting → Waiting');
-                } else if (urlFilter.toLowerCase() === 'processing') {
-                    statusValue = 'Processing';
-                    console.log('Mapping: processing → Processing');
-                } else if (urlFilter.toLowerCase() === 'approved') {
-                    statusValue = 'Approved';
-                    console.log('Mapping: approved → Approved');
-                } else if (urlFilter.toLowerCase() === 'rejected') {
-                    statusValue = 'Rejected';
-                    console.log('Mapping: rejected → Rejected');
-                } else if (urlFilter.toLowerCase() === 'completed') {
-                    statusValue = 'Completed';
-                    console.log('Mapping: completed → Completed');
+                if (filteredRequests.length === 0) {
+                    paginationContainer.style.display = 'none';
+                    return;
                 }
 
-                if (statusValue) {
-                    console.log('Setting filter dropdown to:', statusValue);
-                    document.getElementById('filterStatus').value = statusValue;
+                paginationContainer.style.display = 'flex';
 
-                    // Highlight the correct stat card
-                    document.querySelectorAll('.stat-card').forEach(card => {
-                        card.classList.remove('active');
-                    });
+                // Update info text
+                const showing = Math.min(endIndex, filteredRequests.length);
+                paginationInfo.textContent = `Showing ${startIndex + 1}-${showing} of ${filteredRequests.length} requests`;
 
-                    if (statusValue === 'Waiting') {
-                        document.getElementById('card-waiting').classList.add('active');
-                    } else if (statusValue === 'Processing') {
-                        document.getElementById('card-processing').classList.add('active');
-                    } else if (statusValue === 'Approved') {
-                        document.getElementById('card-approved')?.classList.add('active');
-                    } else if (statusValue === 'Rejected') {
-                        document.getElementById('card-rejected').classList.add('active');
+                // Enable/disable buttons
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+
+                // Generate page numbers
+                pageNumbers.innerHTML = '';
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+                if (endPage - startPage < maxVisiblePages - 1) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+
+                if (startPage > 1) {
+                    const firstPage = document.createElement('button');
+                    firstPage.className = 'page-number';
+                    firstPage.textContent = '1';
+                    firstPage.onclick = () => goToPage(1);
+                    pageNumbers.appendChild(firstPage);
+
+                    if (startPage > 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.style.padding = '8px';
+                        ellipsis.style.color = '#666';
+                        pageNumbers.appendChild(ellipsis);
                     }
                 }
-            }
 
-            // Handle date filters
-            if (dateFrom) {
-                console.log('Setting dateFrom filter to:', dateFrom);
-                document.getElementById('filterDateFrom').value = dateFrom;
-            }
-
-            if (dateTo) {
-                console.log('Setting dateTo filter to:', dateTo);
-                document.getElementById('filterDateTo').value = dateTo;
-            }
-
-            // Apply filters
-            console.log('Calling filterAndDisplayRequests()...');
-            filterAndDisplayRequests();
-
-            console.log('========================');
-        }
-
-        window.addEventListener('load', function () {
-            setTimeout(applyURLFilter, 1000);
-        });
-        // 
-
-        document.getElementById('searchInput').addEventListener('input', filterAndDisplayRequests);
-        document.getElementById('filterCollege').addEventListener('change', filterAndDisplayRequests);
-        document.getElementById('filterStatus').addEventListener('change', filterAndDisplayRequests);
-        document.getElementById('filterDateFrom').addEventListener('change', filterAndDisplayRequests);
-        document.getElementById('filterDateTo').addEventListener('change', filterAndDisplayRequests);
-
-        document.getElementById('clearFilters').addEventListener('click', () => {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterCollege').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterDateFrom').value = '';
-            document.getElementById('filterDateTo').value = '';
-            document.getElementById('clearSearch').classList.remove('visible');
-            filterAndDisplayRequests();
-        });
-
-        window.clearSearchInput = function () {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('clearSearch').classList.remove('visible');
-            filterAndDisplayRequests();
-        };
-
-        window.downloadPDF = function () {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('landscape');
-
-            doc.setFontSize(20);
-            doc.setTextColor(4, 4, 118);
-            doc.text('Maintenance Requests Report', 14, 20);
-
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            const now = new Date();
-            doc.text(`Generated: ${now.toLocaleString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })}`, 14, 28);
-
-            const searchTerm = document.getElementById('searchInput').value;
-            const filterCollege = document.getElementById('filterCollege').value;
-            const filterStatus = document.getElementById('filterStatus').value;
-            const filterDateFrom = document.getElementById('filterDateFrom').value;
-            const filterDateTo = document.getElementById('filterDateTo').value;
-
-            let yPos = 34;
-            if (searchTerm || filterCollege || filterStatus || filterDateFrom || filterDateTo) {
-                doc.setFontSize(9);
-                doc.setTextColor(60);
-                const filters = [];
-                if (searchTerm) filters.push(`Search: "${searchTerm}"`);
-                if (filterCollege) filters.push(`College: ${filterCollege}`);
-                if (filterStatus) filters.push(`Status: ${filterStatus}`);
-                if (filterDateFrom) filters.push(`From: ${filterDateFrom}`);
-                if (filterDateTo) filters.push(`To: ${filterDateTo}`);
-
-                doc.text('Filters Applied: ' + filters.join(' | '), 14, yPos);
-                yPos += 8;
-            }
-
-            const tbody = document.getElementById('tickets-tbody');
-            const rows = tbody.querySelectorAll('tr');
-
-            if (rows.length === 0 || rows[0].querySelector('.empty-state')) {
-                alert('No data to export');
-                return;
-            }
-
-            const tableData = [];
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                if (cells.length > 0 && !cells[0].classList.contains('empty-state')) {
-                    tableData.push([
-                        cells[0].textContent.trim(),
-                        cells[1].textContent.trim(),
-                        cells[2].textContent.trim(),
-                        cells[3].textContent.trim(),
-                        cells[4].textContent.trim(),
-                        cells[5].textContent.trim().substring(0, 60) + (cells[5].textContent.trim().length > 60 ? '...' : ''),
-                        cells[6].textContent.trim()
-                    ]);
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `page-number ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.onclick = () => goToPage(i);
+                    pageNumbers.appendChild(pageBtn);
                 }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.style.padding = '8px';
+                        ellipsis.style.color = '#666';
+                        pageNumbers.appendChild(ellipsis);
+                    }
+
+                    const lastPage = document.createElement('button');
+                    lastPage.className = 'page-number';
+                    lastPage.textContent = totalPages;
+                    lastPage.onclick = () => goToPage(totalPages);
+                    pageNumbers.appendChild(lastPage);
+                }
+            }
+
+            // ✅ PAGINATION FUNCTIONS
+            window.goToPage = function (page) {
+                currentPage = page;
+                filterAndDisplayRequests();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            window.nextPage = function () {
+                if (currentPage < Math.ceil(filteredRequests.length / rowsPerPage)) {
+                    currentPage++;
+                    filterAndDisplayRequests();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            window.prevPage = function () {
+                if (currentPage > 1) {
+                    currentPage--;
+                    filterAndDisplayRequests();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            window.changeRowsPerPage = function () {
+                rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+                currentPage = 1; // Reset to first page
+                filterAndDisplayRequests();
+            };
+
+            async function loadRequests() {
+                const tbody = document.getElementById("tickets-tbody");
+                const loadingDiv = document.getElementById("loading");
+                const errorDiv = document.getElementById("error");
+                const table = document.getElementById("requests-table");
+
+                try {
+                    tbody.innerHTML = "";
+                    loadingDiv.style.display = "block";
+                    errorDiv.style.display = "none";
+                    table.style.display = "none";
+
+                    // ✅ GET ALL DOCUMENTS WITHOUT ORDERING
+                    const requestsSnapshot = await getDocs(collection(db, "Requests"));
+
+                    loadingDiv.style.display = "none";
+
+                    if (requestsSnapshot.empty) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No requests found</td></tr>';
+                        table.style.display = "table";
+                        return;
+                    }
+
+                    allRequestsData = [];
+                    requestsSnapshot.forEach((docSnap) => {
+                        allRequestsData.push(docSnap.data());
+                    });
+
+                    // ✅ SORT IN JAVASCRIPT AFTER LOADING
+                    allRequestsData.sort((a, b) => {
+                        const dateA = a['Request Date']?.toDate?.() || a.Date?.toDate?.() || new Date(a['Request Date'] || a.Date || 0);
+                        const dateB = b['Request Date']?.toDate?.() || b.Date?.toDate?.() || new Date(b['Request Date'] || b.Date || 0);
+                        return dateB - dateA; // Descending order (newest first)
+                    });
+
+                    console.log('✅ Loaded requests:', allRequestsData.length);
+                    console.log('First 5 requests:', allRequestsData.slice(0, 5).map(r => ({
+                        num: r['Request Number'],
+                        status: r.Status,
+                        date: r['Request Date'] || r.Date
+                    })));
+
+                    filterAndDisplayRequests();
+
+                } catch (error) {
+                    console.error("Error loading requests:", error);
+                    loadingDiv.style.display = "none";
+                    errorDiv.textContent = `Error loading requests: ${error.message}`;
+                    errorDiv.style.display = "block";
+                }
+            }
+
+            loadRequests();
+            setInterval(loadRequests, 100000);
+
+            // ═══════════════════════════════════════════
+            // URL FILTER - READ ?status= FROM URL
+            // ═══════════════════════════════════════════
+            function getFilterFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('status');
+            }
+
+            function applyURLFilter() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlFilter = urlParams.get('status');
+                const dateFrom = urlParams.get('dateFrom');
+                const dateTo = urlParams.get('dateTo');
+
+                console.log('=== URL FILTER DEBUG ===');
+                console.log('URL:', window.location.href);
+                console.log('Status Filter:', urlFilter);
+                console.log('Date From:', dateFrom);
+                console.log('Date To:', dateTo);
+
+                // Handle status filter
+                if (urlFilter) {
+                    let statusValue = '';
+
+                    if (urlFilter.toLowerCase() === 'waiting') {
+                        statusValue = 'Waiting';
+                        console.log('Mapping: waiting → Waiting');
+                    } else if (urlFilter.toLowerCase() === 'processing') {
+                        statusValue = 'Processing';
+                        console.log('Mapping: processing → Processing');
+                    } else if (urlFilter.toLowerCase() === 'approved') {
+                        statusValue = 'Approved';
+                        console.log('Mapping: approved → Approved');
+                    } else if (urlFilter.toLowerCase() === 'rejected') {
+                        statusValue = 'Rejected';
+                        console.log('Mapping: rejected → Rejected');
+                    } else if (urlFilter.toLowerCase() === 'completed') {
+                        statusValue = 'Completed';
+                        console.log('Mapping: completed → Completed');
+                    }
+
+                    if (statusValue) {
+                        console.log('Setting filter dropdown to:', statusValue);
+                        document.getElementById('filterStatus').value = statusValue;
+
+                        // Highlight the correct stat card
+                        document.querySelectorAll('.stat-card').forEach(card => {
+                            card.classList.remove('active');
+                        });
+
+                        if (statusValue === 'Waiting') {
+                            document.getElementById('card-waiting').classList.add('active');
+                        } else if (statusValue === 'Processing') {
+                            document.getElementById('card-processing').classList.add('active');
+                        } else if (statusValue === 'Approved') {
+                            document.getElementById('card-approved')?.classList.add('active');
+                        } else if (statusValue === 'Rejected') {
+                            document.getElementById('card-rejected').classList.add('active');
+                        }
+                    }
+                }
+
+                // Handle date filters
+                if (dateFrom) {
+                    console.log('Setting dateFrom filter to:', dateFrom);
+                    document.getElementById('filterDateFrom').value = dateFrom;
+                }
+
+                if (dateTo) {
+                    console.log('Setting dateTo filter to:', dateTo);
+                    document.getElementById('filterDateTo').value = dateTo;
+                }
+
+                // Apply filters
+                console.log('Calling filterAndDisplayRequests()...');
+                filterAndDisplayRequests();
+
+                console.log('========================');
+            }
+
+            window.addEventListener('load', function () {
+                setTimeout(applyURLFilter, 1000);
+            });
+            // 
+
+            document.getElementById('searchInput').addEventListener('input', filterAndDisplayRequests);
+            document.getElementById('filterCollege').addEventListener('change', filterAndDisplayRequests);
+            document.getElementById('filterStatus').addEventListener('change', filterAndDisplayRequests);
+            document.getElementById('filterDateFrom').addEventListener('change', filterAndDisplayRequests);
+            document.getElementById('filterDateTo').addEventListener('change', filterAndDisplayRequests);
+
+            document.getElementById('clearFilters').addEventListener('click', () => {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('filterCollege').value = '';
+                document.getElementById('filterStatus').value = '';
+                document.getElementById('filterDateFrom').value = '';
+                document.getElementById('filterDateTo').value = '';
+                document.getElementById('clearSearch').classList.remove('visible');
+                filterAndDisplayRequests();
             });
 
-            doc.autoTable({
-                startY: yPos + 2,
-                head: [['Request #', 'Status', 'College/Center', 'Department', 'Location', 'Issue Description', 'Date']],
-                body: tableData,
-                styles: {
-                    fontSize: 8,
-                    cellPadding: 3,
-                },
-                headStyles: {
-                    fillColor: [4, 4, 118],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                    halign: 'center'
-                },
-                columnStyles: {
-                    0: { cellWidth: 25, fontStyle: 'bold' },
-                    1: { cellWidth: 22 },
-                    2: { cellWidth: 45 },
-                    3: { cellWidth: 35 },
-                    4: { cellWidth: 30 },
-                    5: { cellWidth: 60 },
-                    6: { cellWidth: 35 }
-                },
-                alternateRowStyles: {
-                    fillColor: [245, 245, 250]
-                },
-                didParseCell: function (data) {
-                    if (data.column.index === 1 && data.section === 'body') {
-                        const status = data.cell.text[0].toLowerCase();
+            window.clearSearchInput = function () {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('clearSearch').classList.remove('visible');
+                filterAndDisplayRequests();
+            };
 
-                        if (status.includes('waiting')) {
-                            data.cell.styles.fillColor = [255, 243, 205];
-                            data.cell.styles.textColor = [243, 156, 18];
-                            data.cell.styles.fontStyle = 'bold';
-                        } else if (status.includes('progress')) {
-                            data.cell.styles.fillColor = [209, 236, 241];
-                            data.cell.styles.textColor = [52, 152, 219];
-                            data.cell.styles.fontStyle = 'bold';
-                        } else if (status.includes('waiting')) {
-                            data.cell.styles.fillColor = [212, 237, 218];
-                            data.cell.styles.textColor = [39, 174, 96];
+            window.downloadPDF = function () {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('landscape');
+
+                doc.setFontSize(20);
+                doc.setTextColor(4, 4, 118);
+                doc.text('Maintenance Requests Report', 14, 20);
+
+                doc.setFontSize(10);
+                doc.setTextColor(100);
+                const now = new Date();
+                doc.text(`Generated: ${now.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })}`, 14, 28);
+
+                const searchTerm = document.getElementById('searchInput').value;
+                const filterCollege = document.getElementById('filterCollege').value;
+                const filterStatus = document.getElementById('filterStatus').value;
+                const filterDateFrom = document.getElementById('filterDateFrom').value;
+                const filterDateTo = document.getElementById('filterDateTo').value;
+
+                let yPos = 34;
+                if (searchTerm || filterCollege || filterStatus || filterDateFrom || filterDateTo) {
+                    doc.setFontSize(9);
+                    doc.setTextColor(60);
+                    const filters = [];
+                    if (searchTerm) filters.push(`Search: "${searchTerm}"`);
+                    if (filterCollege) filters.push(`College: ${filterCollege}`);
+                    if (filterStatus) filters.push(`Status: ${filterStatus}`);
+                    if (filterDateFrom) filters.push(`From: ${filterDateFrom}`);
+                    if (filterDateTo) filters.push(`To: ${filterDateTo}`);
+
+                    doc.text('Filters Applied: ' + filters.join(' | '), 14, yPos);
+                    yPos += 8;
+                }
+
+                const tbody = document.getElementById('tickets-tbody');
+                const rows = tbody.querySelectorAll('tr');
+
+                if (rows.length === 0 || rows[0].querySelector('.empty-state')) {
+                    alert('No data to export');
+                    return;
+                }
+
+                const tableData = [];
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length > 0 && !cells[0].classList.contains('empty-state')) {
+                        tableData.push([
+                            cells[0].textContent.trim(),
+                            cells[1].textContent.trim(),
+                            cells[2].textContent.trim(),
+                            cells[3].textContent.trim(),
+                            cells[4].textContent.trim(),
+                            cells[5].textContent.trim().substring(0, 60) + (cells[5].textContent.trim().length > 60 ? '...' : ''),
+                            cells[6].textContent.trim()
+                        ]);
+                    }
+                });
+
+                doc.autoTable({
+                    startY: yPos + 2,
+                    head: [['Request #', 'Status', 'College/Center', 'Department', 'Location', 'Issue Description', 'Date']],
+                    body: tableData,
+                    styles: {
+                        fontSize: 8,
+                        cellPadding: 3,
+                    },
+                    headStyles: {
+                        fillColor: [4, 4, 118],
+                        textColor: 255,
+                        fontStyle: 'bold',
+                        halign: 'center'
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 25, fontStyle: 'bold' },
+                        1: { cellWidth: 22 },
+                        2: { cellWidth: 45 },
+                        3: { cellWidth: 35 },
+                        4: { cellWidth: 30 },
+                        5: { cellWidth: 60 },
+                        6: { cellWidth: 35 }
+                    },
+                    alternateRowStyles: {
+                        fillColor: [245, 245, 250]
+                    },
+                    didParseCell: function (data) {
+                        if (data.column.index === 1 && data.section === 'body') {
+                            const status = data.cell.text[0].toLowerCase();
+
+                            if (status.includes('waiting')) {
+                                data.cell.styles.fillColor = [255, 243, 205];
+                                data.cell.styles.textColor = [243, 156, 18];
+                                data.cell.styles.fontStyle = 'bold';
+                            } else if (status.includes('progress')) {
+                                data.cell.styles.fillColor = [209, 236, 241];
+                                data.cell.styles.textColor = [52, 152, 219];
+                                data.cell.styles.fontStyle = 'bold';
+                            } else if (status.includes('waiting')) {
+                                data.cell.styles.fillColor = [212, 237, 218];
+                                data.cell.styles.textColor = [39, 174, 96];
+                                data.cell.styles.fontStyle = 'bold';
+                            }
+                        }
+
+                        if (data.column.index === 0 && data.section === 'body') {
+                            data.cell.styles.textColor = [102, 126, 234];
                             data.cell.styles.fontStyle = 'bold';
                         }
                     }
+                });
 
-                    if (data.column.index === 0 && data.section === 'body') {
-                        data.cell.styles.textColor = [102, 126, 234];
-                        data.cell.styles.fontStyle = 'bold';
-                    }
-                }
-            });
+                const finalY = doc.lastAutoTable.finalY + 10;
+                doc.setFontSize(10);
+                doc.setTextColor(60);
 
-            const finalY = doc.lastAutoTable.finalY + 10;
-            doc.setFontSize(10);
-            doc.setTextColor(60);
-
-            const stats = {
-                total: tableData.length,
-                waiting: tableData.filter(row => row[1].toLowerCase().includes('waiting')).length,
-                inProgress: tableData.filter(row => row[1].toLowerCase().includes('progress')).length,
-                waiting: tableData.filter(row => row[1].toLowerCase().includes('waiting')).length
-            };
-
-            doc.text(
-                `Summary: Total: ${stats.total} | waiting: ${stats.waiting} | Processing: ${stats.inProgress} | waiting for approval: ${stats.waiting}`,
-                14,
-                finalY
-            );
-
-            const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.setTextColor(150);
+                const stats = {
+                    total: tableData.length,
+                    waiting: tableData.filter(row => row[1].toLowerCase().includes('waiting')).length,
+                    inProgress: tableData.filter(row => row[1].toLowerCase().includes('progress')).length,
+                    waiting: tableData.filter(row => row[1].toLowerCase().includes('waiting')).length
+                };
 
                 doc.text(
-                    `Page ${i} of ${pageCount}`,
-                    doc.internal.pageSize.width / 2,
-                    doc.internal.pageSize.height - 10,
-                    { align: 'center' }
+                    `Summary: Total: ${stats.total} | waiting: ${stats.waiting} | Processing: ${stats.inProgress} | waiting for approval: ${stats.waiting}`,
+                    14,
+                    finalY
                 );
-            }
 
-            const timestamp = now.toISOString().slice(0, 10);
-            const fileName = `Maintenance_Requests_${timestamp}.pdf`;
-            doc.save(fileName);
-        };
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(150);
 
-        document.getElementById('download').addEventListener('click', downloadPDF);
+                    doc.text(
+                        `Page ${i} of ${pageCount}`,
+                        doc.internal.pageSize.width / 2,
+                        doc.internal.pageSize.height - 10,
+                        { align: 'center' }
+                    );
+                }
 
-        // ═══════════════════════════════════════════
-        // MODAL FUNCTIONS - DEFINE FIRST!
-        // ═══════════════════════════════════════════
+                const timestamp = now.toISOString().slice(0, 10);
+                const fileName = `Maintenance_Requests_${timestamp}.pdf`;
+                doc.save(fileName);
+            };
 
-        // Close modal function
-        window.closeModal = function () {
-            console.log('🔴 Closing modal...');
-            const modal = document.getElementById('requestModal');
-            if (modal) {
-                modal.remove();
-                console.log('✅ Modal removed');
-            }
-            document.body.classList.remove('modal-open');
-        };
+            document.getElementById('download').addEventListener('click', downloadPDF);
 
-        // Show rejection dialog
-        window.showRejectDialog = function (requestNumber) {
-            console.log('📝 Showing rejection dialog for:', requestNumber);
-            const rejectionSection = document.getElementById('rejectionSection');
-            if (rejectionSection) {
-                rejectionSection.style.display = 'block';
-                document.getElementById('rejectionReason').focus();
-            }
-        };
+            // ═══════════════════════════════════════════
+            // MODAL FUNCTIONS - DEFINE FIRST!
+            // ═══════════════════════════════════════════
 
-        // Cancel rejection
-        window.cancelReject = function () {
-            console.log('❌ Canceling rejection');
-            const rejectionSection = document.getElementById('rejectionSection');
-            if (rejectionSection) {
-                rejectionSection.style.display = 'none';
-                document.getElementById('rejectionReason').value = '';
-            }
-        };
+            // Close modal function
+            window.closeModal = function () {
+                console.log('🔴 Closing modal...');
+                const modal = document.getElementById('requestModal');
+                if (modal) {
+                    modal.remove();
+                    console.log('✅ Modal removed');
+                }
+                document.body.classList.remove('modal-open');
+            };
 
-        // Approve request (no confirmation)
-        window.approveRequest = async function (requestNumber) {
-            console.log('✅ Approving request:', requestNumber);
-            try {
-                const requestsRef = collection(db, 'Requests');
-                const q = query(requestsRef);
-                const querySnapshot = await getDocs(q);
+            // Show rejection dialog
+            window.showRejectDialog = function (requestNumber) {
+                console.log('📝 Showing rejection dialog for:', requestNumber);
+                const rejectionSection = document.getElementById('rejectionSection');
+                if (rejectionSection) {
+                    rejectionSection.style.display = 'block';
+                    document.getElementById('rejectionReason').focus();
+                }
+            };
 
-                let docId = null;
-                let requestData = null;
+            // Cancel rejection
+            window.cancelReject = function () {
+                console.log('❌ Canceling rejection');
+                const rejectionSection = document.getElementById('rejectionSection');
+                if (rejectionSection) {
+                    rejectionSection.style.display = 'none';
+                    document.getElementById('rejectionReason').value = '';
+                }
+            };
 
-                querySnapshot.forEach((docSnap) => {
-                    if (docSnap.data()['Request Number'] === requestNumber) {
-                        docId = docSnap.id;
-                        requestData = docSnap.data();
-                    }
-                });
+            // Approve request (no confirmation)
+            window.approveRequest = async function (requestNumber) {
+                console.log('✅ Approving request:', requestNumber);
+                try {
+                    const requestsRef = collection(db, 'Requests');
+                    const q = query(requestsRef);
+                    const querySnapshot = await getDocs(q);
 
-                if (docId) {
-                    await updateDoc(doc(db, 'Requests', docId), {
-                        'Director Approval': 'Approved',
-                        'Status': 'Approved',
-                        'Approved Date': serverTimestamp(),
-                        'Approved By': sessionStorage.getItem('userEmail') || 'Director'
+                    let docId = null;
+                    let requestData = null;
+
+                    querySnapshot.forEach((docSnap) => {
+                        if (docSnap.data()['Request Number'] === requestNumber) {
+                            docId = docSnap.id;
+                            requestData = docSnap.data();
+                        }
                     });
 
-                    alert(`✅ Request ${requestNumber} has been approved!\n\n📧 Notification sent to:\n   - Request submitter\n   - Maintenance team\n\n📋 Status: Approved`);
+                    if (docId) {
+                        await updateDoc(doc(db, 'Requests', docId), {
+                            'Director Approval': 'Approved',
+                            'Status': 'Approved',
+                            'Approved Date': serverTimestamp(),
+                            'Approved By': sessionStorage.getItem('userEmail') || 'Director'
+                        });
 
-                    closeModal();
-                    await loadRequests();
-                } else {
-                    alert('Error: Request not found in database');
-                }
-            } catch (error) {
-                console.error('❌ Error approving request:', error);
-                alert('Error: ' + error.message);
-            }
-        };
+                        alert(`✅ Request ${requestNumber} has been approved!\n\n📧 Notification sent to:\n   - Request submitter\n   - Maintenance team\n\n📋 Status: Approved`);
 
-        // Confirm rejection with reason
-        window.confirmReject = async function (requestNumber) {
-            console.log('🚫 Confirming rejection for:', requestNumber);
-            const reason = document.getElementById('rejectionReason').value.trim();
-
-            if (!reason) {
-                alert('Please provide a reason for rejection');
-                document.getElementById('rejectionReason').focus();
-                return;
-            }
-
-            try {
-                const requestsRef = collection(db, 'Requests');
-                const q = query(requestsRef);
-                const querySnapshot = await getDocs(q);
-
-                let docId = null;
-                let requestData = null;
-
-                querySnapshot.forEach((docSnap) => {
-                    if (docSnap.data()['Request Number'] === requestNumber) {
-                        docId = docSnap.id;
-                        requestData = docSnap.data();
+                        closeModal();
+                        await loadRequests();
+                    } else {
+                        alert('Error: Request not found in database');
                     }
-                });
+                } catch (error) {
+                    console.error('❌ Error approving request:', error);
+                    alert('Error: ' + error.message);
+                }
+            };
 
-                if (docId) {
-                    await updateDoc(doc(db, 'Requests', docId), {
-                        'Status': 'Rejected',
-                        'Rejection Reason': reason,
-                        'Rejected By': sessionStorage.getItem('userEmail') || 'Director',
-                        'Rejection Date': serverTimestamp()
+            // Confirm rejection with reason
+            window.confirmReject = async function (requestNumber) {
+                console.log('🚫 Confirming rejection for:', requestNumber);
+                const reason = document.getElementById('rejectionReason').value.trim();
+
+                if (!reason) {
+                    alert('Please provide a reason for rejection');
+                    document.getElementById('rejectionReason').focus();
+                    return;
+                }
+
+                try {
+                    const requestsRef = collection(db, 'Requests');
+                    const q = query(requestsRef);
+                    const querySnapshot = await getDocs(q);
+
+                    let docId = null;
+                    let requestData = null;
+
+                    querySnapshot.forEach((docSnap) => {
+                        if (docSnap.data()['Request Number'] === requestNumber) {
+                            docId = docSnap.id;
+                            requestData = docSnap.data();
+                        }
                     });
 
-                    alert(`✅ Request ${requestNumber} has been rejected.\n\n📧 Notification sent to:\n   - ${requestData.Email || 'Request submitter'}\n\nRejection reason: ${reason}`);
+                    if (docId) {
+                        await updateDoc(doc(db, 'Requests', docId), {
+                            'Status': 'Rejected',
+                            'Rejection Reason': reason,
+                            'Rejected By': sessionStorage.getItem('userEmail') || 'Director',
+                            'Rejection Date': serverTimestamp()
+                        });
 
-                    closeModal();
-                    await loadRequests();
-                } else {
-                    alert('Error: Request not found in database');
+                        alert(`✅ Request ${requestNumber} has been rejected.\n\n📧 Notification sent to:\n   - ${requestData.Email || 'Request submitter'}\n\nRejection reason: ${reason}`);
+
+                        closeModal();
+                        await loadRequests();
+                    } else {
+                        alert('Error: Request not found in database');
+                    }
+                } catch (error) {
+                    console.error('❌ Error rejecting request:', error);
+                    alert('Error: ' + error.message);
                 }
-            } catch (error) {
-                console.error('❌ Error rejecting request:', error);
-                alert('Error: ' + error.message);
-            }
-        };
+            };
 
-        window.viewRequestDetails = function (requestNumber) {
-            console.log('👁️ Viewing request details for:', requestNumber);
+            window.viewRequestDetails = function (requestNumber) {
+                console.log('👁️ Viewing request details for:', requestNumber);
 
-            const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
+                const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
 
-            if (!request) {
-                alert('Request not found');
-                return;
-            }
+                if (!request) {
+                    alert('Request not found');
+                    return;
+                }
 
-            const status = (request.Status || 'Waiting').toLowerCase();
-            const showApprovalButtons = status === 'waiting' || status.includes('waiting');
+                const status = (request.Status || 'Waiting').toLowerCase();
+                const showApprovalButtons = status === 'waiting' || status.includes('waiting');
 
-            const modalHTML = `
+                const modalHTML = `
         <div id="requestModal" style="
             position: fixed;
             top: 0;
@@ -1826,179 +2075,179 @@
         </div>
     `;
 
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+                document.body.classList.add('modal-open');
+
+                // Click outside to close
+                document.getElementById('requestModal').addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        closeModal();
+                    }
+                });
+            };
+
+            // Close Modal 
+            window.closeModal = function () {
+                console.log('Closing modal...');
+                const modal = document.getElementById('requestModal');
+                if (modal) {
+                    modal.remove();
+                    console.log('Modal removed');
+                }
+                document.body.classList.remove('modal-open');
+            };
+
+            // Show rejection dialog
+            window.showRejectDialog = function (requestNumber) {
+                const rejectionSection = document.getElementById('rejectionSection');
+                if (rejectionSection) {
+                    rejectionSection.style.display = 'block';
+                    document.getElementById('rejectionReason').focus();
+                }
+            };
+
+            // Cancel rejection
+            window.cancelReject = function () {
+                const rejectionSection = document.getElementById('rejectionSection');
+                if (rejectionSection) {
+                    rejectionSection.style.display = 'none';
+                    document.getElementById('rejectionReason').value = '';
+                }
+            };
+
+            // Approve request
+            // Approve request
+            window.approveRequest = async function (requestNumber) {
+                try {
+                    const requestsRef = collection(db, 'Requests');
+                    const q = query(requestsRef);
+                    const querySnapshot = await getDocs(q);
+
+                    let docId = null;
+                    let requestData = null;
+
+                    querySnapshot.forEach((docSnap) => {
+                        if (docSnap.data()['Request Number'] === requestNumber) {
+                            docId = docSnap.id;
+                            requestData = docSnap.data();
+                        }
+                    });
+
+                    if (docId) {
+                        await updateDoc(doc(db, 'Requests', docId), {
+                            'Director Approval': 'Approved',
+                            'Status': 'Approved',
+                            'Approved Date': serverTimestamp(),
+                            'Approved By': sessionStorage.getItem('userEmail') || 'Director'
+                        });
+
+                        alert(`✅ Request ${requestNumber} has been approved!\n\n📧 Notification sent to:\n   - Request submitter\n   - Maintenance team\n\n📋 Status: Approved`);
+
+                        closeModal();
+                        await loadRequests();
+                    } else {
+                        alert('Error: Request not found in database');
+                    }
+                } catch (error) {
+                    console.error('Error approving request:', error);
+                    alert('Error: ' + error.message);
+                }
+            };
+
+            // Confirm rejection with reason
+            window.confirmReject = async function (requestNumber) {
+                const reason = document.getElementById('rejectionReason').value.trim();
+
+                if (!reason) {
+                    alert('Please provide a reason for rejection');
+                    document.getElementById('rejectionReason').focus();
+                    return;
+                }
+
+
+
+                try {
+                    const requestsRef = collection(db, 'Requests');
+                    const q = query(requestsRef);
+                    const querySnapshot = await getDocs(q);
+
+                    let docId = null;
+                    let requestData = null;
+
+                    querySnapshot.forEach((docSnap) => {
+                        if (docSnap.data()['Request Number'] === requestNumber) {
+                            docId = docSnap.id;
+                            requestData = docSnap.data();
+                        }
+                    });
+
+                    if (docId) {
+                        await updateDoc(doc(db, 'Requests', docId), {
+                            'Status': 'Rejected',
+                            'Rejection Reason': reason,
+                            'Rejected By': sessionStorage.getItem('userEmail') || 'Director',
+                            'Rejection Date': serverTimestamp()
+                        });
+
+                        alert(`✅ Request ${requestNumber} has been rejected.\n\n📧 Notification sent to:\n   - ${requestData.Email || 'Request submitter'}\n\nRejection reason: ${reason}`);
+
+                        closeModal();
+                        await loadRequests();
+                    } else {
+                        alert('Error: Request not found in database');
+                    }
+                } catch (error) {
+                    console.error('Error rejecting request:', error);
+                    alert('Error: ' + error.message);
+                }
+            };
+
+
+
+            // ✅ ADD body.modal-open class
             document.body.insertAdjacentHTML('beforeend', modalHTML);
             document.body.classList.add('modal-open');
 
-            // Click outside to close
+            // ✅ UPDATED: Remove body class when clicking outside
             document.getElementById('requestModal').addEventListener('click', function (e) {
                 if (e.target === this) {
                     closeModal();
                 }
             });
-        };
+            ;
 
-        // Close Modal 
-        window.closeModal = function () {
-            console.log('Closing modal...');
-            const modal = document.getElementById('requestModal');
-            if (modal) {
-                modal.remove();
-                console.log('Modal removed');
-            }
-            document.body.classList.remove('modal-open');
-        };
 
-        // Show rejection dialog
-        window.showRejectDialog = function (requestNumber) {
-            const rejectionSection = document.getElementById('rejectionSection');
-            if (rejectionSection) {
-                rejectionSection.style.display = 'block';
-                document.getElementById('rejectionReason').focus();
-            }
-        };
-
-        // Cancel rejection
-        window.cancelReject = function () {
-            const rejectionSection = document.getElementById('rejectionSection');
-            if (rejectionSection) {
-                rejectionSection.style.display = 'none';
-                document.getElementById('rejectionReason').value = '';
-            }
-        };
-
-        // Approve request
-        // Approve request
-        window.approveRequest = async function (requestNumber) {
-            try {
-                const requestsRef = collection(db, 'Requests');
-                const q = query(requestsRef);
-                const querySnapshot = await getDocs(q);
-
-                let docId = null;
-                let requestData = null;
-
-                querySnapshot.forEach((docSnap) => {
-                    if (docSnap.data()['Request Number'] === requestNumber) {
-                        docId = docSnap.id;
-                        requestData = docSnap.data();
-                    }
-                });
-
-                if (docId) {
-                    await updateDoc(doc(db, 'Requests', docId), {
-                        'Director Approval': 'Approved',
-                        'Status': 'Approved',
-                        'Approved Date': serverTimestamp(),
-                        'Approved By': sessionStorage.getItem('userEmail') || 'Director'
-                    });
-
-                    alert(`✅ Request ${requestNumber} has been approved!\n\n📧 Notification sent to:\n   - Request submitter\n   - Maintenance team\n\n📋 Status: Approved`);
-
-                    closeModal();
-                    await loadRequests();
-                } else {
-                    alert('Error: Request not found in database');
+            window.handleDirectorApproval = async function (requestNumber) {
+                if (!confirm('Approve this request and set to Processing?')) {
+                    return;
                 }
-            } catch (error) {
-                console.error('Error approving request:', error);
-                alert('Error: ' + error.message);
-            }
-        };
 
-        // Confirm rejection with reason
-        window.confirmReject = async function (requestNumber) {
-            const reason = document.getElementById('rejectionReason').value.trim();
+                try {
+                    const requestsRef = collection(db, 'Requests');
+                    const q = query(requestsRef);
+                    const querySnapshot = await getDocs(q);
 
-            if (!reason) {
-                alert('Please provide a reason for rejection');
-                document.getElementById('rejectionReason').focus();
-                return;
-            }
+                    let docId = null;
+                    let requestData = null;
 
-
-
-            try {
-                const requestsRef = collection(db, 'Requests');
-                const q = query(requestsRef);
-                const querySnapshot = await getDocs(q);
-
-                let docId = null;
-                let requestData = null;
-
-                querySnapshot.forEach((docSnap) => {
-                    if (docSnap.data()['Request Number'] === requestNumber) {
-                        docId = docSnap.id;
-                        requestData = docSnap.data();
-                    }
-                });
-
-                if (docId) {
-                    await updateDoc(doc(db, 'Requests', docId), {
-                        'Status': 'Rejected',
-                        'Rejection Reason': reason,
-                        'Rejected By': sessionStorage.getItem('userEmail') || 'Director',
-                        'Rejection Date': serverTimestamp()
+                    querySnapshot.forEach((docSnap) => {
+                        if (docSnap.data()['Request Number'] === requestNumber) {
+                            docId = docSnap.id;
+                            requestData = docSnap.data();
+                        }
                     });
 
-                    alert(`✅ Request ${requestNumber} has been rejected.\n\n📧 Notification sent to:\n   - ${requestData.Email || 'Request submitter'}\n\nRejection reason: ${reason}`);
+                    if (docId) {
+                        // Update to Approved status
+                        await updateDoc(doc(db, 'Requests', docId), {
+                            'Director Approval': 'Approved',
+                            'Director Approval Date': serverTimestamp(),
+                            'Status': 'Approved',
+                            'Start Date': new Date().toISOString()
+                        });
 
-                    closeModal();
-                    await loadRequests();
-                } else {
-                    alert('Error: Request not found in database');
-                }
-            } catch (error) {
-                console.error('Error rejecting request:', error);
-                alert('Error: ' + error.message);
-            }
-        };
-
-
-
-        // ✅ ADD body.modal-open class
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        document.body.classList.add('modal-open');
-
-        // ✅ UPDATED: Remove body class when clicking outside
-        document.getElementById('requestModal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-        ;
-
-
-        window.handleDirectorApproval = async function (requestNumber) {
-            if (!confirm('Approve this request and set to Processing?')) {
-                return;
-            }
-
-            try {
-                const requestsRef = collection(db, 'Requests');
-                const q = query(requestsRef);
-                const querySnapshot = await getDocs(q);
-
-                let docId = null;
-                let requestData = null;
-
-                querySnapshot.forEach((docSnap) => {
-                    if (docSnap.data()['Request Number'] === requestNumber) {
-                        docId = docSnap.id;
-                        requestData = docSnap.data();
-                    }
-                });
-
-                if (docId) {
-                    // Update to Approved status
-                    await updateDoc(doc(db, 'Requests', docId), {
-                        'Director Approval': 'Approved',
-                        'Director Approval Date': serverTimestamp(),
-                        'Status': 'Approved',
-                        'Start Date': new Date().toISOString()
-                    });
-
-                    // Show success message
-                    alert(`✅ Request ${requestNumber} has been approved!
+                        // Show success message
+                        alert(`✅ Request ${requestNumber} has been approved!
             
 ✉️ Email notification sent to:
    - Supervisor (for materials & labor assignment)
@@ -2008,74 +2257,74 @@
 
 The request is now ready for processing.`);
 
-                    closeModal();
-                    await loadRequests();
+                        closeModal();
+                        await loadRequests();
 
-                } else {
-                    alert('Error: Request not found in database');
+                    } else {
+                        alert('Error: Request not found in database');
+                    }
+
+                } catch (error) {
+                    console.error('Error approving request:', error);
+                    alert('Error: ' + error.message);
+                }
+            };
+
+
+            window.goToJobDescription = function (requestNumber) {
+                localStorage.setItem('selectedRequestNumber', requestNumber);
+
+                const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
+                if (request) {
+                    localStorage.setItem('selectedRequestData', JSON.stringify(request));
                 }
 
-            } catch (error) {
-                console.error('Error approving request:', error);
-                alert('Error: ' + error.message);
-            }
-        };
+                window.location.href = 'job-description.html';
+            };
 
+            window.handleRejectRequest = async function (requestNumber) {
+                // Show custom dialog for rejection reason
+                const reason = prompt('Please enter the reason for rejecting this request:');
 
-        window.goToJobDescription = function (requestNumber) {
-            localStorage.setItem('selectedRequestNumber', requestNumber);
+                if (reason === null) {
+                    return; // User clicked cancel
+                }
 
-            const request = allRequestsData.find(req => req['Request Number'] === requestNumber);
-            if (request) {
-                localStorage.setItem('selectedRequestData', JSON.stringify(request));
-            }
+                if (!reason || reason.trim() === '') {
+                    alert('Please provide a reason for rejection');
+                    return;
+                }
 
-            window.location.href = 'job-description.html';
-        };
+                if (!confirm(`Are you sure you want to reject this request?\n\nReason: ${reason}\n\n✉️ Rejection notice will be sent to:\n   - Request submitter\n   - Supervisor`)) {
+                    return;
+                }
 
-        window.handleRejectRequest = async function (requestNumber) {
-            // Show custom dialog for rejection reason
-            const reason = prompt('Please enter the reason for rejecting this request:');
+                try {
+                    const requestsRef = collection(db, 'Requests');
+                    const q = query(requestsRef);
+                    const querySnapshot = await getDocs(q);
 
-            if (reason === null) {
-                return; // User clicked cancel
-            }
+                    let docId = null;
+                    let requestData = null;
 
-            if (!reason || reason.trim() === '') {
-                alert('Please provide a reason for rejection');
-                return;
-            }
+                    querySnapshot.forEach((docSnap) => {
+                        if (docSnap.data()['Request Number'] === requestNumber) {
+                            docId = docSnap.id;
+                            requestData = docSnap.data();
+                        }
+                    });
 
-            if (!confirm(`Are you sure you want to reject this request?\n\nReason: ${reason}\n\n✉️ Rejection notice will be sent to:\n   - Request submitter\n   - Supervisor`)) {
-                return;
-            }
+                    if (docId) {
+                        const updateData = {
+                            'Status': 'Rejected',
+                            'Rejection Reason': reason.trim(),
+                            'Rejected By': 'Director',
+                            'Rejection Date': serverTimestamp()
+                        };
 
-            try {
-                const requestsRef = collection(db, 'Requests');
-                const q = query(requestsRef);
-                const querySnapshot = await getDocs(q);
+                        await updateDoc(doc(db, 'Requests', docId), updateData);
 
-                let docId = null;
-                let requestData = null;
-
-                querySnapshot.forEach((docSnap) => {
-                    if (docSnap.data()['Request Number'] === requestNumber) {
-                        docId = docSnap.id;
-                        requestData = docSnap.data();
-                    }
-                });
-
-                if (docId) {
-                    const updateData = {
-                        'Status': 'Rejected',
-                        'Rejection Reason': reason.trim(),
-                        'Rejected By': 'Director',
-                        'Rejection Date': serverTimestamp()
-                    };
-
-                    await updateDoc(doc(db, 'Requests', docId), updateData);
-
-                    alert(`✅ Request rejected successfully.
+                        alert(`✅ Request rejected successfully.
 
 ✉️ Email notification sent to:
    - ${requestData.Email || 'Request submitter'}
@@ -2083,73 +2332,73 @@ The request is now ready for processing.`);
 
 Rejection reason: ${reason}`);
 
-                    closeModal();
+                        closeModal();
+                        loadRequests();
+
+                    } else {
+                        alert('Error: Request not found in database');
+                    }
+                } catch (error) {
+                    console.error('Error rejecting request:', error);
+                    alert('Error: ' + error.message);
+                }
+            };
+
+
+            window.updateOldStatuses = async function () {
+                if (!confirm('This will update all "In Progress" statuses to "Processing". Continue?')) {
+                    return;
+                }
+
+                try {
+                    const requestsRef = collection(db, 'Requests');
+                    const q = query(requestsRef);
+                    const querySnapshot = await getDocs(q);
+
+                    let updateCount = 0;
+                    const updatePromises = [];
+
+                    querySnapshot.forEach((docSnap) => {
+                        if (docSnap.data().Status === 'In Progress') {
+                            updatePromises.push(
+                                updateDoc(doc(db, 'Requests', docSnap.id), {
+                                    Status: 'Processing'
+                                })
+                            );
+                            updateCount++;
+                        }
+                    });
+
+                    await Promise.all(updatePromises);
+                    alert(`Updated ${updateCount} records from "In Progress" to "Processing"`);
                     loadRequests();
 
-                } else {
-                    alert('Error: Request not found in database');
+                } catch (error) {
+                    console.error('Error updating statuses:', error);
+                    alert('Error: ' + error.message);
                 }
-            } catch (error) {
-                console.error('Error rejecting request:', error);
-                alert('Error: ' + error.message);
-            }
-        };
+            };
 
+            window.filterByStatus = function (status) {
+                document.getElementById('filterStatus').value = status;
 
-        window.updateOldStatuses = async function () {
-            if (!confirm('This will update all "In Progress" statuses to "Processing". Continue?')) {
-                return;
-            }
-
-            try {
-                const requestsRef = collection(db, 'Requests');
-                const q = query(requestsRef);
-                const querySnapshot = await getDocs(q);
-
-                let updateCount = 0;
-                const updatePromises = [];
-
-                querySnapshot.forEach((docSnap) => {
-                    if (docSnap.data().Status === 'In Progress') {
-                        updatePromises.push(
-                            updateDoc(doc(db, 'Requests', docSnap.id), {
-                                Status: 'Processing'
-                            })
-                        );
-                        updateCount++;
-                    }
+                document.querySelectorAll('.stat-card').forEach(card => {
+                    card.classList.remove('active');
                 });
 
-                await Promise.all(updatePromises);
-                alert(`Updated ${updateCount} records from "In Progress" to "Processing"`);
-                loadRequests();
+                if (status === '') {
+                    document.getElementById('card-total').classList.add('active');
+                } else if (status === 'waiting') {
+                    document.getElementById('card-waiting').classList.add('active');
+                } else if (status === 'Processing') {
+                    document.getElementById('card-processing').classList.add('active');
+                } else if (status === 'rejected') {
+                    document.getElementById('card-rejected').classList.add('active');
+                }
 
-            } catch (error) {
-                console.error('Error updating statuses:', error);
-                alert('Error: ' + error.message);
-            }
-        };
-
-        window.filterByStatus = function (status) {
-            document.getElementById('filterStatus').value = status;
-
-            document.querySelectorAll('.stat-card').forEach(card => {
-                card.classList.remove('active');
-            });
-
-            if (status === '') {
-                document.getElementById('card-total').classList.add('active');
-            } else if (status === 'waiting') {
-                document.getElementById('card-waiting').classList.add('active');
-            } else if (status === 'Processing') {
-                document.getElementById('card-processing').classList.add('active');
-            } else if (status === 'rejected') {
-                document.getElementById('card-rejected').classList.add('active');
-            }
-
-            filterAndDisplayRequests();
-        };
-    </script>
+                filterAndDisplayRequests();
+            };
+        </script>
 </body>
 
 </html>
