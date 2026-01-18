@@ -502,7 +502,6 @@
         .profile-image-container {
             position: relative;
             display: inline-block;
-            margin-bottom: 20px;
             width: 120px;
             height: 120px;
         }
@@ -570,16 +569,6 @@
 
         .upload-btn:hover {
             background: rgb(185, 213, 255);
-            transform: translateY(-2px);
-        }
-
-        .remove-btn {
-            border: 3px solid #e74c3c;
-            color: black;
-        }
-
-        .remove-btn:hover {
-            background: #ffcdc7;
             transform: translateY(-2px);
         }
 
@@ -900,26 +889,6 @@
                 <div class="account-icon" id="accountIcon">
                     <img src="images/user.png" alt="User Account" id="headerProfileImage">
                 </div>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <div class="dropdown-header">
-                        <div class="admin-name">Admin User</div>
-                        <div class="admin-email">admin@university.edu</div>
-                    </div>
-                    <a href="my-account.html" class="dropdown-item">
-                        <span class="icon">👤</span>
-                        <span>My Account</span>
-                    </a>
-                    <a href="settings.html" class="dropdown-item">
-                        <span class="icon">⚙️</span>
-                        <span>Settings</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <!-- ⬇️ UPDATED LOGOUT BUTTON ⬇️ -->
-                    <a href="#" class="dropdown-item logout" onclick="logout(); return false;">
-                        <span class="icon">🚪</span>
-                        <span>Logout</span>
-                    </a>
-                </div>
             </div>
         </div>
         </div>
@@ -934,18 +903,9 @@
             <div class="profile-image-section">
                 <div class="profile-image-container">
                     <img src="images/user.png" alt="Profile" class="profile-image" id="profileImage">
-                    <input type="file" id="imageUpload" accept="image/*">
-                </div>
-                <div class="image-buttons">
-                    <button class="image-btn upload-btn" onclick="document.getElementById('imageUpload').click()"
-                        style="width: 10rem;">
-                        Upload image
-                    </button>
-                    <button class="image-btn remove-btn" onclick="removeProfileImage()" style="width: 10rem;">
-                        Remove
-                    </button>
                 </div>
             </div>
+            
 
             <!-- Form Section -->
             <div class="form-section">
@@ -1136,15 +1096,6 @@
                 currentImageFile = file;
             }
         });
-
-        window.removeProfileImage = function () {
-            if (confirm('Are you sure you want to remove your profile photo?')) {
-                document.getElementById('profileImage').src = 'images/user.png';
-                document.getElementById('headerProfileImage').src = 'images/user.png';
-                currentImageFile = null;
-                document.getElementById('imageUpload').value = '';
-            }
-        };
 
         document.getElementById('accountForm').addEventListener('submit', async function (e) {
             e.preventDefault();

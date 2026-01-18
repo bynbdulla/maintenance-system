@@ -745,15 +745,17 @@
 
         // Generate automatic request number for regular users
         function generateRequestNumber() {
-            const requestNumberField = document.getElementById('request-number');
-            if (requestNumberField && requestNumberField.hasAttribute('readonly')) {
-                const timestamp = Date.now().toString().slice(-6);
-                const randomNum = Math.floor(Math.random() * 1000);
-                const requestNumber = `RQ-${timestamp}${randomNum}`;
-                requestNumberField.value = requestNumber;
-                console.log('🎫 Generated request number:', requestNumber);
-            }
+            const now = new Date();
+            const year = now.getFullYear().toString().slice(-2); // Last 2 digits of year
+            const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Month with leading zero
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0'); // 3 random digits
+
+            return `RQ-${year}${month}${random}`;
         }
+
+        // Example usage:
+        const requestNumber = generateRequestNumber();
+        console.log(requestNumber); // Output: RQ-2601294
     </script>
 
     <script type="module">

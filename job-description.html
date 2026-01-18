@@ -460,6 +460,78 @@
             -webkit-appearance: none;
             margin: 0;
         }
+
+        .searchable-select-wrapper {
+            position: relative;
+            width: 85%;
+            display: inline-block;
+        }
+
+        .searchable-select-wrapper input.search-input {
+            width: 100%;
+            height: 30px;
+            padding: 4px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        .searchable-select-wrapper input.search-input:focus {
+            outline: none;
+            border-color: rgb(4, 4, 118);
+        }
+
+        .searchable-select-wrapper .dropdown-list {
+            position: absolute;
+            top: 32px;
+            left: 0;
+            right: 0;
+            max-height: 250px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .searchable-select-wrapper .dropdown-list.show {
+            display: block;
+        }
+
+        .searchable-select-wrapper .dropdown-category {
+            background: #f0f4ff;
+            padding: 6px 10px;
+            font-weight: 600;
+            font-size: 12px;
+            color: rgb(4, 4, 118);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .searchable-select-wrapper .dropdown-option {
+            padding: 8px 10px;
+            cursor: pointer;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .searchable-select-wrapper .dropdown-option:hover {
+            background: #f5f7fa;
+        }
+
+        .searchable-select-wrapper .dropdown-option.selected {
+            background: #e8f0fe;
+            color: rgb(4, 4, 118);
+        }
+
+        .searchable-select-wrapper .no-results {
+            padding: 12px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
     </style>
 </head>
 
@@ -521,16 +593,13 @@
                                 <tr>
                                     <td class="sn">1</td>
                                     <td>
-                                        <select class="material-select" id="material-1"
-                                            onchange="handleMaterialSelection(1)">
-                                            <option value="">Select Material...</option>
-                                            <!-- Options will be populated from Firebase -->
-                                        </select>
+                                        <div class="searchable-select-wrapper" id="wrapper-1"></div>
                                     </td>
                                     <td><input type="number" name="qty1" min="0" value="0"
                                             onchange="calculateMaterialTotal(1)">
                                     </td>
-                                    <td><input type="number" id="unitBD1" class="price-field" readonly></td>
+                                    <td><input type="number" id="unitBD1" class="price-field" step="0.001"
+                                            onchange="calculateMaterialTotal(1)"></td>
                                     <td><input type="number" id="totalBD1" readonly></td>
                                     <td>
                                         <img src="images/bin.png" alt="Delete"
@@ -541,16 +610,13 @@
                                 <tr>
                                     <td class="sn">2</td>
                                     <td>
-                                        <select class="material-select" id="material-2"
-                                            onchange="handleMaterialSelection(2)">
-                                            <option value="">Select Material...</option>
-                                            <!-- Options will be populated from Firebase -->
-                                        </select>
+                                        <div class="searchable-select-wrapper" id="wrapper-2"></div>
                                     </td>
                                     <td><input type="number" name="qty2" min="0" value="0"
                                             onchange="calculateMaterialTotal(2)">
                                     </td>
-                                    <td><input type="number" id="unitBD2" class="price-field" readonly></td>
+                                    <td><input type="number" id="unitBD2" class="price-field" step="0.001"
+                                            onchange="calculateMaterialTotal(2)"></td>
                                     <td><input type="number" id="totalBD2" readonly></td>
                                     <td>
                                         <img src="images/bin.png" alt="Delete"
@@ -613,27 +679,25 @@
                             </thead>
                             <tbody id="laborBody">
                                 <tr>
-                                    <td class="specialization">Mason</td>
+                                    <td class="specialization">Builder</td>
                                     <td><input type="number" name="masonNo" min="0"
                                             onchange="calculateLaborTotal('mason')"></td>
                                     <td><input type="number" name="masonDays" min="0"
                                             onchange="calculateLaborTotal('mason')"></td>
                                     <td><input type="number" name="masonHrs" min="0"
                                             onchange="calculateLaborTotal('mason')"></td>
-                                    <td><input type="number" name="masonSalaryBD" min="0" step="0.001" value="1.2"
-                                            readonly></td>
+                                    <td><input type="number" name="masonSalaryBD" step="0.001" value="1.2"></td>
                                     <td><input type="number" name="masonTotalBD" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td class="specialization">Carpentry</td>
+                                    <td class="specialization">Carpenter</td>
                                     <td><input type="number" name="carpentryNo" min="0"
                                             onchange="calculateLaborTotal('carpentry')"></td>
                                     <td><input type="number" name="carpentryDays" min="0"
                                             onchange="calculateLaborTotal('carpentry')"></td>
                                     <td><input type="number" name="carpentryHrs" min="0"
                                             onchange="calculateLaborTotal('carpentry')"></td>
-                                    <td><input type="number" name="carpentrySalaryBD" min="0" step="0.001" value="1.2"
-                                            readonly></td>
+                                    <td><input type="number" name="carpentrySalaryBD" step="0.001" value="1.2"></td>
                                     <td><input type="number" name="carpentryTotalBD" readonly></td>
                                 </tr>
                                 <tr>
@@ -644,8 +708,7 @@
                                             onchange="calculateLaborTotal('painter')"></td>
                                     <td><input type="number" name="painterHrs" min="0"
                                             onchange="calculateLaborTotal('painter')"></td>
-                                    <td><input type="number" name="painterSalaryBD" min="0" step="0.001" value="1"
-                                            readonly></td>
+                                    <td><input type="number" name="painterSalaryBD" step="0.001" value="1"></td>
                                     <td><input type="number" name="painterTotalBD" readonly></td>
                                 </tr>
                                 <tr>
@@ -680,8 +743,8 @@
                                             onchange="calculateLaborTotal('plumber')"></td>
                                     <td><input type="number" name="plumberHrs" min="0"
                                             onchange="calculateLaborTotal('plumber')"></td>
-                                    <td><input type="number" name="plumberSalaryBD" min="0" step="0.001" value="1.5"
-                                            readonly onchange="calculateLaborTotal('plumber')"></td>
+                                    <td><input type="number" name="plumberSalaryBD" step="0.001" value="1.5"
+                                            onchange="calculateLaborTotal('plumber')"></td>
                                     <td><input type="number" name="plumberTotalBD" readonly></td>
                                 </tr>
                                 <tr>
@@ -730,8 +793,12 @@
 
                         <div class="form-row" style="margin-top: 20px;">
                             <div class="form-group">
-                                <label>Starting Date </label>
+                                <label>Start Date </label>
                                 <input type="date" id="startDate">
+                            </div>
+                            <div class="form-group">
+                                <label>End Date </label>
+                                <input type="date" id="EndDate">
                             </div>
                         </div>
 
@@ -748,6 +815,161 @@
     </div>
 
     <script>
+        class SearchableSelect {
+            constructor(wrapperId, rowNumber, materialsData) {
+                this.wrapperId = wrapperId;
+                this.rowNumber = rowNumber;
+                this.materialsData = materialsData || [];
+                this.selectedMaterial = null;
+                this.init();
+            }
+
+            init() {
+                const wrapper = document.getElementById(this.wrapperId);
+                if (!wrapper) return;
+
+                wrapper.innerHTML = `
+                    <input type="text" 
+                           class="search-input" 
+                           placeholder="Search material..." 
+                           autocomplete="off"
+                           data-row="${this.rowNumber}">
+                    <div class="dropdown-list"></div>
+                `;
+
+                this.input = wrapper.querySelector('.search-input');
+                this.dropdown = wrapper.querySelector('.dropdown-list');
+
+                this.input.addEventListener('input', () => this.filterOptions());
+                this.input.addEventListener('focus', () => this.showDropdown());
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!wrapper.contains(e.target)) {
+                        this.hideDropdown();
+                    }
+                });
+            }
+
+            updateMaterials(materialsData) {
+                this.materialsData = materialsData;
+            }
+
+            filterOptions() {
+                const searchTerm = this.input.value.toLowerCase();
+                this.renderDropdown(searchTerm);
+            }
+
+            renderDropdown(searchTerm = '') {
+                if (!this.materialsData || this.materialsData.length === 0) {
+                    this.dropdown.innerHTML = '<div class="no-results">Loading materials...</div>';
+                    return;
+                }
+
+                // Group materials by category
+                const categorized = {};
+                this.materialsData.forEach(material => {
+                    const matchesSearch = !searchTerm ||
+                        material.name.toLowerCase().includes(searchTerm) ||
+                        material.category.toLowerCase().includes(searchTerm) ||
+                        material.unit.toLowerCase().includes(searchTerm);
+
+                    if (matchesSearch) {
+                        if (!categorized[material.category]) {
+                            categorized[material.category] = [];
+                        }
+                        categorized[material.category].push(material);
+                    }
+                });
+
+                if (Object.keys(categorized).length === 0) {
+                    this.dropdown.innerHTML = '<div class="no-results">No materials found</div>';
+                    return;
+                }
+
+                let html = '';
+                Object.keys(categorized).sort().forEach(category => {
+                    html += `<div class="dropdown-category">${category}</div>`;
+                    categorized[category].forEach(material => {
+                        const isSelected = this.selectedMaterial &&
+                            this.selectedMaterial.no === material.no ? 'selected' : '';
+                        html += `
+                            <div class="dropdown-option ${isSelected}" 
+                                 data-material='${JSON.stringify(material)}'>
+                                ${material.name} - ${material.unit}
+                            </div>
+                        `;
+                    });
+                });
+
+                this.dropdown.innerHTML = html;
+
+                // Add click handlers
+                this.dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        const material = JSON.parse(e.target.dataset.material);
+                        this.selectMaterial(material);
+                    });
+                });
+            }
+
+            showDropdown() {
+                this.renderDropdown(this.input.value.toLowerCase());
+                this.dropdown.classList.add('show');
+            }
+
+            hideDropdown() {
+                this.dropdown.classList.remove('show');
+            }
+
+            selectMaterial(material) {
+                this.selectedMaterial = material;
+                this.input.value = `${material.name} - ${material.unit}`;
+                this.hideDropdown();
+
+                // Trigger the material selection handler
+                if (typeof window.handleMaterialSelection === 'function') {
+                    window.handleMaterialSelection(this.rowNumber, material);
+                }
+            }
+
+            // ✅ NEW: Method to set material directly (for loading saved data)
+            setMaterial(materialName, unitCost) {
+                this.selectedMaterial = {
+                    name: materialName,
+                    price: unitCost
+                };
+                this.input.value = materialName;
+                console.log(`✅ Material ${this.rowNumber} set to: ${materialName}`);
+            }
+
+            // ✅ NEW: Replace with readonly input (for view mode)
+            convertToReadonly(materialName) {
+                const wrapper = document.getElementById(this.wrapperId);
+                if (!wrapper) return;
+
+                wrapper.innerHTML = `
+                    <input type="text" 
+                           class="search-input" 
+                           value="${materialName}"
+                           readonly
+                           style="background-color: #f8f9fa; cursor: default;">
+                `;
+                console.log(`✅ Material ${this.rowNumber} converted to readonly: ${materialName}`);
+            }
+
+            getSelectedMaterial() {
+                return this.selectedMaterial;
+            }
+
+            reset() {
+                this.selectedMaterial = null;
+                this.input.value = '';
+            }
+        }
+        // Store all searchable select instances
+        window.searchableSelects = {};
+
         // ============================================
         // MATERIAL ROW MANAGEMENT
         // ============================================
@@ -764,10 +986,7 @@
             newRow.innerHTML = `
         <td class="sn">${rowNumber}</td>
         <td>
-            <select class="material-select" id="material-${rowNumber}" 
-                    onchange="handleMaterialSelection(${rowNumber})">
-                <option value="">Select Material...</option>
-            </select>
+            <div class="searchable-select-wrapper" id="wrapper-${rowNumber}"></div>
         </td>
         <td><input type="number" name="qty${rowNumber}" min="0" value="0" 
                    onchange="calculateMaterialTotal(${rowNumber})"></td>
@@ -782,12 +1001,29 @@
             const buttonRow = tbody.querySelector('tr:last-child');
             tbody.insertBefore(newRow, buttonRow);
 
+
+            // Initialize searchable select for new row
             setTimeout(() => {
-                const dropdown = document.getElementById(`material-${rowNumber}`);
-                if (dropdown && window.populateSingleDropdown) {
-                    window.populateSingleDropdown(dropdown);
-                }
+                const newSelect = new SearchableSelect(`wrapper-${rowNumber}`, rowNumber, window.materialsDatabase);
+                window.searchableSelects[rowNumber] = newSelect;
             }, 100);
+        };
+
+        // ============================================
+        // MATERIAL SELECTION HANDLER - UPDATED
+        // ============================================
+        window.handleMaterialSelection = function (rowNumber, material) {
+            if (!material) return;
+
+            console.log('📦 Row', rowNumber, '- Selected:', material.name);
+
+            const quantityInput = document.querySelector(`[name="qty${rowNumber}"]`);
+            if (quantityInput) quantityInput.value = 1;
+
+            const bdInput = document.getElementById(`unitBD${rowNumber}`);
+            if (bdInput) bdInput.value = material.price.toFixed(3);
+
+            calculateMaterialTotal(rowNumber);
         };
 
         // ============================================
@@ -867,9 +1103,16 @@
                 document.getElementById('dayWorkForm')?.reset();
                 document.getElementById('materialsGrandTotalBD').value = '';
                 document.getElementById('laborGrandTotalBD').value = '';
+
+                // Reset all searchable selects
+                Object.values(window.searchableSelects).forEach(select => {
+                    if (select && select.reset) select.reset();
+                });
+
                 updateGrandTotal();
             }
         }
+
 
         function deleteRow(element) {
             const row = element.closest('tr');
@@ -880,6 +1123,42 @@
                 }
             }
         }
+
+        window.calculateMaterialTotal = function (row) {
+            const qtyInput = document.querySelector(`[name="qty${row}"]`);
+            const bdInput = document.getElementById(`unitBD${row}`);
+            if (!qtyInput || !bdInput) return;
+
+            const qty = parseFloat(qtyInput.value || 0);
+            const unitPrice = parseFloat(bdInput.value || 0);
+            const total = qty * unitPrice;
+
+            const totalBDInput = document.getElementById(`totalBD${row}`);
+            if (totalBDInput) {
+                totalBDInput.value = total.toFixed(3);
+            }
+
+            calculateMaterialsGrandTotal();
+        };
+        window.calculateMaterialsGrandTotal = function () {
+            let grandTotal = 0;
+
+            for (let i = 1; i <= 100; i++) {
+                const totalBDInput = document.getElementById(`totalBD${i}`);
+                if (totalBDInput) {
+                    grandTotal += parseFloat(totalBDInput.value || 0);
+                }
+            }
+
+            const grandBDElement = document.getElementById('materialsGrandTotalBD');
+            if (grandBDElement) {
+                grandBDElement.value = grandTotal.toFixed(3);
+            }
+
+            if (typeof updateGrandTotal === 'function') {
+                updateGrandTotal();
+            }
+        };
 
         // ============================================
         // FORM SUBMIT HANDLER - IMPORTANT!
@@ -959,105 +1238,16 @@
 
                 window.materialsDatabase = materialsDatabase;
                 console.log('✅ Loaded', materialsDatabase.length, 'materials');
-                populateMaterialDropdowns();
+
+                // Initialize searchable selects for rows 1 and 2
+                window.searchableSelects[1] = new SearchableSelect('wrapper-1', 1, materialsDatabase);
+                window.searchableSelects[2] = new SearchableSelect('wrapper-2', 2, materialsDatabase);
+
             } catch (error) {
                 console.error('❌ Error loading materials:', error);
                 alert('Failed to load materials from database');
             }
         }
-
-        function populateMaterialDropdowns() {
-            const dropdowns = document.querySelectorAll('select[id^="material-"]');
-            console.log('🔄 Populating', dropdowns.length, 'dropdowns');
-
-            dropdowns.forEach(dropdown => {
-                populateSingleDropdown(dropdown);
-            });
-        }
-
-        function populateSingleDropdown(dropdown) {
-            if (!materialsDatabase || materialsDatabase.length === 0) {
-                console.log('⚠️ Materials not loaded yet');
-                return;
-            }
-
-            dropdown.innerHTML = '<option value="">Select Material...</option>';
-
-            const categorized = {};
-            materialsDatabase.forEach(m => {
-                if (!categorized[m.category]) categorized[m.category] = [];
-                categorized[m.category].push(m);
-            });
-
-            Object.keys(categorized).sort().forEach(category => {
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = category;
-
-                categorized[category].forEach(material => {
-                    const option = document.createElement('option');
-                    option.value = JSON.stringify(material);
-                    option.textContent = `${material.name} - ${material.unit}`;
-                    optgroup.appendChild(option);
-                });
-
-                dropdown.appendChild(optgroup);
-            });
-        }
-
-        window.populateSingleDropdown = populateSingleDropdown;
-
-        window.handleMaterialSelection = function (rowNumber) {
-            const dropdown = document.getElementById(`material-${rowNumber}`);
-            if (!dropdown || !dropdown.value) return;
-
-            const material = JSON.parse(dropdown.value);
-            console.log('📦 Row', rowNumber, '- Selected:', material.name);
-
-            const quantityInput = document.querySelector(`[name="qty${rowNumber}"]`);
-            if (quantityInput) quantityInput.value = 1;
-
-            const bdInput = document.getElementById(`unitBD${rowNumber}`);
-            if (bdInput) bdInput.value = material.price.toFixed(3);
-
-            calculateMaterialTotal(rowNumber);
-        };
-
-        window.calculateMaterialTotal = function (row) {
-            const qtyInput = document.querySelector(`[name="qty${row}"]`);
-            const bdInput = document.getElementById(`unitBD${row}`);
-            if (!qtyInput || !bdInput) return;
-
-            const qty = parseFloat(qtyInput.value || 0);
-            const unitPrice = parseFloat(bdInput.value || 0);
-            const total = qty * unitPrice;
-
-            const totalBDInput = document.getElementById(`totalBD${row}`);
-            if (totalBDInput) {
-                totalBDInput.value = total.toFixed(3);
-            }
-
-            calculateMaterialsGrandTotal();
-        };
-
-        window.calculateMaterialsGrandTotal = function () {
-            let grandTotal = 0;
-
-            for (let i = 1; i <= 100; i++) {
-                const totalBDInput = document.getElementById(`totalBD${i}`);
-                if (totalBDInput) {
-                    grandTotal += parseFloat(totalBDInput.value || 0);
-                }
-            }
-
-            const grandBDElement = document.getElementById('materialsGrandTotalBD');
-            if (grandBDElement) {
-                grandBDElement.value = grandTotal.toFixed(3);
-            }
-
-            if (typeof updateGrandTotal === 'function') {
-                updateGrandTotal();
-            }
-        };
 
         // ============================================
         // UPDATE REQUEST STATUS IN REQUESTS COLLECTION
@@ -1095,7 +1285,7 @@
         }
 
         // ============================================
-        // SUBMIT TO FIREBASE
+        // SUBMIT TO FIREBASE - UPDATED
         // ============================================
         window.submitJobDescription = async function () {
             console.log('📤 FIREBASE SUBMIT FUNCTION CALLED!');
@@ -1105,25 +1295,27 @@
                 const location = document.getElementById('Location').value;
                 const college = document.getElementById('college').value;
                 const startDate = document.getElementById('startDate').value;
+                const EndDate = document.getElementById('EndDate').value;
 
                 if (!requestNo || !startDate) {
                     alert('⚠️ Request Number and Starting Date are required!');
                     return false;
                 }
 
-                // Collect materials
+                // Collect materials - UPDATED TO USE SEARCHABLE SELECT
                 const materials = [];
                 for (let i = 1; i <= 100; i++) {
-                    const dropdown = document.getElementById(`material-${i}`);
+                    const searchableSelect = window.searchableSelects[i];
                     const qtyInput = document.querySelector(`[name="qty${i}"]`);
                     const unitBDInput = document.getElementById(`unitBD${i}`);
                     const totalBDInput = document.getElementById(`totalBD${i}`);
 
-                    if (dropdown && dropdown.value && qtyInput && parseFloat(qtyInput.value) > 0) {
-                        const materialData = JSON.parse(dropdown.value);
+                    if (searchableSelect && searchableSelect.getSelectedMaterial() &&
+                        qtyInput && parseFloat(qtyInput.value) > 0) {
+                        const material = searchableSelect.getSelectedMaterial();
                         materials.push({
                             serialNo: i,
-                            materialName: materialData.name,
+                            materialName: material.name,
                             quantity: parseFloat(qtyInput.value),
                             unitCost: parseFloat(unitBDInput.value || 0),
                             totalCost: parseFloat(totalBDInput.value || 0)
@@ -1181,6 +1373,7 @@
                     location: location,
                     college: college,
                     startingDate: startDate,
+                    EndDate: EndDate,
                     materials: materials,
                     materialsGrandTotal: materialsTotalBD,
                     labor: labor,
@@ -1192,21 +1385,16 @@
 
                 console.log('📋 Saving to Firestore:', jobDescription);
 
-                // Save Job Description
                 const docRef = await addDoc(collection(db, 'JobDescriptions'), jobDescription);
                 console.log('✅ Job Description saved! Document ID:', docRef.id);
 
-                // Update Request status
                 await updateRequestStatus(requestNo, jobStatus);
 
-                // Show success message
                 alert(`✅ Job Description submitted successfully!\n\nDocument ID: ${docRef.id}\nStatus: ${jobStatus}`);
 
-                // Clear localStorage
                 localStorage.removeItem('selectedRequestData');
                 localStorage.removeItem('selectedRequestNumber');
 
-                // Redirect to all-requests page
                 setTimeout(() => {
                     window.location.href = 'all-requests.html';
                 }, 1000);
@@ -1287,55 +1475,413 @@
                 console.log('ℹ️ No request data found - user came directly to page');
             }
         });
+        const viewMode = sessionStorage.getItem('viewMode');
+        const jobDescDataString = sessionStorage.getItem('jobDescriptionData');
+
+        if (viewMode === 'true' && jobDescDataString) {
+            console.log('📋 Auto-filling Job Description with saved data...');
+
+            try {
+                const jobDescData = JSON.parse(jobDescDataString);
+
+                // Clear the viewMode flag
+                sessionStorage.removeItem('viewMode');
+
+                // Fill basic information
+                if (jobDescData['Request Number']) {
+                    document.getElementById('request-number').value = jobDescData['Request Number'];
+                }
+                if (jobDescData.Location) {
+                    document.getElementById('location').value = jobDescData.Location;
+                }
+                if (jobDescData.College) {
+                    document.getElementById('college').value = jobDescData.College;
+                }
+
+                // Fill dates
+                if (jobDescData['Start Date'] || jobDescData.startingDate) {
+                    document.getElementById('starting-date').value = jobDescData['Start Date'] || jobDescData.startingDate;
+                }
+                if (jobDescData['End Date'] || jobDescData.endDate) {
+                    document.getElementById('expected-end-date').value = jobDescData['End Date'] || jobDescData.endDate;
+                }
+
+                // Fill materials
+                if (jobDescData.Materials && Array.isArray(jobDescData.Materials)) {
+                    // Clear existing rows except the first one
+                    const tbody = document.getElementById("material-rows");
+                    while (tbody.children.length > 1) {
+                        tbody.removeChild(tbody.lastChild);
+                    }
+
+                    jobDescData.Materials.forEach((material, index) => {
+                        if (index === 0) {
+                            // Fill first row
+                            document.getElementById('materialNo1').value = material.no || '';
+                            document.getElementById('materialName1').value = material.name || '';
+                            document.getElementById('unit1').value = material.unit || '';
+                            document.getElementById('quantity1').value = material.quantity || '';
+                            document.getElementById('unitBD1').value = material.price || '';
+                            calculateMaterialTotal(1);
+                        } else {
+                            // Add new row
+                            addMaterialRow();
+                            const rowNum = index + 1;
+                            document.getElementById(`materialNo${rowNum}`).value = material.no || '';
+                            document.getElementById(`materialName${rowNum}`).value = material.name || '';
+                            document.getElementById(`unit${rowNum}`).value = material.unit || '';
+                            document.getElementById(`quantity${rowNum}`).value = material.quantity || '';
+                            document.getElementById(`unitBD${rowNum}`).value = material.price || '';
+                            calculateMaterialTotal(rowNum);
+                        }
+                    });
+                }
+
+                // Fill labor information
+                const laborTypes = ['mason', 'carpentry', 'painter', 'electrician', 'ac', 'plumber', 'guardian', 'unskilled'];
+
+                laborTypes.forEach(type => {
+                    const laborKey = type.charAt(0).toUpperCase() + type.slice(1);
+
+                    if (jobDescData[laborKey]) {
+                        const laborData = jobDescData[laborKey];
+
+                        // Fill number of workers
+                        const numElement = document.getElementById(`no-${type}`);
+                        if (numElement && laborData.no) {
+                            numElement.value = laborData.no;
+                        }
+
+                        // Fill days
+                        const daysElement = document.getElementById(`days-${type}`);
+                        if (daysElement && laborData.days) {
+                            daysElement.value = laborData.days;
+                        }
+
+                        // Fill hours
+                        const hoursElement = document.getElementById(`hours-${type}`);
+                        if (hoursElement && laborData.hours) {
+                            hoursElement.value = laborData.hours;
+                        }
+
+                        // Fill daily salary
+                        const salaryElement = document.getElementById(`salary-${type}`);
+                        if (salaryElement && laborData.dailySalary) {
+                            salaryElement.value = laborData.dailySalary;
+                        }
+
+                        // Recalculate total for this labor type
+                        calculateLaborTotal(type);
+                    }
+                });
+
+                // Recalculate all totals
+                calculateMaterialsGrandTotal();
+                updateGrandTotal();
+
+                console.log('✅ Job Description auto-filled successfully!');
+
+                // Show success message
+                setTimeout(() => {
+                    alert('✅ Job Description loaded successfully!\n\nYou can now view or edit the materials and labor information.');
+                }, 500);
+
+            } catch (error) {
+                console.error('❌ Error auto-filling Job Description:', error);
+                alert('Error loading saved data: ' + error.message);
+            }
+        }
+
     </script>
     <script>
-        // ✅ AUTO-FILL FORM FROM REQUEST DATA
         window.addEventListener('DOMContentLoaded', function () {
-            console.log('🔄 Checking for request data...');
+            console.log('🔄 Job Description page loaded, checking for data...');
 
-            // Get the stored request data
+            // ============================================
+            // PART 1: AUTO-FILL FROM REQUEST DATA (for new Job Descriptions)
+            // ============================================
             const requestData = localStorage.getItem('selectedRequestData');
             const requestNumber = localStorage.getItem('selectedRequestNumber');
 
             if (requestData && requestNumber) {
-                console.log('✅ Found request data, auto-filling form...');
+                console.log('✅ Found request data, auto-filling basic info...');
 
                 try {
                     const request = JSON.parse(requestData);
-                    console.log('📦 Request data:', request);
 
-                    // ✅ Auto-fill Request Number → id="requestNo"
+                    // Fill Request Number
                     const requestNoField = document.getElementById('requestNo');
                     if (requestNoField) {
                         requestNoField.value = requestNumber;
-                        console.log('✅ Filled Request Number:', requestNumber);
                     }
 
-                    // ✅ Auto-fill Job Location → id="Location"
+                    // Fill Location
                     const locationField = document.getElementById('Location');
                     if (locationField) {
                         locationField.value = request.Location || 'N/A';
-                        console.log('✅ Filled Job Location:', request.Location);
                     }
 
-                    // ✅ Auto-fill College → id="college"
+                    // Fill College
                     const collegeField = document.getElementById('college');
                     if (collegeField) {
                         collegeField.value = request.College || 'N/A';
-                        console.log('✅ Filled Dept./College/Deanship:', request.College);
                     }
-
-                    console.log('✅ Auto-fill complete!');
-
-                    // Optional: Clear localStorage after successful fill
-                    // localStorage.removeItem('selectedRequestData');
-                    // localStorage.removeItem('selectedRequestNumber');
 
                 } catch (error) {
                     console.error('❌ Error parsing request data:', error);
                 }
+            }
+
+            // ============================================
+            // PART 2: AUTO-FILL FROM JOB DESCRIPTION DATA (for viewing existing)
+            // ============================================
+            const viewMode = localStorage.getItem('viewMode');
+            const jobDescDataString = localStorage.getItem('jobDescriptionData');
+
+            if (viewMode === 'view' && jobDescDataString) {
+                console.log('📋 VIEW MODE DETECTED - Loading saved Job Description...');
+
+                try {
+                    const jobDescData = JSON.parse(jobDescDataString);
+                    console.log('📦 Job Description data:', jobDescData);
+
+                    // Clear the view mode flag
+                    localStorage.removeItem('viewMode');
+
+                    // ✅ HIDE SUBMIT AND RESET BUTTONS IN VIEW MODE
+                    const formActions = document.querySelector('.form-actions');
+                    if (formActions) {
+                        formActions.style.display = 'none';
+                        console.log('✅ Submit/Reset buttons hidden');
+                    }
+
+                    // ===========================================
+                    // FILL BASIC INFORMATION
+                    // ===========================================
+
+                    const requestNoField = document.getElementById('requestNo');
+                    if (requestNoField && jobDescData.requestNumber) {
+                        requestNoField.value = jobDescData.requestNumber;
+                    }
+
+                    const locationField = document.getElementById('Location');
+                    if (locationField && jobDescData.location) {
+                        locationField.value = jobDescData.location;
+                    }
+
+                    const collegeField = document.getElementById('college');
+                    if (collegeField && jobDescData.college) {
+                        collegeField.value = jobDescData.college;
+                    }
+
+                    // ===========================================
+                    // FILL DATES
+                    // ===========================================
+
+                    const startDateField = document.getElementById('startDate');
+                    if (startDateField && jobDescData.startingDate) {
+                        startDateField.value = jobDescData.startingDate;
+                    }
+
+                    const endDateField = document.getElementById('EndDate');
+                    if (endDateField && jobDescData.EndDate) {
+                        endDateField.value = jobDescData.EndDate;
+                    }
+
+                    // ===========================================
+                    // FILL MATERIALS - FIXED TO SHOW MATERIAL NAMES
+                    // ===========================================
+
+                    // ===========================================
+                    // FILL MATERIALS - USING READONLY INPUTS
+                    // ===========================================
+
+                    if (jobDescData.materials && Array.isArray(jobDescData.materials)) {
+                        console.log('📦 Loading', jobDescData.materials.length, 'materials...');
+
+                        jobDescData.materials.forEach((material, index) => {
+                            const rowNum = index + 1;
+
+                            console.log(`Material ${rowNum}:`, material);
+
+                            // Add new row if needed (skip first 2 rows as they already exist)
+                            if (rowNum > 2) {
+                                if (typeof window.addMaterialRow === 'function') {
+                                    window.addMaterialRow();
+                                }
+                            }
+
+                            // Wait for row to be created
+                            setTimeout(() => {
+                                // ✅ Convert to readonly input in view mode
+                                const searchableSelect = window.searchableSelects[rowNum];
+                                if (searchableSelect && material.materialName) {
+                                    searchableSelect.convertToReadonly(material.materialName);
+                                }
+
+                                // Fill quantity
+                                const qtyInput = document.querySelector(`[name="qty${rowNum}"]`);
+                                if (qtyInput && material.quantity !== undefined) {
+                                    qtyInput.value = material.quantity;
+                                    qtyInput.readOnly = true;
+                                    qtyInput.style.backgroundColor = '#f8f9fa';
+                                    qtyInput.style.cursor = 'default';
+                                }
+
+                                // Fill unit cost
+                                const unitBDInput = document.getElementById(`unitBD${rowNum}`);
+                                if (unitBDInput && material.unitCost !== undefined) {
+                                    unitBDInput.value = material.unitCost.toFixed(3);
+                                }
+
+                                // Fill total cost
+                                const totalBDInput = document.getElementById(`totalBD${rowNum}`);
+                                if (totalBDInput && material.totalCost !== undefined) {
+                                    totalBDInput.value = material.totalCost.toFixed(3);
+                                }
+
+                            }, index * 150);
+                        });
+
+                        // Recalculate materials grand total
+                        setTimeout(() => {
+                            if (typeof window.calculateMaterialsGrandTotal === 'function') {
+                                window.calculateMaterialsGrandTotal();
+                                console.log('✅ Materials grand total recalculated');
+                            }
+                        }, jobDescData.materials.length * 150 + 500);
+                    }
+
+                    // ===========================================
+                    // FILL LABOR INFORMATION
+                    // ===========================================
+
+                    // ===========================================
+                    // FILL LABOR INFORMATION
+                    // ===========================================
+
+                    if (jobDescData.labor && Array.isArray(jobDescData.labor)) {
+                        console.log('👷 Loading labor information...');
+
+                        jobDescData.labor.forEach(laborItem => {
+                            const type = laborItem.specialization.toLowerCase();
+                            console.log(`Loading ${type}:`, laborItem);
+
+                            // Number of workers
+                            const noField = document.querySelector(`[name="${type}No"]`);
+                            if (noField && laborItem.numberOfWorkers !== undefined) {
+                                noField.value = laborItem.numberOfWorkers;
+                                noField.readOnly = true;
+                                noField.style.backgroundColor = '#f8f9fa';
+                                noField.style.cursor = 'default';
+                            }
+
+                            // Days
+                            const daysField = document.querySelector(`[name="${type}Days"]`);
+                            if (daysField && laborItem.days !== undefined) {
+                                daysField.value = laborItem.days;
+                                daysField.readOnly = true;
+                                daysField.style.backgroundColor = '#f8f9fa';
+                                daysField.style.cursor = 'default';
+                            }
+
+                            // Hours
+                            const hrsField = document.querySelector(`[name="${type}Hrs"]`);
+                            if (hrsField && laborItem.hours !== undefined) {
+                                hrsField.value = laborItem.hours;
+                                hrsField.readOnly = true;
+                                hrsField.style.backgroundColor = '#f8f9fa';
+                                hrsField.style.cursor = 'default';
+                            }
+
+                            // Daily Salary
+                            const salaryField = document.querySelector(`[name="${type}SalaryBD"]`);
+                            if (salaryField && laborItem.dailySalary !== undefined) {
+                                salaryField.value = laborItem.dailySalary.toFixed(3);
+                                salaryField.readOnly = true;
+                                salaryField.style.backgroundColor = '#f8f9fa';
+                                salaryField.style.cursor = 'default';
+                            }
+
+                            // Total (read from saved data)
+                            const totalField = document.querySelector(`[name="${type}TotalBD"]`);
+                            if (totalField && laborItem.totalCost !== undefined) {
+                                totalField.value = laborItem.totalCost.toFixed(3);
+                            }
+                        });
+                    }
+
+                    // ✅ Hide delete buttons and Add button in view mode
+                    setTimeout(() => {
+                        // Hide delete icons
+                        const deleteButtons = document.querySelectorAll('.materials-table img[alt="Delete"]');
+                        deleteButtons.forEach(btn => {
+                            btn.style.display = 'none';
+                        });
+
+                        // Hide Add button
+                        const addButton = document.querySelector('button[onclick="addMaterialRow()"]');
+                        if (addButton) {
+                            addButton.closest('tr').style.display = 'none';
+                        }
+
+                        // Make date fields readonly
+                        const startDateField = document.getElementById('startDate');
+                        if (startDateField) {
+                            startDateField.readOnly = true;
+                            startDateField.style.backgroundColor = '#f8f9fa';
+                            startDateField.style.cursor = 'default';
+                        }
+
+                        const endDateField = document.getElementById('EndDate');
+                        if (endDateField) {
+                            endDateField.readOnly = true;
+                            endDateField.style.backgroundColor = '#f8f9fa';
+                            endDateField.style.cursor = 'default';
+                        }
+                    }, 100);
+
+                    // ===========================================
+                    // FILL GRAND TOTALS DIRECTLY FROM SAVED DATA
+                    // ===========================================
+
+                    setTimeout(() => {
+                        console.log('🔢 Setting grand totals from saved data...');
+
+                        // Materials Grand Total
+                        if (jobDescData.materialsGrandTotal !== undefined) {
+                            const materialsGrandEl = document.getElementById('materialsGrandTotalBD');
+                            if (materialsGrandEl) {
+                                materialsGrandEl.value = jobDescData.materialsGrandTotal.toFixed(3);
+                            }
+                        }
+
+                        // Labor Grand Total
+                        if (jobDescData.laborGrandTotal !== undefined) {
+                            const laborGrandEl = document.getElementById('laborGrandTotalBD');
+                            if (laborGrandEl) {
+                                laborGrandEl.value = jobDescData.laborGrandTotal.toFixed(3);
+                            }
+                        }
+
+                        // Overall Grand Total
+                        if (jobDescData.estimatedTotalCost !== undefined) {
+                            const grandTotalDisplay = document.getElementById('grandTotalDisplay');
+                            if (grandTotalDisplay) {
+                                grandTotalDisplay.textContent = jobDescData.estimatedTotalCost.toFixed(3);
+                            }
+                        }
+
+                        console.log('✅ Job Description loaded successfully!');
+
+                    }, 2500);
+
+                } catch (error) {
+                    console.error('❌ Error loading Job Description:', error);
+                    alert('Error loading data:\n\n' + error.message);
+                }
             } else {
-                console.log('ℹ️ No request data found - user came directly to page');
+                console.log('ℹ️ No Job Description data to load (creating new)');
             }
         });
     </script>

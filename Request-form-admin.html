@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request</title>
+    <title>Existing Request</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link rel="icon" type="image/x-icon" href="images/worksheet.png">
     <style>
@@ -266,32 +266,59 @@
             min-height: 80px;
         }
 
-        button {
-            transition: background 0.2s;
+        /* footer wrapper */
+        .form-footer {
+            display: flex;
+            justify-content: flex-end;
+            /* pushes button to the right */
+            padding-top: 16px;
+            gap: 12px;
+        }
+
+        /* button styling */
+        .next-btn,
+        .form-footer button {
             width: 35%;
+            /* remove fixed 35% width */
             padding: 14px;
+            /* keep your padding */
             background: #d4b483;
-            color: rgb(0, 0, 0);
+            color: #000;
             border: none;
             border-radius: 8px;
             font-size: 16px;
-            font-weight: 60;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: #e5e7eb;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             font-family: serif;
-            font-weight: bold;
-            margin-left: 23px;
+            margin-right: 40px;
+            /* remove margin-left */
 
         }
 
-        button:hover:not(:disabled) {
-            background: #e3e2e7;
+        /* focus and hover for accessibility */
+        .next-btn:focus {
+            outline: 3px solid rgba(11, 94, 215, 0.25);
+            outline-offset: 2px;
         }
 
-        button:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
+        .next-btn:hover {
+            filter: brightness(0.98);
+        }
+
+        /* mobile: center the button and increase tappable area */
+        @media (max-width: 480px) {
+            .form-footer {
+                justify-content: center;
+                padding: 18px 12px 6px;
+            }
+
+            .next-btn {
+                width: 90%;
+                max-width: 360px;
+                padding: 14px 18px;
+            }
         }
 
         .hidden {
@@ -429,6 +456,35 @@
         .remove-file:hover {
             background: #fecaca;
         }
+
+        /* Error message styling */
+        #request-number-error {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Input error state */
+        input.error {
+            border-color: #d32f2f !important;
+            background-color: #ffebee !important;
+        }
+
+        /* Input success state */
+        input.success {
+            border-color: #4caf50 !important;
+            background-color: #f1f8f4 !important;
+        }
+
+        /* Loading state for button */
+        .next-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed !important;
+        }
     </style>
 
 </head>
@@ -549,7 +605,9 @@
                     placeholder="Please describe the maintenance issue in detail..." required></textarea>
             </div>
 
-            <button type="submit">Submit</button>
+            <div class="form-footer">
+                <button class="btn next-btn" onclick="validateAndProceed()">Next</button>
+            </div>
         </form>
     </div>
 
@@ -674,7 +732,7 @@
     <script type="module">
         // Firebase SDK
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -690,16 +748,116 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // ============================================
-        // FORM SUBMISSION
-        // ============================================
+        // ✅ Track if we've already shown alert for current value
+        let lastCheckedValue = '';
+        let hasShownAlert = false;
+
+        // ✅ FUNCTION TO CHECK IF REQUEST NUMBER EXISTS
+        async function checkRequestNumberExists(requestNumber) {
+            try {
+                console.log('🔍 Checking if request number exists:', requestNumber);
+                const requestsRef = collection(db, 'Requests');
+                const querySnapshot = await getDocs(requestsRef);
+
+                let exists = false;
+                querySnapshot.forEach((doc) => {
+                    if (doc.data()['Request Number'] === requestNumber) {
+                        exists = true;
+                    }
+                });
+
+                console.log('✅ Check complete. Exists:', exists);
+                return exists;
+            } catch (error) {
+                console.error('❌ Error checking request number:', error);
+                return false;
+            }
+        }
+
+        // ✅ IMPROVED REAL-TIME VALIDATION - ALERT ONLY ONCE
+        const requestNumberInput = document.getElementById('request-number');
+
+        requestNumberInput.addEventListener('input', function () {
+            // Reset alert flag when user starts typing
+            if (this.value !== lastCheckedValue) {
+                hasShownAlert = false;
+            }
+        });
+
+        requestNumberInput.addEventListener('blur', async function () {
+            const requestNumber = this.value.trim();
+
+            if (!requestNumber) {
+                // Clear error styling if empty
+                this.style.borderColor = '';
+                this.style.backgroundColor = '';
+                const errorMsg = document.getElementById('request-number-error');
+                if (errorMsg) {
+                    errorMsg.remove();
+                }
+                return;
+            }
+
+            // Only check if this is a new value
+            if (requestNumber === lastCheckedValue) {
+                return; // Don't check again for the same value
+            }
+
+            const exists = await checkRequestNumberExists(requestNumber);
+
+            if (exists) {
+                // Update last checked value
+                lastCheckedValue = requestNumber;
+
+                // Show error styling
+                this.style.borderColor = '#d32f2f';
+                this.style.backgroundColor = '#ffebee';
+
+                // Create or update error message
+                let errorMsg = document.getElementById('request-number-error');
+                if (!errorMsg) {
+                    errorMsg = document.createElement('p');
+                    errorMsg.id = 'request-number-error';
+                    errorMsg.style.color = '#d32f2f';
+                    errorMsg.style.fontSize = '14px';
+                    errorMsg.style.marginTop = '5px';
+                    errorMsg.style.fontWeight = '600';
+                    this.parentElement.appendChild(errorMsg);
+                }
+                errorMsg.textContent = '❌ This request number already exists. Please use a different number.';
+
+                // Show alert ONLY ONCE
+                if (!hasShownAlert) {
+                    alert('⚠️ Request Number "' + requestNumber + '" already exists in the database!\n\nPlease enter a different request number.');
+                    hasShownAlert = true;
+                }
+
+                // Focus back to input but don't select - let admin edit
+                this.focus();
+
+            } else {
+                // Clear error styling if request number is unique
+                this.style.borderColor = '#4caf50';
+                this.style.backgroundColor = '#f1f8f4';
+                const errorMsg = document.getElementById('request-number-error');
+                if (errorMsg) {
+                    errorMsg.remove();
+                }
+
+                // Reset tracking
+                lastCheckedValue = '';
+                hasShownAlert = false;
+            }
+        });
+
+        // ✅ ENHANCED FORM SUBMISSION - NO ALERT (already shown during blur)
         window.submitForm = async function (event) {
             event.preventDefault();
 
             console.log('🚀 Form submission started...');
 
-            // Get values using CORRECT IDs from your HTML
-            const requestNumber = document.getElementById('request-number').value;
+            // Get values
+            const requestNumber = document.getElementById('request-number').value.trim();
             const name = document.getElementById('name').value.trim();
             const college = document.getElementById('college').value;
             const dept = document.getElementById('dept').value || 'N/A';
@@ -710,64 +868,82 @@
             const email = document.getElementById('email').value.trim();
             const description = document.getElementById('description').value.trim();
 
-            console.log('📋 Form data collected:', {
-                requestNumber,
-                name,
-                college,
-                dept,
-                locationType,
-                location,
-                officeRoom,
-                mobileNumber,
-                email,
-                description
-            });
-
             // Validate required fields
             if (!requestNumber) {
                 alert('❌ Request Number is required');
+                document.getElementById('request-number').focus();
                 return false;
             }
 
             if (!name) {
                 alert('❌ Name is required');
+                document.getElementById('name').focus();
                 return false;
             }
 
             if (!mobileNumber) {
                 alert('❌ Mobile Number is required');
+                document.getElementById('number').focus();
                 return false;
             }
 
             if (!email) {
                 alert('❌ Email is required');
+                document.getElementById('email').focus();
                 return false;
             }
 
             if (!description) {
                 alert('❌ Issue Description is required');
+                document.getElementById('description').focus();
                 return false;
             }
 
-            // Validate that either Location Type OR College is filled
             if (!locationType && !college) {
                 alert('❌ Please fill either Location Type or College / Center');
                 return false;
             }
 
-            // If location type is selected, location must be selected
             if (locationType && location === 'N/A') {
                 alert('❌ Please select a location');
+                document.getElementById('locationOptions').focus();
+                return false;
+            }
+
+            // ✅ SILENT CHECK - if duplicate, just show visual error (alert already shown)
+            console.log('🔍 Final check for duplicate request number...');
+            const exists = await checkRequestNumberExists(requestNumber);
+
+            if (exists) {
+                // Just update visual feedback - NO ALERT
+                document.getElementById('request-number').style.borderColor = '#d32f2f';
+                document.getElementById('request-number').style.backgroundColor = '#ffebee';
+                document.getElementById('request-number').focus();
+
+                // Make sure error message is visible
+                let errorMsg = document.getElementById('request-number-error');
+                if (!errorMsg) {
+                    errorMsg = document.createElement('p');
+                    errorMsg.id = 'request-number-error';
+                    errorMsg.style.color = '#d32f2f';
+                    errorMsg.style.fontSize = '14px';
+                    errorMsg.style.marginTop = '5px';
+                    errorMsg.style.fontWeight = '600';
+                    requestNumberInput.parentElement.appendChild(errorMsg);
+                }
+                errorMsg.textContent = '❌ This request number already exists. Please use a different number.';
+
                 return false;
             }
 
             try {
                 // Show loading state
-                const submitButton = document.querySelector('button[type="submit"]');
+                const submitButton = document.querySelector('.next-btn');
                 const originalButtonText = submitButton.textContent;
                 submitButton.disabled = true;
                 submitButton.textContent = 'Submitting...';
                 submitButton.style.backgroundColor = '#9ca3af';
+                submitButton.style.cursor = 'not-allowed';
 
                 console.log('💾 Saving to Firebase...');
 
@@ -806,32 +982,51 @@
                 // Reset form
                 document.getElementById('maintenanceForm').reset();
 
-                // Generate new request number
-                const timestamp = Date.now().toString().slice(-6);
-                const randomNum = Math.floor(Math.random() * 1000);
-
                 // Hide conditional fields
                 document.getElementById('departmentContainer').style.display = 'none';
                 document.getElementById('locationOptionsContainer').style.display = 'none';
                 document.getElementById('officeRoomContainer').style.display = 'none';
                 document.getElementById('collegeContainer').style.display = 'none';
 
+                // Clear tracking variables
+                lastCheckedValue = '';
+                hasShownAlert = false;
+
+                // Clear any error messages
+                const errorMsg = document.getElementById('request-number-error');
+                if (errorMsg) {
+                    errorMsg.remove();
+                }
+
+                // Reset input styling
+                document.getElementById('request-number').style.borderColor = '';
+                document.getElementById('request-number').style.backgroundColor = '';
+
                 // Re-enable button
                 submitButton.disabled = false;
                 submitButton.textContent = originalButtonText;
                 submitButton.style.backgroundColor = '#d4b483';
+                submitButton.style.cursor = 'pointer';
 
                 console.log('🎉 Form reset successfully!');
+
+                // Optionally redirect
+                setTimeout(() => {
+                    if (confirm('Would you like to view all requests?')) {
+                        window.location.href = 'all-requests.html';
+                    }
+                }, 1000);
 
             } catch (error) {
                 console.error('❌ Error submitting request:', error);
                 alert(`❌ Failed to submit request.\n\nError: ${error.message}`);
 
                 // Re-enable button
-                const submitButton = document.querySelector('button[type="submit"]');
+                const submitButton = document.querySelector('.next-btn');
                 submitButton.disabled = false;
-                submitButton.textContent = 'Submit';
+                submitButton.textContent = 'Next';
                 submitButton.style.backgroundColor = '#d4b483';
+                submitButton.style.cursor = 'pointer';
             }
 
             return false;

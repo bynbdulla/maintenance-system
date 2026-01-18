@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material Report</title>
+    <link rel="icon" type="image/x-icon" href="images/tools.png" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: rgb(4, 4, 118);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 7.4rem;
+            position: relative;
+        }
+
+        #admin-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 15px;
+            margin-top: 9px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            padding-left: 3rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            margin-left: 4.5rem;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        .account-menu {
+            position: absolute;
+            top: 40px;
+            right: 34px;
+            z-index: 1000;
+        }
+
+        button[onclick="addMaterialRow()"]:hover {
+            background: rgb(20, 20, 160) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(4, 4, 118, 0.3);
+        }
+
+        button[onclick="addMaterialRow()"]:active {
+            transform: translateY(0);
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4A5568;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .account-icon img {
+            width: 50%;
+            object-fit: cover;
+        }
+
+        .account-icon:hover {
+            background-color: #f0f4f8;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .dropdown-header .admin-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .dropdown-header .admin-email {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-item .icon {
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 8px 0;
+        }
+
+        .dropdown-item.logout {
+            color: #d32f2f;
+        }
+
+        .dropdown-item.logout:hover {
+            background-color: #ffebee;
+        }
+
+        /* Form Container Styles */
+        .form-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, rgb(4, 4, 118) 0%, rgb(20, 20, 160) 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .form-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .form-header .university-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .form-header .university-info span {
+            font-size: 14px;
+        }
+
+        .form-body {
+            padding: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section-title {
+            background: #f0f4ff;
+            padding: 12px 20px;
+            border-left: 4px solid rgb(4, 4, 118);
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: rgb(4, 4, 118);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-row.three-cols {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .form-row.four-cols {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group label .arabic {
+            float: right;
+            color: #666;
+        }
+
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgb(4, 4, 118);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(4, 4, 118, 0.1);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Materials Table */
+        .materials-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .materials-table th,
+        .materials-table td {
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .materials-table th {
+            background: rgb(4, 4, 118);
+            color: white;
+            font-weight: 600;
+        }
+
+        .materials-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .materials-table .sn {
+            width: 50px;
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+
+        /* Labor Table */
+        .labor-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .labor-table th,
+        .labor-table td {
+            border: 1px solid #e0e0e0;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .labor-table th {
+            background: rgb(4, 4, 118);
+            color: white;
+            font-weight: 600;
+        }
+
+        .labor-table input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .labor-table .specialization {
+            text-align: left;
+            padding-left: 15px;
+            background: #f9f9f9;
+        }
+
+        /* Totals Section */
+        .totals-section {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .total-row:last-child {
+            border-bottom: none;
+        }
+
+        .total-row label {
+            font-weight: 600;
+            color: rgb(4, 4, 118);
+        }
+
+        .total-row .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: rgb(4, 4, 118);
+        }
+
+        /* Submit Button */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: rgb(4, 4, 118);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: rgb(20, 20, 160);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(4, 4, 118, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+
+        .material-select {
+            width: 85%;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .searchable-select-wrapper {
+            position: relative;
+            width: 85%;
+            display: inline-block;
+        }
+
+        .searchable-select-wrapper input.search-input {
+            width: 100%;
+            height: 30px;
+            padding: 4px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        .searchable-select-wrapper input.search-input:focus {
+            outline: none;
+            border-color: rgb(4, 4, 118);
+        }
+
+        .searchable-select-wrapper .dropdown-list {
+            position: absolute;
+            top: 32px;
+            left: 0;
+            right: 0;
+            max-height: 250px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .searchable-select-wrapper .dropdown-list.show {
+            display: block;
+        }
+
+        .searchable-select-wrapper .dropdown-category {
+            background: #f0f4ff;
+            padding: 6px 10px;
+            font-weight: 600;
+            font-size: 12px;
+            color: rgb(4, 4, 118);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .searchable-select-wrapper .dropdown-option {
+            padding: 8px 10px;
+            cursor: pointer;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .searchable-select-wrapper .dropdown-option:hover {
+            background: #f5f7fa;
+        }
+
+        .searchable-select-wrapper .dropdown-option.selected {
+            background: #e8f0fe;
+            color: rgb(4, 4, 118);
+        }
+
+        .searchable-select-wrapper .no-results {
+            padding: 12px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="header-title">
+                <img id="admin-img" src="images/optimizing.png" alt="Dashboard">
+                <h1>Job Description</h1>
+            </div>
+        </div>
+    </header>
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-body">
+                <form id="dayWorkForm">
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <span>Basic Information</span>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Request No.</label>
+                                <input type="text" id="requestNo" class="readonly-field" readonly style="width:25rem;">
+                            </div>
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" id="Location" class="readonly-field" readonly style="width:25rem;">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Department</label>
+                                <input type="text" id="college" class="readonly-field" readonly style="width:25rem;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <span>List of Materials</span>
+                        </div>
+
+                        <table class="materials-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 8%;">S.N</th>
+                                    <th style="width: 42%;">Material</th>
+                                    <th style="width: 12%;">Qty</th>
+                                    <th style="width: 18%;">Unit Cost (BD)</th>
+                                    <th style="width: 20%;">Total (BD)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materialsTableBody">
+                                <!-- Material rows will be added here dynamically -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" style="text-align: right; padding-right: 20px;">Total</td>
+                                    <td id="materialsTotalBD" style="text-align: center;">0.000</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Required Labor Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <span>List of Labor</span>
+                        </div>
+
+                        <table class="labor-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 6%;">S.N</th>
+                                    <th style="width: 30%;">Labor</th>
+                                    <th style="width: 10%;">Workers</th>
+                                    <th style="width: 10%;">Days</th>
+                                    <th style="width: 10%;">Hours</th>
+                                    <th style="width: 14%;">Wage (BD)</th>
+                                    <th style="width: 20%;">Total (BD)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="laborTableBody">
+                                <!-- Labor rows will be added here dynamically -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" style="text-align: right; padding-right: 20px;">Total</td>
+                                    <td id="laborTotalBD" style="text-align: center;">0.000</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Totals & Dates Section -->
+                    <div class="form-section">
+                        <div class="totals-section">
+                            <div class="total-row">
+                                <label>Cost of Materials & Manpower</label>
+                                <div class="value"><span id="grandTotalDisplay">0.000</span> BD</div>
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label>Start Date </label>
+                                <input type="date" id="startDate" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>End Date </label>
+                                <input type="date" id="EndDate" readonly>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            query,
+            orderBy,
+            addDoc,
+            serverTimestamp,
+            where,
+            updateDoc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+            authDomain: "requests-ffdd6.firebaseapp.com",
+            projectId: "requests-ffdd6",
+            storageBucket: "requests-ffdd6.firebasestorage.app",
+            messagingSenderId: "316405880275",
+            appId: "1:316405880275:web:f4b271583e903ac639cb26"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', function () {
+            console.log('🔄 Loading Job Description data...');
+
+            const viewMode = localStorage.getItem('viewMode');
+            const jobDescDataString = localStorage.getItem('jobDescriptionData');
+
+            if (viewMode === 'view' && jobDescDataString) {
+                try {
+                    const jobDescData = JSON.parse(jobDescDataString);
+                    console.log('📦 Job Description data:', jobDescData);
+                    console.log('Materials:', jobDescData.materials);
+                    console.log('Labor:', jobDescData.labor);
+                    console.log('Request Number:', jobDescData.requestNumber);
+
+                    localStorage.removeItem('viewMode');
+
+                    // Fill basic information
+                    document.getElementById('requestNo').value = jobDescData.requestNumber || '';
+                    document.getElementById('Location').value = jobDescData.location || '';
+                    document.getElementById('college').value = jobDescData.college || '';
+                    document.getElementById('startDate').value = jobDescData.startingDate || '';
+                    const endDateField = document.getElementById('EndDate');
+                    if (endDateField && (jobDescData.EndDate || jobDescData.endDate)) {
+                        endDateField.value = jobDescData.EndDate || jobDescData.endDate || '';
+                    }
+
+                    // Fill materials table
+                    if (jobDescData.materials && Array.isArray(jobDescData.materials)) {
+                        const materialsTableBody = document.getElementById('materialsTableBody');
+                        let materialsTotalCost = 0;
+
+                        jobDescData.materials.forEach((material, index) => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${index + 1}</td>
+                                <td style="text-align: left; padding-left: 20px;">${material.materialName || ''}</td>
+                                <td>${material.quantity || 0}</td>
+                                <td>${(material.unitCost || 0).toFixed(3)}</td>
+                                <td>${(material.totalCost || 0).toFixed(3)}</td>
+                            `;
+                            materialsTableBody.appendChild(row);
+                            materialsTotalCost += material.totalCost || 0;
+                        });
+
+                        document.getElementById('materialsTotalBD').textContent = materialsTotalCost.toFixed(3);
+                    }
+
+                    // Fill labor table
+                    if (jobDescData.labor && Array.isArray(jobDescData.labor)) {
+                        const laborTableBody = document.getElementById('laborTableBody');
+                        let laborTotalCost = 0;
+
+                        jobDescData.labor.forEach((laborItem, index) => {
+                            const row = document.createElement('tr');
+
+                            row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td style="text-align: left; padding-left: 20px;">${laborItem.specialization || ''}</td>
+                            <td>${laborItem.numberOfWorkers || 0}</td>
+                            <td>${laborItem.days || 0}</td>
+                            <td>${laborItem.hours || 0}</td>
+                            <td>${(laborItem.dailySalary || 0).toFixed(3)}</td>
+                            <td>${(laborItem.totalCost || 0).toFixed(3)}</td>
+                            `;
+                            laborTableBody.appendChild(row);
+                            laborTotalCost += laborItem.totalCost || 0;
+                        });
+
+                        document.getElementById('laborTotalBD').textContent = laborTotalCost.toFixed(3);
+                    }
+
+                    // Fill grand total
+                    const grandTotal = jobDescData.estimatedTotalCost || 0;
+                    document.getElementById('grandTotalDisplay').textContent = grandTotal.toFixed(3);
+
+                    console.log('✅ Job Description loaded successfully!');
+
+                } catch (error) {
+                    console.error('❌ Error loading Job Description:', error);
+                    alert('Error loading data: ' + error.message);
+                }
+            } else {
+                console.log('ℹ️ No Job Description data found');
+                alert('No job description data found. Please select a job description to view.');
+            }
+        });
+    </script>
+</body>
+
+</html>
