@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Maintenance Requests</title>
     <link rel="icon" type="image/x-icon" href="images/dashboard.png">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -60,14 +60,6 @@
             margin: 0;
         }
 
-        /* Account Menu */
-        .account-menu {
-            position: absolute;
-            top: 40px;
-            right: 34px;
-            z-index: 1000;
-        }
-
         .account-icon {
             width: 40px;
             height: 40px;
@@ -91,72 +83,42 @@
             transform: scale(1.05);
         }
 
-        .dropdown-menu {
-            position: absolute;
-            top: 55px;
-            right: 0;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            min-width: 220px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .dropdown-menu.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-header {
-            padding: 16px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .dropdown-header .admin-name {
-            font-weight: 600;
-            color: #333;
-            font-size: 15px;
-        }
-
-        .dropdown-header .admin-email {
-            color: #666;
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        .dropdown-item {
-            padding: 12px 16px;
+        /* Loading State */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 12px;
-            color: #333;
-            text-decoration: none;
-            transition: background-color 0.2s ease;
-            cursor: pointer;
-            font-size: 14px;
+            z-index: 9999;
         }
 
-        .dropdown-item:hover {
-            background-color: #f5f5f5;
+        .loading-content {
+            text-align: center;
         }
 
-        .dropdown-divider {
-            height: 1px;
-            background-color: #e0e0e0;
-            margin: 8px 0;
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid rgb(4, 4, 118);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
 
-        .dropdown-item.logout {
-            color: #d32f2f;
-        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
 
-        .dropdown-item.logout:hover {
-            background-color: #ffebee;
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Main Container */
@@ -165,7 +127,7 @@
             max-width: 100%;
             margin: 0;
             padding: 20px;
-            margin-bottom: 10rem;
+            margin-bottom: 1rem;
         }
 
         .dashboard-row {
@@ -238,6 +200,37 @@
             margin: 4px 0;
             font-size: 16px;
             line-height: 1.4;
+        }
+
+        /* Account Menu */
+        .account-menu {
+            position: absolute;
+            top: 40px;
+            right: 34px;
+            z-index: 1000;
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .account-icon img {
+            width: 50%;
+            object-fit: cover;
+        }
+
+        .account-icon:hover {
+            background-color: #f0f4f8;
+            transform: scale(1.05);
         }
 
         /* Quick Actions */
@@ -334,7 +327,7 @@
             margin-top: 1rem;
         }
 
-        /* Section Title */
+        /* Charts Section */
         .section-title {
             font-size: 2.5rem;
             color: var(--black);
@@ -397,10 +390,12 @@
         .charts-section {
             margin: 3rem 1.5rem;
             margin-bottom: 4rem;
+            border-top: 1px solid rgb(204, 204, 204);
         }
 
         .section-title {
             font-size: 2.5rem;
+            margin-top: 2rem;
             color: #333;
             margin-bottom: 15px;
             font-weight: 800;
@@ -430,8 +425,8 @@
             background: white;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(4, 4, 118, 0.1);
+            /* box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); */
+            border: 2.5px solid rgba(4, 4, 118, 0.158);
             transition: all 0.3s ease;
         }
 
@@ -445,6 +440,8 @@
             color: rgb(4, 4, 118);
             margin-bottom: 20px;
             font-weight: bold;
+            margin-left: 2rem;
+
         }
 
         .chart-wrapper {
@@ -491,16 +488,52 @@
             display: inline-block;
         }
 
-        /* Responsive: 1 chart per row on mobile */
         @media (max-width: 768px) {
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
             .chart-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                padding-left: 30px;
+            }
+
+            .header-title {
+                margin-left: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-row {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .notification-box {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .add-new {
+                flex-direction: column;
+                gap: 1rem;
             }
         }
     </style>
 </head>
 
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p style="color: rgb(4, 4, 118); font-size: 18px; font-weight: bold;">Loading Dashboard...</p>
+        </div>
+    </div>
     <header class="admin-header">
         <div class="header-content">
             <div class="header-title">
@@ -529,19 +562,19 @@
                 <div class="notification-card approved" onclick="viewApprovedRequests()">
                     <h4><img src="images/approved.png" class="notification-img"> Approved by Director</h4>
                     <div class="notification-text">
-                        <p>You have <strong>3</strong> Requests</p>
+                        <p>You have <strong id="approved-count">0</strong> Requests</p>
                     </div>
                 </div>
                 <div class="notification-card rejected" onclick="viewRejectedRequests()">
                     <h4><img src="images/reject.png" class="notification-img"> Rejected Requests</h4>
                     <div class="notification-text">
-                        <p>You have <strong>3</strong> requests</p>
+                        <p>You have <strong id="rejected-count">0</strong> requests</p>
                     </div>
                 </div>
                 <div class="notification-card processing" onclick="viewProcessingRequests()">
                     <h4><img src="images/processing.png" class="notification-img"> Processing Requests</h4>
                     <div class="notification-text">
-                        <p>You have <strong>3</strong> Requests</p>
+                        <p>You have <strong id="processing-count">0</strong> Requests</p>
                     </div>
                 </div>
             </div>
@@ -559,25 +592,25 @@
 
                 <div class="action-grid">
                     <a href="all-requests.html" class="action-card">
-                        <div class="badge">10</div>
+                        <div class="badge" id="total-badge">0</div>
                         <img src="images/job-application.png" alt="Requests">
-                        <h3>Requests</h3>
+                        <h3>All Requests</h3>
                     </a>
 
                     <a href="all-requests.html?status=processing" class="action-card">
-                        <div class="badge">7</div>
+                        <div class="badge" id="processing-badge">0</div>
                         <img src="images/processing.png" alt="Processing">
                         <h3>Processing</h3>
                     </a>
 
                     <a href="#" onclick="goToThisMonth(); return false;" class="action-card">
-                        <div class="badge">20</div>
+                        <div class="badge" id="month-badge">0</div>
                         <img src="images/calendar (1).png" alt="This Month">
                         <h3>This Month</h3>
                     </a>
 
                     <a href="all-requests.html?status=completed" class="action-card">
-                        <div class="badge">7</div>
+                        <div class="badge" id="completed-badge">0</div>
                         <img src="images/checklist.png" alt="Done">
                         <h3>Completed</h3>
                     </a>
@@ -594,26 +627,26 @@
         <div class="chart-grid">
             <!-- Requests Status Chart -->
             <div class="chart-container">
-                <h3 class="chart-title">Request Status Overview</h3>
+                <h3 class="chart-title">Request Status </h3>
                 <div class="custom-legend">
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #e64d4d;"></span>
+                        <span class="legend-color" style="background-color: #E68787;border:1px solid #e64d4d;"></span>
                         Waiting
                     </span>
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #FFB700;"></span>
+                        <span class="legend-color" style="background-color: #FCDB8D;border:1px solid #FFB700;"></span>
                         Approved
                     </span>
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #42794d;"></span>
+                        <span class="legend-color" style="background-color: #9BE8AE;border:1px solid #42794d;"></span>
                         Processing
                     </span>
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #09034D;"></span>
+                        <span class="legend-color" style="background-color: #95B2F5;border:1px solid #09034D;"></span>
                         Completed
                     </span>
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #b9b0b0;"></span>
+                        <span class="legend-color" style="background-color: #BAB3B3;border:1px solid #000000;"></span>
                         Rejected
                     </span>
                 </div>
@@ -640,35 +673,9 @@
                 </div>
             </div>
 
-            <!-- Request Categories -->
-            <div class="chart-container">
-                <h3 class="chart-title">Request Categories Distribution</h3>
-                <div class="custom-legend">
-                    <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #8d6e3a;"></span>
-                        Electrical
-                    </span>
-                    <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #c89d63;"></span>
-                        Plumbing
-                    </span>
-                    <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: rgb(4, 4, 118);"></span>
-                        HVAC
-                    </span>
-                    <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #42794d;"></span>
-                        General
-                    </span>
-                </div>
-                <div class="chart-wrapper">
-                    <canvas id="categoriesChart"></canvas>
-                </div>
-            </div>
-
             <!-- Response Time Chart -->
             <div class="chart-container">
-                <h3 class="chart-title">Average Response Time (Hours)</h3>
+                <h3 class="chart-title">Top Departments</h3>
                 <div class="custom-legend">
                     <span class="legend-item">
                         <span class="legend-color"
@@ -682,7 +689,7 @@
                     </span>
                 </div>
                 <div class="chart-wrapper">
-                    <canvas id="responseChart"></canvas>
+                    <canvas id="TopDept"></canvas>
                 </div>
             </div>
         </div>
@@ -691,7 +698,19 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        console.log('🚀 Starting dashboard...');
+
+        // Check Chart.js
+        if (typeof Chart === 'undefined') {
+            console.error('❌ Chart.js not loaded');
+            document.getElementById('loadingOverlay').innerHTML =
+                '<div style="text-align: center; color: red;"><h2>Error: Chart.js failed to load</h2><p>Please check your internet connection</p></div>';
+        } else {
+            console.log('✅ Chart.js loaded successfully');
+        }
+
 
         const firebaseConfig = {
             apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
@@ -703,304 +722,263 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        console.log('🔍 Checking authentication...');
-
-        // Check authentication state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in
-                console.log('✅ Authenticated as:', user.email);
-
-                // Update UI with user info
-                const adminEmailElement = document.querySelector('.admin-email');
-                const adminNameElement = document.querySelector('.admin-name');
-
-                if (adminEmailElement) {
-                    adminEmailElement.textContent = user.email;
-                }
-
-                if (adminNameElement) {
-                    // Extract name from email (before @)
-                    const displayName = user.displayName || user.email.split('@')[0];
-                    adminNameElement.textContent = displayName;
-                }
-
-                // Also save to session storage for consistency
-                sessionStorage.setItem('isAuthenticated', 'true');
-                sessionStorage.setItem('userEmail', user.email);
-                sessionStorage.setItem('userName', user.displayName || user.email.split('@')[0]);
-
-            } else {
-                // User is not signed in - redirect to login
-                console.log('❌ Not authenticated - redirecting to login');
-                sessionStorage.clear();
-                window.location.replace('login.html');
-            }
-        });
-
-        // Global logout function
-        window.logout = async function () {
-            if (confirm('Are you sure you want to logout?')) {
-                try {
-                    console.log('🚪 Logging out...');
-
-                    // Clear session
-                    sessionStorage.clear();
-                    localStorage.clear();
-
-                    // Sign out from Firebase
-                    await signOut(auth);
-
-                    console.log('✅ Logged out successfully');
-                    window.location.replace('login.html');
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    // Force logout even if Firebase fails
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    window.location.replace('login.html');
-                }
-            }
-        };
-    </script>
-
-    <script>
-        // Account dropdown
-        const accountIcon = document.getElementById('accountIcon');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-
-        accountIcon.addEventListener('click', function (e) {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', function (e) {
-            if (!accountIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.classList.remove('active');
-            }
-        });
-
-        document.getElementById('this-month-box').addEventListener('click', () => {
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-            const formatDate = date => date.toISOString().split('T')[0];
-            const startDate = formatDate(firstDay);
-            const endDate = formatDate(lastDay);
-
-            const filteredRequests = allRequests.filter(req => {
-                const reqDate = formatDate(new Date(req.date));
-                return reqDate >= startDate && reqDate <= endDate;
-            });
-
-            displayRequests(filteredRequests);
-        });
-
-
-        // Navigation functions
-        function viewProcessingRequests() {
+        // Global navigation functions (moved outside module scope)
+        window.viewProcessingRequests = function () {
             window.location.href = 'all-requests.html?status=processing';
-        }
+        };
 
-        function viewRejectedRequests() {
-            window.location.href = 'all-requests.html?status=Rejected';
-        }
+        window.viewRejectedRequests = function () {
+            window.location.href = 'all-requests.html?status=rejected';
+        };
 
-        function viewApprovedRequests() {
+        window.viewApprovedRequests = function () {
             window.location.href = 'all-requests.html?status=approved';
-        }
+        };
 
-
-        // Add this function to your existing script section
-        function goToThisMonth() {
+        window.goToThisMonth = function () {
             const today = new Date();
             const year = today.getFullYear();
-            const month = today.getMonth() + 1; // Add 1 because getMonth() is 0-indexed (0=Jan, 11=Dec)
+            const month = today.getMonth() + 1;
 
-            // Format month and day with leading zeros
             const monthStr = String(month).padStart(2, '0');
-
-            // First day of current month (always day 1)
             const firstDayStr = `${year}-${monthStr}-01`;
 
-            // Last day of current month
-            const lastDay = new Date(year, month, 0).getDate(); // Day 0 of next month = last day of current month
+            const lastDay = new Date(year, month, 0).getDate();
             const lastDayStr = `${year}-${monthStr}-${String(lastDay).padStart(2, '0')}`;
 
-            console.log('This Month Filter:');
-            console.log('From:', firstDayStr);
-            console.log('To:', lastDayStr);
-
-            // Redirect with date filters
+            console.log('This Month Filter:', firstDayStr, 'to', lastDayStr);
             window.location.href = `all-requests.html?dateFrom=${firstDayStr}&dateTo=${lastDayStr}`;
+        };
+
+        async function loadAndDisplay() {
+            try {
+                console.log('📊 Fetching from Firebase...');
+
+                const requestsRef = collection(db, "Requests");
+                const snapshot = await getDocs(requestsRef);
+
+                console.log(`✅ Got ${snapshot.size} requests`);
+
+                // Initialize counters
+                const stats = {
+                    waiting: 0,
+                    approved: 0,
+                    processing: 0,
+                    completed: 0,
+                    rejected: 0
+                };
+
+                const categories = {
+                    electrical: 0,
+                    plumbing: 0,
+                    hvac: 0,
+                    general: 0
+                };
+
+                const months = new Array(12).fill(0);
+                const completedMonths = new Array(12).fill(0);
+
+                let thisMonthCount = 0;
+                const currentMonth = new Date().getMonth();
+                const currentYear = new Date().getFullYear();
+
+                //Process all requests 
+                snapshot.forEach((doc) => {
+                    const req = doc.data();
+
+                    // Status counting (handle both "Status" and "status")
+                    const status = (req.Status || req.status || 'waiting').toLowerCase();
+
+                    if (status.includes('wait')) stats.waiting++;
+                    else if (status.includes('approved')) stats.approved++;
+                    else if (status.includes('process')) stats.processing++;
+                    else if (status.includes('complete')) stats.completed++;
+                    else if (status.includes('reject')) stats.rejected++;
+                    else stats.waiting++;
+
+                    // Category counting
+                    const cat = (req.category || 'general').toLowerCase();
+                    if (categories[cat] !== undefined) categories[cat]++;
+                    else categories.general++;
+
+                    // Monthly data and this month count
+                    try {
+                        let date;
+                        if (req['Request Date']?.toDate) date = req['Request Date'].toDate();
+                        else if (req.Date?.toDate) date = req.Date.toDate();
+                        else date = new Date(req['Request Date'] || req.Date);
+
+                        const monthIndex = date.getMonth();
+                        const year = date.getFullYear();
+
+                        months[monthIndex]++;
+                        if (status.includes('complete')) completedMonths[monthIndex]++;
+
+                        // Count this month's requests
+                        if (monthIndex === currentMonth && year === currentYear) {
+                            thisMonthCount++;
+                        }
+                    } catch (e) {
+                        console.warn('Date parsing error:', e);
+                    }
+                });
+
+                console.log('📊 Final Stats:', stats);
+                console.log('📊 Categories:', categories);
+                console.log('📊 This Month:', thisMonthCount);
+
+                // Update notification counts
+                document.getElementById('approved-count').textContent = stats.approved;
+                document.getElementById('rejected-count').textContent = stats.rejected;
+                document.getElementById('processing-count').textContent = stats.processing;
+
+                // Update badge counts
+                const totalRequests = snapshot.size;
+                document.getElementById('total-badge').textContent = totalRequests;
+                document.getElementById('processing-badge').textContent = stats.processing;
+                document.getElementById('month-badge').textContent = thisMonthCount;
+                document.getElementById('completed-badge').textContent = stats.completed;
+
+                // Configure Chart.js defaults
+                Chart.defaults.font.family = "Georgia";
+                Chart.defaults.plugins.legend.display = false; // Hide default legend, we use custom
+
+                // Chart 1: Status Doughnut Chart
+                new Chart(document.getElementById('statusChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Waiting', 'Approved', 'Processing', 'Completed', 'Rejected'],
+                        datasets: [{
+                            data: [stats.waiting, stats.approved, stats.processing, stats.completed, stats.rejected],
+                            backgroundColor: ['#E68787', '#FCDB8D', '#9BE8AE', '#95B2F5', '#BAB3B3'],
+                            borderWidth: 2,
+                            borderColor: '#1A1919'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${label}: ${value} `;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Chart 2: Monthly Trends Line Chart
+                new Chart(document.getElementById('trendsChart'), {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Total Requests',
+                            data: months,
+                            borderColor: 'rgb(4, 4, 118)',
+                            backgroundColor: 'rgba(4, 4, 118, 0.1)',
+                            tension: 0.4,
+                            borderWidth: 3,
+                            fill: true
+                        }, {
+                            label: 'Completed',
+                            data: completedMonths,
+                            borderColor: '#42794d',
+                            backgroundColor: 'rgba(66, 121, 77, 0.1)',
+                            tension: 0.4,
+                            borderWidth: 3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+                // Chart 4: Response Time Bar Chart (with sample data)
+                new Chart(document.getElementById('TopDept'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Top Departments',
+                            data: [8, 12, 6, 10, 7, 9],
+                            backgroundColor: 'rgb(4, 4, 118)',
+                            borderWidth: 0
+                        }, {
+                            label: 'Target Time',
+                            data: [10, 10, 10, 10, 10, 10],
+                            backgroundColor: '#b08d57',
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Hours'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                console.log('✅ All charts created successfully!');
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
+
+            } catch (error) {
+                console.error('❌ Error loading dashboard:', error);
+                document.getElementById('loadingOverlay').innerHTML =
+                    `<div style="text-align: center; color: red; padding: 40px;">
+                        <h2>⚠️ Error Loading Dashboard</h2>
+                        <p>${error.message}</p>
+                        <p style="font-size: 14px; color: #666;">Check console for details</p>
+                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: rgb(4, 4, 118); color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            Retry
+                        </button>
+                    </div>`;
+            }
         }
 
-        // Chart.js Configuration
-        Chart.defaults.font.family = "Georgia, 'Times New Roman', Times, serif";
-        Chart.defaults.plugins.legend.display = false;
-
-        // 1. Request Status Doughnut Chart
-        const statusCtx = document.getElementById('statusChart').getContext('2d');
-        new Chart(statusCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Processing', 'Completed', 'Rejected', 'Pending'],
-                datasets: [{
-                    data: [7, 45, 3, 5],
-                    backgroundColor: [
-                        'rgb(4, 4, 118)',
-                        '#42794d',
-                        '#FFB74D',
-                        '#b08d57'
-                    ],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                const label = context.label || '';
-                                const value = context.parsed || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = ((value / total) * 100).toFixed(1);
-                                return `${label}: ${value} (${percentage}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // 2. Monthly Trends Line Chart
-        const trendsCtx = document.getElementById('trendsChart').getContext('2d');
-        new Chart(trendsCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Total Requests',
-                    data: [12, 19, 15, 25, 22, 30, 28, 35, 32, 40, 38, 45],
-                    borderColor: 'rgb(4, 4, 118)',
-                    backgroundColor: 'rgba(4, 4, 118, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 3
-                }, {
-                    label: 'Completed',
-                    data: [10, 15, 12, 20, 18, 25, 24, 30, 28, 35, 33, 40],
-                    borderColor: '#42794d',
-                    backgroundColor: 'rgba(66, 121, 77, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 10
-                        }
-                    }
-                }
-            }
-        });
-
-        // 3. Categories Horizontal Bar Chart
-        const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
-        new Chart(categoriesCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Electrical', 'Plumbing', 'HVAC', 'General Maintenance'],
-                datasets: [{
-                    data: [25, 18, 15, 22],
-                    backgroundColor: [
-                        '#8d6e3a',
-                        '#c89d63',
-                        'rgb(4, 4, 118)',
-                        '#42794d'
-                    ],
-                    borderWidth: 0,
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 5
-                        }
-                    }
-                }
-            }
-        });
-
-        // 4. Response Time Multi-axis Chart
-        const responseCtx = document.getElementById('responseChart').getContext('2d');
-        new Chart(responseCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Response Time',
-                    data: [8, 12, 6, 10, 7, 9],
-                    backgroundColor: 'rgb(4, 4, 118)',
-                    borderRadius: 6,
-                    yAxisID: 'y'
-                }, {
-                    label: 'Target Time',
-                    data: [10, 10, 10, 10, 10, 10],
-                    type: 'line',
-                    borderColor: '#b08d57',
-                    backgroundColor: 'rgba(176, 141, 87, 0.1)',
-                    borderWidth: 3,
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    yAxisID: 'y'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) {
-                                return value + 'h';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
+        // Start loading data
+        loadAndDisplay();
     </script>
 </body>
 
