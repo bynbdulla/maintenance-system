@@ -505,7 +505,7 @@
             <div class="form-group">
                 <label for="request-number">Request Number <span class="required">*</span></label>
                 <input type="text" id="request-number" name="requestNumber"
-                    placeholder="Enter request number (e.g., RQ-2512993)" required style="width: 410px;">
+                    placeholder="Enter request number (e.g., 2512993)" required style="width: 410px;">
             </div>
 
             <!-- Name -->
@@ -594,8 +594,8 @@
 
             <!-- Email -->
             <div class="form-group">
-                <label for="email">Email <span class="required">*</span></label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <label for="email">Email </label>
+                <input type="email" id="email" name="email" placeholder="Enter your email">
             </div>
 
             <!-- Issue Description -->
@@ -604,9 +604,25 @@
                 <textarea id="description" name="description"
                     placeholder="Please describe the maintenance issue in detail..." required></textarea>
             </div>
+            <!-- Date -->
+            <div class="form-group">
+                <label for="date">Date <span class="required">*</span></label>
+                <input type="date" id="date">
+            </div>
+            <!-- Status -->
+            <div class="form-group">
+                <label for="status">Status<span class="required">*</span></label>
+                <select id="status" name="status" required>
+                    <option>Waiting</option>
+                    <option>Approved</option>
+                    <option>Processing</option>
+                    <option selected>Completed</option>
+                    <option>Rejected</option>
+                </select>
+            </div>
 
             <div class="form-footer">
-                <button class="btn next-btn" onclick="validateAndProceed()">Next</button>
+                <button type="button" onclick="saveRequestToFirebase()">Next</button>
             </div>
         </form>
     </div>
@@ -727,14 +743,17 @@
             console.log('📄 Admin request form loaded');
             initializeDropdowns();
         });
+        
+        // date 
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').setAttribute('max', today);
+
     </script>
 
     <script type="module">
-        // Firebase SDK
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
             authDomain: "requests-ffdd6.firebaseapp.com",
@@ -744,292 +763,54 @@
             appId: "1:316405880275:web:f4b271583e903ac639cb26"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // ✅ Track if we've already shown alert for current value
-        let lastCheckedValue = '';
-        let hasShownAlert = false;
-
-        // ✅ FUNCTION TO CHECK IF REQUEST NUMBER EXISTS
-        async function checkRequestNumberExists(requestNumber) {
-            try {
-                console.log('🔍 Checking if request number exists:', requestNumber);
-                const requestsRef = collection(db, 'Requests');
-                const querySnapshot = await getDocs(requestsRef);
-
-                let exists = false;
-                querySnapshot.forEach((doc) => {
-                    if (doc.data()['Request Number'] === requestNumber) {
-                        exists = true;
-                    }
-                });
-
-                console.log('✅ Check complete. Exists:', exists);
-                return exists;
-            } catch (error) {
-                console.error('❌ Error checking request number:', error);
-                return false;
-            }
+        // Generate unique request number
+        function generateRequestNumber() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `REQ-${year}${month}${day}-${random}`;
         }
 
-        // ✅ IMPROVED REAL-TIME VALIDATION - ALERT ONLY ONCE
-        const requestNumberInput = document.getElementById('request-number');
-
-        requestNumberInput.addEventListener('input', function () {
-            // Reset alert flag when user starts typing
-            if (this.value !== lastCheckedValue) {
-                hasShownAlert = false;
-            }
-        });
-
-        requestNumberInput.addEventListener('blur', async function () {
-            const requestNumber = this.value.trim();
-
-            if (!requestNumber) {
-                // Clear error styling if empty
-                this.style.borderColor = '';
-                this.style.backgroundColor = '';
-                const errorMsg = document.getElementById('request-number-error');
-                if (errorMsg) {
-                    errorMsg.remove();
-                }
-                return;
-            }
-
-            // Only check if this is a new value
-            if (requestNumber === lastCheckedValue) {
-                return; // Don't check again for the same value
-            }
-
-            const exists = await checkRequestNumberExists(requestNumber);
-
-            if (exists) {
-                // Update last checked value
-                lastCheckedValue = requestNumber;
-
-                // Show error styling
-                this.style.borderColor = '#d32f2f';
-                this.style.backgroundColor = '#ffebee';
-
-                // Create or update error message
-                let errorMsg = document.getElementById('request-number-error');
-                if (!errorMsg) {
-                    errorMsg = document.createElement('p');
-                    errorMsg.id = 'request-number-error';
-                    errorMsg.style.color = '#d32f2f';
-                    errorMsg.style.fontSize = '14px';
-                    errorMsg.style.marginTop = '5px';
-                    errorMsg.style.fontWeight = '600';
-                    this.parentElement.appendChild(errorMsg);
-                }
-                errorMsg.textContent = '❌ This request number already exists. Please use a different number.';
-
-                // Show alert ONLY ONCE
-                if (!hasShownAlert) {
-                    alert('⚠️ Request Number "' + requestNumber + '" already exists in the database!\n\nPlease enter a different request number.');
-                    hasShownAlert = true;
-                }
-
-                // Focus back to input but don't select - let admin edit
-                this.focus();
-
-            } else {
-                // Clear error styling if request number is unique
-                this.style.borderColor = '#4caf50';
-                this.style.backgroundColor = '#f1f8f4';
-                const errorMsg = document.getElementById('request-number-error');
-                if (errorMsg) {
-                    errorMsg.remove();
-                }
-
-                // Reset tracking
-                lastCheckedValue = '';
-                hasShownAlert = false;
-            }
-        });
-
-        // ✅ ENHANCED FORM SUBMISSION - NO ALERT (already shown during blur)
-        window.submitForm = async function (event) {
-            event.preventDefault();
-
-            console.log('🚀 Form submission started...');
-
-            // Get values
-            const requestNumber = document.getElementById('request-number').value.trim();
-            const name = document.getElementById('name').value.trim();
-            const college = document.getElementById('college').value;
-            const dept = document.getElementById('dept').value || 'N/A';
-            const locationType = document.getElementById('locationType').value;
-            const location = document.getElementById('locationOptions').value || 'N/A';
-            const officeRoom = document.getElementById('officeRoom').value.trim() || 'N/A';
-            const mobileNumber = document.getElementById('number').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const description = document.getElementById('description').value.trim();
-
-            // Validate required fields
-            if (!requestNumber) {
-                alert('❌ Request Number is required');
-                document.getElementById('request-number').focus();
-                return false;
-            }
-
-            if (!name) {
-                alert('❌ Name is required');
-                document.getElementById('name').focus();
-                return false;
-            }
-
-            if (!mobileNumber) {
-                alert('❌ Mobile Number is required');
-                document.getElementById('number').focus();
-                return false;
-            }
-
-            if (!email) {
-                alert('❌ Email is required');
-                document.getElementById('email').focus();
-                return false;
-            }
-
-            if (!description) {
-                alert('❌ Issue Description is required');
-                document.getElementById('description').focus();
-                return false;
-            }
-
-            if (!locationType && !college) {
-                alert('❌ Please fill either Location Type or College / Center');
-                return false;
-            }
-
-            if (locationType && location === 'N/A') {
-                alert('❌ Please select a location');
-                document.getElementById('locationOptions').focus();
-                return false;
-            }
-
-            // ✅ SILENT CHECK - if duplicate, just show visual error (alert already shown)
-            console.log('🔍 Final check for duplicate request number...');
-            const exists = await checkRequestNumberExists(requestNumber);
-
-            if (exists) {
-                // Just update visual feedback - NO ALERT
-                document.getElementById('request-number').style.borderColor = '#d32f2f';
-                document.getElementById('request-number').style.backgroundColor = '#ffebee';
-                document.getElementById('request-number').focus();
-
-                // Make sure error message is visible
-                let errorMsg = document.getElementById('request-number-error');
-                if (!errorMsg) {
-                    errorMsg = document.createElement('p');
-                    errorMsg.id = 'request-number-error';
-                    errorMsg.style.color = '#d32f2f';
-                    errorMsg.style.fontSize = '14px';
-                    errorMsg.style.marginTop = '5px';
-                    errorMsg.style.fontWeight = '600';
-                    requestNumberInput.parentElement.appendChild(errorMsg);
-                }
-                errorMsg.textContent = '❌ This request number already exists. Please use a different number.';
-
-                return false;
-            }
-
+        // Save to Firebase
+        window.saveRequestToFirebase = async function () {
             try {
-                // Show loading state
-                const submitButton = document.querySelector('.next-btn');
-                const originalButtonText = submitButton.textContent;
-                submitButton.disabled = true;
-                submitButton.textContent = 'Submitting...';
-                submitButton.style.backgroundColor = '#9ca3af';
-                submitButton.style.cursor = 'not-allowed';
+                // ⚠️ CHANGE THESE IDs TO MATCH YOUR FORM FIELDS
+                const locationType = document.getElementById('locationType')?.value || '';
+                const mobileNumber = document.getElementById('mobileNumber')?.value || '';
+                const email = document.getElementById('email')?.value || '';
+                const description = document.getElementById('description')?.value || '';
 
-                console.log('💾 Saving to Firebase...');
-
-                // Prepare location string
-                let fullLocation = location;
-                if (officeRoom && officeRoom !== 'N/A') {
-                    fullLocation = `${location} - ${officeRoom}`;
+                if (!mobileNumber || !description) {
+                    alert('Please fill in all required fields');
+                    return false;
                 }
+
+                const requestNumber = generateRequestNumber();
 
                 const requestData = {
-                    "Request Number": requestNumber,
-                    "Status": "Waiting",
-                    "Request Date": serverTimestamp(),
-                    "Name": name,
-                    "College": college || 'N/A',
-                    "Department": dept,
-                    "Location": fullLocation,
-                    "Mobile Number": mobileNumber,
-                    "Email": email,
-                    "Description": description,
-                    "approvedBy": null,
-                    "rejectedBy": null,
-                    "approvalDate": null,
-                    "rejectionDate": null,
-                    "rejectionReason": null
+                    'Request Number': requestNumber,
+                    'Location Type': locationType,
+                    'Mobile Number': mobileNumber,
+                    'Email': email,
+                    'Description': description,
+                    'Status': 'Waiting',
+                    'Request Date': serverTimestamp()
                 };
 
-                console.log('📤 Submitting data:', requestData);
+                await addDoc(collection(db, 'Requests'), requestData);
 
-                const docRef = await addDoc(collection(db, 'Requests'), requestData);
-
-                console.log('✅ Document created with ID:', docRef.id);
-
-                alert(`✅ Request submitted successfully!\n\nRequest Number: ${requestNumber}\n\nYou will receive updates via email.`);
-
-                // Reset form
-                document.getElementById('maintenanceForm').reset();
-
-                // Hide conditional fields
-                document.getElementById('departmentContainer').style.display = 'none';
-                document.getElementById('locationOptionsContainer').style.display = 'none';
-                document.getElementById('officeRoomContainer').style.display = 'none';
-                document.getElementById('collegeContainer').style.display = 'none';
-
-                // Clear tracking variables
-                lastCheckedValue = '';
-                hasShownAlert = false;
-
-                // Clear any error messages
-                const errorMsg = document.getElementById('request-number-error');
-                if (errorMsg) {
-                    errorMsg.remove();
-                }
-
-                // Reset input styling
-                document.getElementById('request-number').style.borderColor = '';
-                document.getElementById('request-number').style.backgroundColor = '';
-
-                // Re-enable button
-                submitButton.disabled = false;
-                submitButton.textContent = originalButtonText;
-                submitButton.style.backgroundColor = '#d4b483';
-                submitButton.style.cursor = 'pointer';
-
-                console.log('🎉 Form reset successfully!');
-
-                // Optionally redirect
-                setTimeout(() => {
-                    if (confirm('Would you like to view all requests?')) {
-                        window.location.href = 'all-requests.html';
-                    }
-                }, 1000);
+                alert(`✅ Request submitted!\nRequest Number: ${requestNumber}`);
+                return true;
 
             } catch (error) {
-                console.error('❌ Error submitting request:', error);
-                alert(`❌ Failed to submit request.\n\nError: ${error.message}`);
-
-                // Re-enable button
-                const submitButton = document.querySelector('.next-btn');
-                submitButton.disabled = false;
-                submitButton.textContent = 'Next';
-                submitButton.style.backgroundColor = '#d4b483';
-                submitButton.style.cursor = 'pointer';
+                alert('❌ Error: ' + error.message);
+                return false;
             }
-
-            return false;
         };
     </script>
 </body>

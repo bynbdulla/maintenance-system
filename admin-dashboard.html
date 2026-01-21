@@ -426,7 +426,7 @@
             padding: 30px;
             border-radius: 15px;
             /* box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); */
-            border: 2.5px solid rgba(4, 4, 118, 0.158);
+            border: 2.5px solid rgba(4, 4, 118, 0.64);
             transition: all 0.3s ease;
         }
 
@@ -454,7 +454,7 @@
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-TOP: 30px;
             flex-wrap: wrap;
         }
 
@@ -522,6 +522,71 @@
                 flex-direction: column;
                 gap: 1rem;
             }
+        }
+
+
+        /* Trends Controls Styles */
+        .trends-controls,
+        top-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            margin-left: 1.7rem;
+        }
+
+        .trends-controls select,
+        .trends-controls input[type="month"],
+        .top-controls select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .trends-controls select:focus,
+        .trends-controls input[type="month"]:focus,
+        .top-controls select:focus {
+            outline: none;
+            border-color: rgb(4, 4, 118);
+            box-shadow: 0 0 0 2px rgba(4, 4, 118, 0.1);
+        }
+
+        .trends-controls label,
+        .top-controls label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .trends-controls button {
+            padding: 8px 20px;
+            background: rgb(4, 4, 118);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .trends-controls button:hover {
+            background: rgb(6, 6, 160);
+            transform: translateY(-1px);
+        }
+
+        #customRangeInputs {
+            display: none;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #customRangeInputs.show {
+            display: flex;
         }
     </style>
 </head>
@@ -628,6 +693,9 @@
             <!-- Requests Status Chart -->
             <div class="chart-container">
                 <h3 class="chart-title">Request Status </h3>
+                <div class="chart-wrapper">
+                    <canvas id="statusChart"></canvas>
+                </div>
                 <div class="custom-legend">
                     <span class="legend-item legend-static">
                         <span class="legend-color" style="background-color: #E68787;border:1px solid #e64d4d;"></span>
@@ -650,46 +718,68 @@
                         Rejected
                     </span>
                 </div>
-                <div class="chart-wrapper">
-                    <canvas id="statusChart"></canvas>
-                </div>
+
             </div>
 
-            <!-- Monthly Requests Trend -->
+            <!-- Monthly Request Trends -->
             <div class="chart-container">
                 <h3 class="chart-title">Monthly Request Trends</h3>
-                <div class="custom-legend">
-                    <span class="legend-item">
-                        <span class="legend-color" style="background-color: rgb(4, 4, 118);"></span>
-                        Total Requests
-                    </span>
-                    <span class="legend-item">
-                        <span class="legend-color" style="background-color: #42794d;"></span>
-                        Completed
-                    </span>
+                <div class="trends-controls">
+                    <div>
+                        <label for="trendsRange">Quick Select:</label>
+                        <select id="trendsRange">
+                            <option value="3">Last 3 Months</option>
+                            <option value="6" selected>Last 6 Months</option>
+                            <option value="12">Last 12 Months</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div id="customRangeInputs">
+                        <label>From:</label>
+                        <input type="month" id="trendsFrom">
+                        <label>To:</label>
+                        <input type="month" id="trendsTo">
+                        <button id="applyTrendsRange">Apply</button>
+                    </div>
                 </div>
                 <div class="chart-wrapper">
                     <canvas id="trendsChart"></canvas>
                 </div>
-            </div>
-
-            <!-- Response Time Chart -->
-            <div class="chart-container">
-                <h3 class="chart-title">Top Departments</h3>
-                <div class="custom-legend">
-                    <span class="legend-item">
-                        <span class="legend-color"
-                            style="background-color: rgb(4, 4, 118); border-radius: 50%; width: 10px; height: 10px;"></span>
-                        Response Time
+                <div class="custom-legend" style="top: 3rem;">
+                    <span class="legend-item legend-static">
+                        <span class="legend-color" style="background-color: rgb(4, 4, 118);"></span>
+                        Total Requests
                     </span>
-                    <span class="legend-item">
-                        <span class="legend-color"
-                            style="background-color: #b08d57; border-radius: 50%; width: 10px; height: 10px;"></span>
-                        Target Time
+                    <span class="legend-item legend-static">
+                        <span class="legend-color" style="background-color: #42794d;"></span>
+                        Completed
                     </span>
                 </div>
+            </div>
+
+            <!-- Top Colleges Chart -->
+            <div class="chart-container">
+                <h3 class="chart-title">Top Colleges</h3>
+                <div class="top-controls">
+                    <div>
+                        <label for="collegesRange">Quick Select:</label>
+                        <select id="collegesRange">
+                            <option value="3">Last 3 Months</option>
+                            <option value="6" selected>Last 6 Months</option>
+                            <option value="12">Last 12 Months</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="chart-wrapper">
-                    <canvas id="TopDept"></canvas>
+                    <canvas id="collegesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- This Month Chart -->
+            <div class="chart-container">
+                <h3 class="chart-title">This Month Requests</h3>
+                <div class="chart-wrapper">
+                    <canvas id="stackedChart"></canvas>
                 </div>
             </div>
         </div>
@@ -724,7 +814,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Global navigation functions (moved outside module scope)
+        // Global navigation functions
         window.viewProcessingRequests = function () {
             window.location.href = 'all-requests.html?status=processing';
         };
@@ -752,6 +842,322 @@
             window.location.href = `all-requests.html?dateFrom=${firstDayStr}&dateTo=${lastDayStr}`;
         };
 
+        // Store all requests data globally for chart updates
+        let allRequestsData = [];
+        let trendsChart = null;
+        let collegesChart = null;
+
+        // Helper function to generate month keys for a range
+        function generateMonthKeys(monthsBack) {
+            const keys = [];
+            const now = new Date();
+
+            for (let i = monthsBack - 1; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                keys.push(key);
+            }
+
+            return keys;
+        }
+
+        // Helper function to generate month keys between two dates
+        function generateMonthKeysBetween(fromDate, toDate) {
+            const keys = [];
+            const current = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
+            const end = new Date(toDate.getFullYear(), toDate.getMonth(), 1);
+
+            while (current <= end) {
+                const key = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
+                keys.push(key);
+                current.setMonth(current.getMonth() + 1);
+            }
+
+            return keys;
+        }
+
+        // Format month key to display label (e.g., "2025-01" -> "Jan 2025")
+        function formatMonthLabel(key) {
+            const [year, month] = key.split('-');
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${monthNames[parseInt(month) - 1]} ${year}`;
+        }
+        // Helper function to check if a college name is valid (not empty, unknown, or n/a)
+        function isValidCollegeName(name) {
+            if (!name || typeof name !== 'string') return false;
+            const trimmed = name.trim().toLowerCase();
+            return trimmed !== '' &&
+                trimmed !== 'unknown' &&
+                trimmed !== 'n/a' &&
+                trimmed !== 'na' &&
+                trimmed !== 'null' &&
+                trimmed !== 'undefined' &&
+                trimmed !== '-';
+        }
+
+        // Build or update the trends chart
+        function buildTrendsChart(monthKeys) {
+            const totalByMonth = {};
+            const completedByMonth = {};
+
+            monthKeys.forEach(key => {
+                totalByMonth[key] = 0;
+                completedByMonth[key] = 0;
+            });
+
+            allRequestsData.forEach(req => {
+                try {
+                    let date;
+                    if (req['Request Date']?.toDate) date = req['Request Date'].toDate();
+                    else if (req.Date?.toDate) date = req.Date.toDate();
+                    else date = new Date(req['Request Date'] || req.Date);
+
+                    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+                    if (monthKeys.includes(key)) {
+                        totalByMonth[key]++;
+
+                        const status = (req.Status || req.status || '').toLowerCase();
+                        if (status.includes('complete')) {
+                            completedByMonth[key]++;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Date parsing error:', e);
+                }
+            });
+
+            const labels = monthKeys.map(formatMonthLabel);
+            const totalData = monthKeys.map(key => totalByMonth[key]);
+            const completedData = monthKeys.map(key => completedByMonth[key]);
+
+            console.log('📊 Trends Chart Data:', { labels, totalData, completedData });
+
+            if (trendsChart) {
+                trendsChart.destroy();
+            }
+
+            trendsChart = new Chart(document.getElementById('trendsChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Requests',
+                        data: totalData,
+                        borderColor: 'rgb(4, 4, 118)',
+                        backgroundColor: 'rgba(4, 4, 118)',
+                        tension: 0.4,
+                        borderWidth: 1.5,
+                        fill: false
+                    }, {
+                        label: 'Completed',
+                        data: completedData,
+                        borderColor: '#42794d',
+                        backgroundColor: 'rgba(66, 121, 77, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 1.5,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: function (context) {
+                                    return context[0].label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 0,
+                                minRotation: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Build or update the colleges chart
+        function buildCollegesChart(range) {
+            const monthKeys = generateMonthKeys(range);
+            const collegeCounts = {};
+
+            allRequestsData.forEach(req => {
+                try {
+                    let date;
+                    if (req.Date?.toDate) date = req.Date.toDate();
+                    else if (req['Request Date']?.toDate) date = req['Request Date'].toDate();
+                    else date = new Date(req.Date || req['Request Date']);
+
+                    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+                    if (monthKeys.includes(key)) {
+                        const college = req.College;
+                        // Only count valid college names (skip Unknown, N/A, empty, etc.)
+                        if (isValidCollegeName(college)) {
+                            collegeCounts[college] = (collegeCounts[college] || 0) + 1;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Date parsing error:', e);
+                }
+            });
+
+            // Sort by count and get top colleges
+            const sortedColleges = Object.entries(collegeCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            const labels = sortedColleges.map(([name]) => name);
+            const values = sortedColleges.map(([, count]) => count);
+
+            console.log('📊 Colleges Chart Data:', { labels, values });
+
+            if (collegesChart) {
+                collegesChart.destroy();
+            }
+            // Function to wrap text into multiple lines
+            function wrapText(text, maxCharsPerLine = 15) {
+                const words = text.split(' ');
+                const lines = [];
+                let currentLine = '';
+
+                words.forEach(word => {
+                    if ((currentLine + ' ' + word).trim().length <= maxCharsPerLine) {
+                        currentLine = (currentLine + ' ' + word).trim();
+                    } else {
+                        if (currentLine) lines.push(currentLine);
+                        currentLine = word;
+                    }
+                });
+                if (currentLine) lines.push(currentLine);
+
+                return lines;
+            }
+
+            // Wrap labels into multiple lines
+            const wrappedLabels = labels.map(label => wrapText(label, 15));
+
+            collegesChart = new Chart(document.getElementById('collegesChart'), {
+                type: 'bar',
+                data: {
+                    labels: wrappedLabels,
+                    datasets: [{
+                        label: 'Requests',
+                        data: values,
+                        borderColor: 'black',
+                        backgroundColor: '#FFDEAD',
+                        borderWidth: 1.3,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                // Show full college name in tooltip
+                                title: function (context) {
+                                    const index = context[0].dataIndex;
+                                    return labels[index]; // Full name
+                                },
+                                label: function (context) {
+                                    return `Requests: ${context.parsed.x}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 },
+                            title: {
+                                display: true,
+                                text: 'Number of Requests'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: { size: 10 },
+                                autoSkip: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Setup trends chart controls
+        function setupTrendsControls() {
+            const rangeSelect = document.getElementById('trendsRange');
+            const customInputs = document.getElementById('customRangeInputs');
+            const fromInput = document.getElementById('trendsFrom');
+            const toInput = document.getElementById('trendsTo');
+            const applyBtn = document.getElementById('applyTrendsRange');
+
+            const now = new Date();
+            const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+            fromInput.value = `${sixMonthsAgo.getFullYear()}-${String(sixMonthsAgo.getMonth() + 1).padStart(2, '0')}`;
+            toInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+            rangeSelect.addEventListener('change', (e) => {
+                const value = e.target.value;
+
+                if (value === 'custom') {
+                    customInputs.classList.add('show');
+                } else {
+                    customInputs.classList.remove('show');
+                    const monthKeys = generateMonthKeys(parseInt(value));
+                    buildTrendsChart(monthKeys);
+                }
+            });
+
+            applyBtn.addEventListener('click', () => {
+                const fromValue = fromInput.value;
+                const toValue = toInput.value;
+
+                if (!fromValue || !toValue) {
+                    alert('Please select both From and To months');
+                    return;
+                }
+
+                const fromDate = new Date(fromValue + '-01');
+                const toDate = new Date(toValue + '-01');
+
+                if (fromDate > toDate) {
+                    alert('From date must be before To date');
+                    return;
+                }
+
+                const monthKeys = generateMonthKeysBetween(fromDate, toDate);
+                buildTrendsChart(monthKeys);
+            });
+        }
+
+        // Setup colleges chart controls
+        function setupCollegesControls() {
+            const rangeSelect = document.getElementById('collegesRange');
+
+            rangeSelect.addEventListener('change', (e) => {
+                const range = parseInt(e.target.value);
+                buildCollegesChart(range);
+            });
+        }
+
         async function loadAndDisplay() {
             try {
                 console.log('📊 Fetching from Firebase...');
@@ -760,6 +1166,12 @@
                 const snapshot = await getDocs(requestsRef);
 
                 console.log(`✅ Got ${snapshot.size} requests`);
+
+                // Store all requests data for chart updates
+                allRequestsData = [];
+                snapshot.forEach((doc) => {
+                    allRequestsData.push(doc.data());
+                });
 
                 // Initialize counters
                 const stats = {
@@ -770,25 +1182,24 @@
                     rejected: 0
                 };
 
-                const categories = {
-                    electrical: 0,
-                    plumbing: 0,
-                    hvac: 0,
-                    general: 0
+                let thisMonthCount = 0;
+
+                // ✅ NEW: Stats for THIS MONTH only
+                const thisMonthStats = {
+                    waiting: 0,
+                    approved: 0,
+                    processing: 0,
+                    completed: 0,
+                    rejected: 0
                 };
 
-                const months = new Array(12).fill(0);
-                const completedMonths = new Array(12).fill(0);
-
-                let thisMonthCount = 0;
                 const currentMonth = new Date().getMonth();
                 const currentYear = new Date().getFullYear();
 
-                //Process all requests 
+                // Process all requests 
                 snapshot.forEach((doc) => {
                     const req = doc.data();
 
-                    // Status counting (handle both "Status" and "status")
                     const status = (req.Status || req.status || 'waiting').toLowerCase();
 
                     if (status.includes('wait')) stats.waiting++;
@@ -798,12 +1209,6 @@
                     else if (status.includes('reject')) stats.rejected++;
                     else stats.waiting++;
 
-                    // Category counting
-                    const cat = (req.category || 'general').toLowerCase();
-                    if (categories[cat] !== undefined) categories[cat]++;
-                    else categories.general++;
-
-                    // Monthly data and this month count
                     try {
                         let date;
                         if (req['Request Date']?.toDate) date = req['Request Date'].toDate();
@@ -813,12 +1218,16 @@
                         const monthIndex = date.getMonth();
                         const year = date.getFullYear();
 
-                        months[monthIndex]++;
-                        if (status.includes('complete')) completedMonths[monthIndex]++;
-
-                        // Count this month's requests
                         if (monthIndex === currentMonth && year === currentYear) {
                             thisMonthCount++;
+
+                            // ✅ NEW: Count this month's stats by status
+                            if (status.includes('wait')) thisMonthStats.waiting++;
+                            else if (status.includes('approved')) thisMonthStats.approved++;
+                            else if (status.includes('process')) thisMonthStats.processing++;
+                            else if (status.includes('complete')) thisMonthStats.completed++;
+                            else if (status.includes('reject')) thisMonthStats.rejected++;
+                            else thisMonthStats.waiting++;
                         }
                     } catch (e) {
                         console.warn('Date parsing error:', e);
@@ -826,7 +1235,6 @@
                 });
 
                 console.log('📊 Final Stats:', stats);
-                console.log('📊 Categories:', categories);
                 console.log('📊 This Month:', thisMonthCount);
 
                 // Update notification counts
@@ -843,7 +1251,7 @@
 
                 // Configure Chart.js defaults
                 Chart.defaults.font.family = "Georgia";
-                Chart.defaults.plugins.legend.display = false; // Hide default legend, we use custom
+                Chart.defaults.plugins.legend.display = false;
 
                 // Chart 1: Status Doughnut Chart
                 new Chart(document.getElementById('statusChart'), {
@@ -861,17 +1269,13 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: {
-                                display: false
-                            },
+                            legend: { display: false },
                             tooltip: {
                                 callbacks: {
                                     label: function (context) {
                                         const label = context.label || '';
                                         const value = context.parsed || 0;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = ((value / total) * 100).toFixed(1);
-                                        return `${label}: ${value} `;
+                                        return `${label}: ${value}`;
                                     }
                                 }
                             }
@@ -879,89 +1283,50 @@
                     }
                 });
 
-                // Chart 2: Monthly Trends Line Chart
-                new Chart(document.getElementById('trendsChart'), {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                        datasets: [{
-                            label: 'Total Requests',
-                            data: months,
-                            borderColor: 'rgb(4, 4, 118)',
-                            backgroundColor: 'rgba(4, 4, 118, 0.1)',
-                            tension: 0.4,
-                            borderWidth: 3,
-                            fill: true
-                        }, {
-                            label: 'Completed',
-                            data: completedMonths,
-                            borderColor: '#42794d',
-                            backgroundColor: 'rgba(66, 121, 77, 0.1)',
-                            tension: 0.4,
-                            borderWidth: 3,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        }
-                    }
-                });
+                // Chart 2: Monthly Trends - Default to last 6 months
+                setupTrendsControls();
+                const defaultMonthKeys = generateMonthKeys(6);
+                buildTrendsChart(defaultMonthKeys);
 
+                // Chart 3: Top Colleges - Default to last 6 months
+                setupCollegesControls();
+                buildCollegesChart(6);
 
-                // Chart 4: Response Time Bar Chart (with sample data)
-                new Chart(document.getElementById('TopDept'), {
+                //Chart 4: This Month Requests 
+                new Chart(document.getElementById('stackedChart'), {
                     type: 'bar',
                     data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        labels: ['Waiting', 'Approved', 'Processing', 'Completed', 'Rejected'],
                         datasets: [{
-                            label: 'Top Departments',
-                            data: [8, 12, 6, 10, 7, 9],
-                            backgroundColor: 'rgb(4, 4, 118)',
-                            borderWidth: 0
-                        }, {
-                            label: 'Target Time',
-                            data: [10, 10, 10, 10, 10, 10],
-                            backgroundColor: '#b08d57',
-                            borderWidth: 0
+                            data: [thisMonthStats.waiting, thisMonthStats.approved, thisMonthStats.processing, thisMonthStats.completed, thisMonthStats.rejected],
+                            backgroundColor: ['#E68787', '#FCDB8D', '#9BE8AE', '#95B2F5', '#BAB3B3'],
+                            borderWidth: 2,
+                            borderColor: '#1A1919'
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Hours'
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed.y ?? context.parsed.x;
+                                        return `${label}: ${value}`;
+                                    }
                                 }
                             }
                         }
                     }
                 });
 
+
                 console.log('✅ All charts created successfully!');
-                // Hide loading overlay
                 document.getElementById('loadingOverlay').style.display = 'none';
+
+
 
             } catch (error) {
                 console.error('❌ Error loading dashboard:', error);

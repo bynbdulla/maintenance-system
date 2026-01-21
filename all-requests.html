@@ -1141,7 +1141,7 @@
     <script type="module">
 
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, updateDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, updateDoc, doc, serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
@@ -1797,7 +1797,7 @@
                 // ✅ FIXED STATUS FILTER - handles all variations
                 let matchesStatus = true;
                 if (filterStatus) {
-                    const dataStatus = (data.Status || 'Waiting').toLowerCase().trim();
+                    const dataStatus = (data.Status || data.status || 'waiting').toLowerCase().trim();
                     const filterStatusLower = filterStatus.toLowerCase();
 
                     if (filterStatusLower === 'waiting' || filterStatusLower === 'waiting for approval') {

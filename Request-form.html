@@ -553,18 +553,20 @@
     </div>
 
     <script>
-        // Simple script to set request number immediately
-        function setInitialRequestNumber() {
-            const now = new Date();
-            const year = now.getFullYear().toString().slice(-2);
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-            const requestNumber = `RQ-${year}${month}${random}`;
+        // ═══════════════════════════════════════════
+        // REQUEST NUMBER GENERATION
+        // Format: RQ-YYMMNNN (7 digits after RQ-)
+        // YY = Year (2 digits), MM = Month (2 digits), NNN = Random (3 digits)
+        // Example: RQ-2601920
+        // ═══════════════════════════════════════════
 
-            const field = document.getElementById('requestNumber');
-            if (field) {
-                field.value = requestNumber;
-            }
+        function generateRequestNumber() {
+            const now = new Date();
+            const year = now.getFullYear().toString().slice(-2); // Last 2 digits of year (e.g., 26)
+            const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Month 01-12
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0'); // Random 000-999
+
+            return `RQ-${year}${month}${random}`;
         }
 
         // Location data
@@ -737,25 +739,14 @@
                     label.appendChild(badge);
                 }
             } else {
-                console.log('📝 Regular mode - request number is read-only');
+                console.log('📝 Regular mode - generating request number');
                 // Generate automatic request number for regular users
-                generateRequestNumber();
+                if (requestNumberField) {
+                    requestNumberField.value = generateRequestNumber();
+                    console.log('🎫 Generated request number:', requestNumberField.value);
+                }
             }
         });
-
-        // Generate automatic request number for regular users
-        function generateRequestNumber() {
-            const now = new Date();
-            const year = now.getFullYear().toString().slice(-2); // Last 2 digits of year
-            const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Month with leading zero
-            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0'); // 3 random digits
-
-            return `RQ-${year}${month}${random}`;
-        }
-
-        // Example usage:
-        const requestNumber = generateRequestNumber();
-        console.log(requestNumber); // Output: RQ-2601294
     </script>
 
     <script type="module">
@@ -776,6 +767,18 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // ═══════════════════════════════════════════
+        // REQUEST NUMBER GENERATION (for form reset)
+        // Format: RQ-YYMMNNN (7 digits after RQ-)
+        // ═══════════════════════════════════════════
+        function generateRequestNumber() {
+            const now = new Date();
+            const year = now.getFullYear().toString().slice(-2);
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `RQ-${year}${month}${random}`;
+        }
 
         // ============================================
         // FORM SUBMISSION
@@ -892,6 +895,9 @@
 
                 // Reset form
                 document.getElementById('maintenanceForm').reset();
+
+                // Generate new request number (Format: RQ-YYMMNNN)
+                document.getElementById('request-number').value = generateRequestNumber();
 
                 // Generate new request number
                 const timestamp = Date.now().toString().slice(-6);

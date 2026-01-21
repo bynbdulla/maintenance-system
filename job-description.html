@@ -686,7 +686,8 @@
                                             onchange="calculateLaborTotal('mason')"></td>
                                     <td><input type="number" name="masonHrs" min="0"
                                             onchange="calculateLaborTotal('mason')"></td>
-                                    <td><input type="number" name="masonSalaryBD" step="0.001" value="1.2"></td>
+                                    <td><input type="number" name="masonSalaryBD" step="0.001" value="1.2"
+                                            onchange="calculateLaborTotal('mason')"></td>
                                     <td><input type="number" name="masonTotalBD" readonly></td>
                                 </tr>
                                 <tr>
@@ -697,8 +698,9 @@
                                             onchange="calculateLaborTotal('carpentry')"></td>
                                     <td><input type="number" name="carpentryHrs" min="0"
                                             onchange="calculateLaborTotal('carpentry')"></td>
-                                    <td><input type="number" name="carpentrySalaryBD" step="0.001" value="1.2"></td>
-                                    <td><input type="number" name="carpentryTotalBD" readonly></td>
+                                    <td><input type="number" name="carpentrySalaryBD" step="0.001" value="1.2"
+                                            onchange="calculateLaborTotal('carpentry')""></td>
+                                    <td><input type=" number" name="carpentryTotalBD" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="specialization">Painter</td>
@@ -708,7 +710,8 @@
                                             onchange="calculateLaborTotal('painter')"></td>
                                     <td><input type="number" name="painterHrs" min="0"
                                             onchange="calculateLaborTotal('painter')"></td>
-                                    <td><input type="number" name="painterSalaryBD" step="0.001" value="1"></td>
+                                    <td><input type="number" name="painterSalaryBD" step="0.001" value="1"
+                                            onchange="calculateLaborTotal('painter')"></td>
                                     <td><input type="number" name="painterTotalBD" readonly></td>
                                 </tr>
                                 <tr>
@@ -1030,21 +1033,20 @@
         // LABOR CALCULATIONS (BD ONLY)
         // ============================================
         function calculateLaborTotal(type) {
-            console.log(`🔧 Calculating labor for: ${type}`);
+            const no = parseFloat(document.querySelector(`[name="${type}No"]`)?.value) || 0;
+            const days = parseFloat(document.querySelector(`[name="${type}Days"]`)?.value) || 0;
+            const hrs = parseFloat(document.querySelector(`[name="${type}Hrs"]`)?.value) || 0;
+            const hourlySalary = parseFloat(document.querySelector(`[name="${type}SalaryBD"]`)?.value) || 0;
 
-            const no = parseFloat(document.querySelector(`[name="${type}No"]`)?.value || 0);
-            const days = parseFloat(document.querySelector(`[name="${type}Days"]`)?.value || 0);
-            const hrs = parseFloat(document.querySelector(`[name="${type}Hrs"]`)?.value || 0);
-            const salaryBD = parseFloat(document.querySelector(`[name="${type}SalaryBD"]`)?.value || 0);
+            // ✅ FIXED: Calculate TOTAL HOURS (1 day = 8 hours)
+            const totalHours = (days * 8) + hrs;
 
-            const totalDays = days + (hrs / 8);
-            const totalBD = no * totalDays * salaryBD;
+            // ✅ FIXED: Total = Workers × Total Hours × Hourly Salary
+            const totalBD = no * totalHours * hourlySalary;
 
-            console.log(`   ${type}: ${no} workers × ${totalDays.toFixed(2)} days × ${salaryBD} BD = ${totalBD.toFixed(3)} BD`);
-
-            const totalBDEl = document.querySelector(`[name="${type}TotalBD"]`);
-            if (totalBDEl) {
-                totalBDEl.value = totalBD.toFixed(3);
+            const totalBDInput = document.querySelector(`[name="${type}TotalBD"]`);
+            if (totalBDInput) {
+                totalBDInput.value = totalBD.toFixed(3);
             }
 
             calculateLaborGrandTotal();
@@ -1118,10 +1120,31 @@
             const row = element.closest('tr');
             if (row) {
                 row.remove();
+
+                // ✅ RENUMBER ALL REMAINING ROWS
+                renumberMaterialRows();
+
                 if (typeof window.calculateMaterialsGrandTotal === 'function') {
                     window.calculateMaterialsGrandTotal();
                 }
             }
+        }
+
+        // ✅ NEW FUNCTION: Add this after deleteRow
+        function renumberMaterialRows() {
+            const tbody = document.getElementById('materialsBody');
+            if (!tbody) return;
+
+            const rows = tbody.querySelectorAll('tr');
+            let serialNumber = 1;
+
+            rows.forEach(row => {
+                const snCell = row.querySelector('.sn');
+                if (snCell) {
+                    snCell.textContent = serialNumber;
+                    serialNumber++;
+                }
+            });
         }
 
         window.calculateMaterialTotal = function (row) {
