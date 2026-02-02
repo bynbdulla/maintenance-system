@@ -71,6 +71,7 @@
             padding: 2rem;
             position: relative;
             z-index: 1;
+            width: 120rem;
         }
 
         .login-card {
@@ -92,7 +93,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            background: none;
             border-radius: 20px 20px 0 0;
         }
 
@@ -300,9 +301,9 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <img src="images/optimizing.png" alt="UoB Logo" class="logo-icon">
+                <img src="images/userkey.png" alt="UoB Logo" class="logo-icon">
                 <h1>Welcome Back</h1>
-                <p>University of Bahrain Maintenance System</p>
+                <sub>University of Bahrain Maintenance System</sub>
             </div>
 
             <div id="message" class="message"></div>
@@ -320,9 +321,6 @@
                     <span class="password-toggle" id="passwordToggle">👁</span>
                 </div>
 
-                <div class="forgot-password-link">
-                    <a href="#" id="forgotPasswordLink">Forgot password?</a>
-                </div>
 
                 <button type="submit" class="login-button" id="loginButton">
                     <span id="buttonText">Sign In</span>
@@ -359,7 +357,6 @@
         const buttonText = document.getElementById('buttonText');
         const loadingText = document.getElementById('loadingText');
         const messageDiv = document.getElementById('message');
-        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
 
         console.log('🔥 Login page initialized');
 
@@ -389,25 +386,6 @@
             passwordToggle.textContent = type === 'password' ? '👁' : '🙈';
         });
 
-        // Forgot Password
-        forgotPasswordLink.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const email = emailInput.value.trim();
-
-            if (!email) {
-                showMessage('Please enter your email address first.', 'error');
-                emailInput.focus();
-                return;
-            }
-
-            try {
-                await sendPasswordResetEmail(auth, email);
-                showMessage('✅ Password reset email sent! Check your inbox.', 'success');
-            } catch (error) {
-                console.error('Reset error:', error);
-                showMessage('Failed to send reset email. Please check your email address.', 'error');
-            }
-        });
 
         // Login Form Handler
         loginForm.addEventListener('submit', async (e) => {
@@ -502,14 +480,6 @@
                 loadingText.classList.remove('show');
             }
         });
-        
-        // After successful login in login.html
-        sessionStorage.setItem('isAuthenticated', 'true');
-        sessionStorage.setItem('userEmail', user.email);
-        sessionStorage.setItem('userName', user.displayName || user.email.split('@')[0]);
-
-        // Then redirect
-        window.location.replace('admin-dashboard.html');
     </script>
 </body>
 
