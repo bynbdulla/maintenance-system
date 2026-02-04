@@ -694,19 +694,9 @@
             }
         }
 
-        // Try to set it immediately
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function () {
-                setInitialRequestNumber();
-                initializeDropdowns();
-            });
-        } else {
-            setInitialRequestNumber();
+        document.addEventListener('DOMContentLoaded', function () {
             initializeDropdowns();
-        }
-        // ═══════════════════════════════════════════
-        // ADMIN MODE - EDITABLE REQUEST NUMBER
-        // ═══════════════════════════════════════════
+        });
 
         window.addEventListener('DOMContentLoaded', function () {
             // Check if accessed from admin dashboard
