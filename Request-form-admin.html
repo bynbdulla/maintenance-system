@@ -14,15 +14,31 @@
             box-sizing: border-box;
         }
 
+        :root {
+            /* Navy, Teal, Sky Blue, Beige Color Palette */
+            --navy: #2F4456;
+            --teal: #567C8D;
+            --sky-blue: #C8D9E6;
+            --beige: #F5EFEB;
+            --white: #FFFFFF;
+
+            /* Functional colors */
+            --primary: var(--navy);
+            --secondary: var(--teal);
+            --accent: var(--sky-blue);
+            --background: var(--beige);
+            --text-dark: #2c2c2c;
+            --text-light: #5a5a5a;
+        }
+
         body {
             font-family: cinzyl;
-            background: rgb(4, 4, 118);
+            background: var(--navy);
             min-height: 100vh;
             padding: 24px;
             display: flex;
             justify-content: center;
             align-items: center;
-
         }
 
         .container {
@@ -72,7 +88,7 @@
 
         .icon-wrapper {
             display: inline-flex;
-            background: #e0e7ff;
+            background: var(--sky-blue);
             padding: 16px;
             border-radius: 50%;
             margin-bottom: 16px;
@@ -81,11 +97,11 @@
         .icon {
             width: 48px;
             height: 48px;
-            color: #4f46e5;
+            color: var(--navy);
         }
 
         h1 {
-            color: #0e447e;
+            color: var(--navy);
             font-size: 28px;
             margin-bottom: 8px;
         }
@@ -112,8 +128,24 @@
         }
 
         .alert-success {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
+            background: #e8f4f8;
+            border: 1px solid var(--teal);
+        }
+
+        .alert-success .alert-icon {
+            color: var(--teal);
+        }
+
+        .alert-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .alert-message {
+            font-size: 14px;
+            color: var(--teal);
         }
 
         .alert-error {
@@ -135,29 +167,14 @@
             margin-top: 4px;
         }
 
-        .alert-success .alert-icon {
-            color: #16a34a;
-        }
-
         .alert-error .alert-icon {
             color: #dc2626;
-        }
-
-        .alert-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #166534;
-            margin-bottom: 8px;
         }
 
         .alert-error .alert-title {
             color: #991b1b;
         }
 
-        .alert-message {
-            font-size: 14px;
-            color: #15803d;
-        }
 
         .alert-error .alert-message {
             color: #b91c1c;
@@ -168,51 +185,52 @@
             border-radius: 8px;
             padding: 16px;
             margin-top: 16px;
+            border: 1px solid var(--sky-blue);
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
             padding: 12px 0;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--sky-blue);
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .detail-value {
+            color: var(--teal);
+            text-align: right;
+        }
+
+        .request-number {
+            color: var(--navy);
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+        }
+
+        .description-text {
+            background: var(--beige);
+            padding: 12px;
+            border-radius: 6px;
+            color: var(--navy);
+            margin-top: 8px;
+            white-space: pre-wrap;
         }
 
         .detail-row:last-child {
             border-bottom: none;
         }
 
-        .detail-label {
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .detail-value {
-            color: #1f2937;
-            text-align: right;
-        }
-
-        .request-number {
-            color: #4f46e5;
-            font-family: 'Courier New', monospace;
-            font-weight: 700;
-        }
-
         .description-full {
             padding-top: 8px;
         }
 
-        .description-text {
-            background: #f9fafb;
-            padding: 12px;
-            border-radius: 6px;
-            color: #1f2937;
-            margin-top: 8px;
-            white-space: pre-wrap;
-        }
-
         .status-badge {
-            background: #fef3c7;
-            color: #92400e;
+            background: var(--sky-blue);
+            color: var(--navy);
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 14px;
@@ -222,19 +240,18 @@
         .form-group {
             margin-bottom: 22px;
             margin-left: 23px;
-
         }
 
         label {
             display: block;
             font-size: 14px;
             font-weight: 600;
-            color: #374151;
+            color: var(--navy);
             margin-bottom: 8px;
         }
 
         .required {
-            color: #ef4444;
+            color: var(--teal);
         }
 
         input,
@@ -242,7 +259,7 @@
         textarea {
             width: 410px;
             padding: 12px 16px;
-            border: 1px solid #d1d5db;
+            border: 1px solid var(--sky-blue);
             border-radius: 8px;
             font-size: 16px;
             font-family: inherit;
@@ -255,8 +272,8 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(47, 68, 86, 0.1);
         }
 
         textarea {
@@ -277,35 +294,30 @@
         .next-btn,
         .form-footer button {
             width: 35%;
-            /* remove fixed 35% width */
             padding: 14px;
-            /* keep your padding */
-            background: #d4b483;
-            color: #000;
+            background: var(--teal);
+            color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 6px rgba(86, 124, 141, 0.3);
             font-family: serif;
             margin-right: 40px;
-            /* remove margin-left */
-
         }
 
-        /* focus and hover for accessibility */
+        .next-btn:hover {
+            background: var(--navy);
+            transform: translateY(-2px);
+        }
+
         .next-btn:focus {
             outline: 3px solid rgba(11, 94, 215, 0.25);
             outline-offset: 2px;
         }
 
-        .next-btn:hover {
-            filter: brightness(0.98);
-        }
-
-        /* mobile: center the button and increase tappable area */
         @media (max-width: 480px) {
             .form-footer {
                 justify-content: center;
@@ -323,31 +335,30 @@
             display: none;
         }
 
-        /* Drag and Drop Styles */
         .drop-zone {
-            border: 2px dashed #d1d5db;
+            border: 2px dashed var(--sky-blue);
             border-radius: 10px;
             padding: 15px;
             text-align: center;
-            background: #f9fafb;
+            background: white;
             transition: all 0.3s ease;
             cursor: pointer;
             width: 410px;
         }
 
         .drop-zone:hover {
-            border-color: #4f46e5;
-            background: #f3f4f6;
+            border-color: var(--navy);
+            background: var(--beige);
         }
 
         .drop-zone.dragover {
-            border-color: #4f46e5;
-            background: #e0e7ff;
+            border-color: var(--navy);
+            background: var(--sky-blue);
             transform: scale(1.02);
         }
 
         .upload-icon {
-            color: #9ca3af;
+            color: var(--teal);
             margin-bottom: 8px;
             width: 40px;
             height: 40px;
@@ -367,7 +378,7 @@
         }
 
         .browse-btn {
-            background: #4f46e5;
+            background: var(--navy);
             color: white;
             padding: 8px 20px;
             border-radius: 6px;
@@ -381,7 +392,7 @@
         }
 
         .browse-btn:hover {
-            background: #4338ca;
+            background: var(--teal);
         }
 
         .file-list {
@@ -393,11 +404,34 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
+            background: var(--beige);
+            border: 1px solid var(--sky-blue);
             border-radius: 8px;
             margin-bottom: 8px;
             width: 410px;
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--sky-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--navy);
+            font-weight: bold;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: var(--teal);
         }
 
         .file-info {
@@ -406,37 +440,14 @@
             gap: 12px;
         }
 
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            background: #e0e7ff;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #4f46e5;
-            font-weight: bold;
-        }
-
         .file-details {
             display: flex;
             flex-direction: column;
         }
 
-        .file-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .file-size {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
         .remove-file {
-            background: #fee2e2;
-            color: #dc2626;
+            background: #fff3e6;
+            color: var(--teal);
             border: none;
             width: 30px;
             height: 30px;
@@ -452,7 +463,8 @@
         }
 
         .remove-file:hover {
-            background: #fecaca;
+            background: var(--teal);
+            color: white;
         }
 
         /* Error message styling */
@@ -466,16 +478,14 @@
             gap: 5px;
         }
 
-        /* Input error state */
         input.error {
             border-color: #d32f2f !important;
             background-color: #ffebee !important;
         }
 
-        /* Input success state */
         input.success {
-            border-color: #4caf50 !important;
-            background-color: #f1f8f4 !important;
+            border-color: var(--teal) !important;
+            background-color: #e8f4f8 !important;
         }
 
         /* Loading state for button */
@@ -494,7 +504,7 @@
         }
 
         .validation-message.success {
-            color: #16a34a;
+            color: var(--teal);
         }
 
         .validation-message.error {
@@ -502,13 +512,12 @@
         }
 
         .validation-message.loading {
-            color: #6b7280;
+            color: var(--navy);
         }
 
-        /* Status badge styling */
         .status-indicator {
-            background: #d7e3ff;
-            color: #09034D;
+            background: var(--sky-blue);
+            color: var(--navy);
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
@@ -517,8 +526,6 @@
             margin-top: 10px;
             margin-left: 23px;
             margin-bottom: 10px;
-
-
         }
     </style>
 
@@ -537,7 +544,7 @@
 
             <!-- Status Indicator -->
             <div class="status-indicator">
-                ✅ All requests submitted through this form will be marked as <strong>Completed</strong>
+                All requests submitted through this form will be marked as <strong>Completed</strong>
             </div>
 
             <!-- Request Number -->

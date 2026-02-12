@@ -8,6 +8,23 @@
     <link rel="icon" type="image/x-icon" href="images/dashboard.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            /* Navy, Teal, Sky Blue, Beige Color Palette */
+            --navy: #2F4456;
+            --teal: #567C8D;
+            --sky-blue: #C8D9E6;
+            --beige: #F5EFEB;
+            --white: #FFFFFF;
+
+            /* Functional colors */
+            --primary: var(--navy);
+            --secondary: var(--teal);
+            --accent: var(--sky-blue);
+            --background: var(--beige);
+            --text-dark: #2c2c2c;
+            --text-light: #5a5a5a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -16,13 +33,12 @@
         }
 
         body {
-            background-color: #f4f4f4;
+            background-color: var(--beige);
             min-height: 100vh;
         }
 
-        /* Header */
         .admin-header {
-            background: rgb(4, 4, 118);
+            background: var(--navy);
             color: white;
             padding: 20px 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -79,16 +95,18 @@
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            border: 2px solid var(--sky-blue);
+        }
+
+        .account-icon:hover {
+            background-color: var(--beige);
+            transform: scale(1.05);
+            border-color: var(--teal);
         }
 
         .account-icon img {
             width: 50%;
             object-fit: cover;
-        }
-
-        .account-icon:hover {
-            background-color: #f0f4f8;
-            transform: scale(1.05);
         }
 
         .dropdown-menu {
@@ -114,17 +132,18 @@
 
         .dropdown-header {
             padding: 16px;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--sky-blue);
+            background: var(--beige);
         }
 
         .dropdown-header .admin-name {
             font-weight: 600;
-            color: #333;
+            color: var(--navy);
             font-size: 15px;
         }
 
         .dropdown-header .admin-email {
-            color: #666;
+            color: var(--teal);
             font-size: 13px;
             margin-top: 4px;
         }
@@ -142,21 +161,21 @@
         }
 
         .dropdown-item:hover {
-            background-color: #f5f5f5;
+            background-color: var(--beige);
         }
 
         .dropdown-divider {
             height: 1px;
-            background-color: #e0e0e0;
+            background-color: var(--sky-blue);
             margin: 8px 0;
         }
 
         .dropdown-item.logout {
-            color: #d32f2f;
+            color: var(--teal);
         }
 
         .dropdown-item.logout:hover {
-            background-color: #ffebee;
+            background-color: #e8f4f8;
         }
 
         /* Main Container */
@@ -173,7 +192,6 @@
             margin: 0 1rem;
         }
 
-        /* Notifications Box */
         .notification-box {
             width: 350px;
             max-width: 350px;
@@ -181,12 +199,12 @@
             padding: 20px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             margin-top: 30px;
-            border: 2px solid rgb(4, 4, 118);
+            border: 2px solid var(--navy);
             border-radius: 8px;
         }
 
         .notification-box h2 {
-            color: rgb(4, 4, 118);
+            color: var(--navy);
             margin-bottom: 1.5rem;
             font-weight: bold;
             text-transform: uppercase;
@@ -214,18 +232,18 @@
         }
 
         .notification-card.rejected {
-            border-left-color: #FFB74D;
-            background-color: #fff9e6;
+            border-left-color: var(--teal);
+            background-color: #e8f4f8;
         }
 
         .notification-card.waiting {
             border-left-color: #e64d4d;
-            background-color: #fff3f3;
+            background-color: #f4d4d4;
         }
 
         .notification-card.approved {
-            border-left-color: #42794d;
-            background-color: #f0f9f0;
+            border-left-color: var(--navy);
+            background-color: var(--sky-blue);
         }
 
         .notification-card h4 {
@@ -239,7 +257,6 @@
             line-height: 1.4;
         }
 
-        /* Quick Actions */
         .quick-actions {
             flex: 2;
             background: white;
@@ -247,6 +264,14 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
             margin-top: 30px;
+            border: 2px solid var(--sky-blue);
+        }
+
+        .add-new h2 {
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .add-new {
@@ -256,27 +281,22 @@
             margin-bottom: 2rem;
         }
 
-        .add-new h2 {
-            color: rgb(4, 4, 118);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         button.new {
-            border: 1.5px solid #7e7509;
+            border: 1.5px solid var(--teal);
             padding: 4px;
             border-radius: 6px;
             height: 2.3rem;
             width: 10rem;
-            background: #ffe9c1;
+            background: var(--sky-blue);
+            color: var(--navy);
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
         }
 
         button.new:hover {
-            background: #e3e2e7;
+            background: var(--teal);
+            color: white;
             transform: translateY(-2px);
         }
 
@@ -288,7 +308,7 @@
         }
 
         .action-card {
-            background: #f3f3f3;
+            background: var(--beige);
             padding: 1.5rem;
             border-radius: 10px;
             text-align: center;
@@ -298,10 +318,11 @@
             width: 100%;
             position: relative;
             cursor: pointer;
+            border: 1px solid var(--sky-blue);
         }
 
         .action-card:hover {
-            border: 2px solid rgb(4, 4, 118);
+            border: 2px solid var(--navy);
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
@@ -310,7 +331,7 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            background-color: #b08d57;
+            background-color: var(--teal);
             color: white;
             border-radius: 50%;
             width: 28px;
@@ -329,14 +350,13 @@
 
         .action-card h3 {
             font-size: 1.1rem;
-            color: rgb(4, 4, 118);
+            color: var(--navy);
             margin-top: 1rem;
         }
 
-        /* Section Title */
         .section-title {
             margin: 4rem 0 2rem 5rem;
-            color: rgb(4, 4, 118);
+            color: var(--navy);
             font-size: 24px;
             font-weight: 700;
         }
@@ -392,9 +412,27 @@
                     <h1>Director Dashboard</h1>
                 </button>
             </div>
+
             <div class="account-menu">
-                <div class="account-icon" id="accountIcon" onclick="window.location.href='my-account.html'">
+                <div class="account-icon" id="accountIcon" onclick="toggleDropdown(event)">
                     <img src="images/user.png" alt="User Account">
+                </div>
+
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="admin-name" id="adminName">Loading...</div>
+                        <div class="admin-email" id="adminEmail">Loading...</div>
+                    </div>
+                    <a class="dropdown-item" onclick="goToDashboard()" style="cursor: pointer;">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                    <a class="dropdown-item" onclick="window.location.href='my-account.html'" style="cursor: pointer;">
+                        <span class="icon">👤</span> My Account
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item logout" onclick="logout()" style="cursor: pointer;">
+                        <span class="icon">🚪</span> Logout
+                    </a>
                 </div>
             </div>
         </div>
@@ -406,15 +444,10 @@
             <div class="notification-box">
                 <h2><img src="images/bell.png" class="notification-img"> Notifications</h2>
 
-                <div class="notification-card waiting" onclick="viewWaitingRequests()">
-                    <h4><img src="images/hourglass.png" class="notification-img"> Waiting for Approval</h4>
-                    <div class="notification-text">
-                        <p>You have <strong>3</strong> Requests</p>
-                    </div>
-                </div>
+
 
                 <div class="notification-card approved" onclick="viewApprovedRequests()">
-                    <h4><img src="images/approved.png" class="notification-img"> Approved by Director</h4>
+                    <h4><img src="images/approved.png" class="notification-img"> Approved Requests</h4>
                     <div class="notification-text">
                         <p>You have <strong id="approved-count">0</strong> Requests</p>
                     </div>
@@ -423,6 +456,12 @@
                     <h4><img src="images/reject.png" class="notification-img"> Rejected Requests</h4>
                     <div class="notification-text">
                         <p>You have <strong id="rejected-count">0</strong> requests</p>
+                    </div>
+                </div>
+                <div class="notification-card processing" onclick="viewProcessingRequests()">
+                    <h4><img src="images/processing.png" class="notification-img"> Processing Requests</h4>
+                    <div class="notification-text">
+                        <p>You have <strong id="processing-count">0</strong> Requests</p>
                     </div>
                 </div>
             </div>
@@ -439,25 +478,25 @@
 
                 <div class="action-grid">
                     <a href="all-requests-d.html" class="action-card">
-                        <div class="badge">10</div>
+                        <div class="badge" id="total-badge">0</div>
                         <img src="images/job-application.png" alt="Requests">
-                        <h3>Requests</h3>
+                        <h3>All Requests</h3>
                     </a>
 
                     <a href="all-requests-d.html?status=processing" class="action-card">
-                        <div class="badge">7</div>
+                        <div class="badge" id="processing-badge">0</div>
                         <img src="images/processing.png" alt="Processing">
                         <h3>Processing</h3>
                     </a>
 
                     <a href="#" onclick="goToThisMonth(); return false;" class="action-card">
-                        <div class="badge">20</div>
+                        <div class="badge" id="month-badge">0</div>
                         <img src="images/calendar (1).png" alt="This Month">
                         <h3>This Month</h3>
                     </a>
 
                     <a href="all-requests-d.html?status=completed" class="action-card">
-                        <div class="badge">7</div>
+                        <div class="badge" id="completed-badge">0</div>
                         <img src="images/checklist.png" alt="Done">
                         <h3>Completed</h3>
                     </a>
@@ -466,141 +505,145 @@
         </div>
     </div>
 
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
-            authDomain: "requests-ffdd6.firebaseapp.com",
-            projectId: "requests-ffdd6",
-            storageBucket: "requests-ffdd6.firebasestorage.app",
-            messagingSenderId: "316405880275",
-            appId: "1:316405880275:web:f4b271583e903ac639cb26"
+    <script>
+        // Dropdown toggle
+        window.toggleDropdown = function (event) {
+            event.stopPropagation();
+            document.getElementById('dropdownMenu').classList.toggle('active');
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        console.log('🔍 Checking authentication...');
-
-        // Check authentication state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in
-                console.log('✅ Authenticated as:', user.email);
-
-                // Update UI with user info
-                const adminEmailElement = document.querySelector('.admin-email');
-                const adminNameElement = document.querySelector('.admin-name');
-
-                if (adminEmailElement) {
-                    adminEmailElement.textContent = user.email;
-                }
-
-                if (adminNameElement) {
-                    // Extract name from email (before @)
-                    const displayName = user.displayName || user.email.split('@')[0];
-                    adminNameElement.textContent = displayName;
-                }
-
-                // Also save to session storage for consistency
-                sessionStorage.setItem('isAuthenticated', 'true');
-                sessionStorage.setItem('userEmail', user.email);
-                sessionStorage.setItem('userName', user.displayName || user.email.split('@')[0]);
-
-            } else {
-                // User is not signed in - redirect to login
-                console.log('❌ Not authenticated - redirecting to login');
-                sessionStorage.clear();
-                window.location.replace('login.html');
+        document.addEventListener('click', function (event) {
+            const menu = document.getElementById('dropdownMenu');
+            const icon = document.getElementById('accountIcon');
+            if (!icon.contains(event.target)) {
+                menu.classList.remove('active');
             }
         });
 
-        // Global logout function
-        window.logout = async function () {
-            if (confirm('Are you sure you want to logout?')) {
-                try {
-                    console.log('🚪 Logging out...');
-
-                    // Clear session
-                    sessionStorage.clear();
-                    localStorage.clear();
-
-                    // Sign out from Firebase
-                    await signOut(auth);
-
-                    console.log('✅ Logged out successfully');
-                    window.location.replace('login.html');
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    // Force logout even if Firebase fails
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    window.location.replace('login.html');
-                }
-            }
+        // Navigation functions
+        window.viewApprovedRequests = function () {
+            window.location.href = 'all-requests-d.html?status=approved';
+        };
+        window.viewRejectedRequests = function () {
+            window.location.href = 'all-requests-d.html?status=Rejected';
+        };
+        window.viewProcessingRequests = function () {
+            window.location.href = 'all-requests-d.html?status=processing';
+        };
+        window.goToThisMonth = function () {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            const mStr = String(month).padStart(2, '0');
+            const lastDay = new Date(year, month, 0).getDate();
+            window.location.href = 'all-requests-d.html?dateFrom=' + year + '-' + mStr + '-01&dateTo=' + year + '-' + mStr + '-' + String(lastDay).padStart(2, '0');
         };
     </script>
 
-    <script>
+    <script type="module">
+        import { protectPage, logout } from './auth-module.js';
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        document.getElementById('this-month-box').addEventListener('click', () => {
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        // Make logout available globally
+        window.logout = logout;
 
-            const formatDate = date => date.toISOString().split('T')[0];
-            const startDate = formatDate(firstDay);
-            const endDate = formatDate(lastDay);
-
-            const filteredRequests = allRequests.filter(req => {
-                const reqDate = formatDate(new Date(req.date));
-                return reqDate >= startDate && reqDate <= endDate;
-            });
-
-            displayRequests(filteredRequests);
+        // Protect this page
+        protectPage().then(({ db, user }) => {
+            console.log('✅ Director Dashboard - User authenticated:', user.email);
+            loadDashboardData(db);
+        }).catch(error => {
+            console.error('Authentication failed:', error);
         });
 
+        async function loadDashboardData(db) {
+            try {
+                console.log('📊 Director Dashboard – fetching Requests...');
+                const snapshot = await getDocs(collection(db, "Requests"));
+                console.log(`✅ Got ${snapshot.size} documents`);
 
-        // Navigation functions
-        function viewWaitingRequests() {
-            window.location.href = 'all-requests-d.html?status=waiting';
+                const stats = {
+                    waiting: 0,
+                    approved: 0,
+                    processing: 0,
+                    completed: 0,
+                    rejected: 0
+                };
+                let thisMonthCount = 0;
+
+                const now = new Date();
+                const curMonth = now.getMonth();
+                const curYear = now.getFullYear();
+
+                snapshot.forEach((doc) => {
+                    const req = doc.data();
+                    const status = (req.Status || req.status || 'waiting').toLowerCase();
+
+                    if (status.includes('wait')) stats.waiting++;
+                    else if (status.includes('approved')) stats.approved++;
+                    else if (status.includes('process')) stats.processing++;
+                    else if (status.includes('complete')) stats.completed++;
+                    else if (status.includes('reject')) stats.rejected++;
+                    else stats.waiting++;
+
+                    try {
+                        let date;
+                        if (req['Request Date']?.toDate) date = req['Request Date'].toDate();
+                        else if (req.Date?.toDate) date = req.Date.toDate();
+                        else date = new Date(req['Request Date'] || req.Date);
+
+                        if (date.getMonth() === curMonth && date.getFullYear() === curYear) {
+                            thisMonthCount++;
+                        }
+                    } catch (e) {
+                        console.warn('Date parse error:', e);
+                    }
+                });
+
+                console.log('📊 Stats:', stats, '| This Month:', thisMonthCount);
+
+                // Update notification cards
+                document.getElementById('approved-count').textContent = stats.approved;
+                document.getElementById('rejected-count').textContent = stats.rejected;
+                document.getElementById('processing-count').textContent = stats.processing;
+
+                // Update quick-access badges
+                document.getElementById('total-badge').textContent = snapshot.size;
+                document.getElementById('processing-badge').textContent = stats.processing;
+                document.getElementById('month-badge').textContent = thisMonthCount;
+                document.getElementById('completed-badge').textContent = stats.completed;
+
+            } catch (error) {
+                console.error('❌ Director Dashboard load error:', error);
+                alert('Error loading dashboard data. Please refresh the page.');
+            }
         }
+    </script>
+    <script>
+        // Global dashboard navigation based on user role
+        window.goToDashboard = function () {
+            const role = sessionStorage.getItem('userRole');
 
-        function viewRejectedRequests() {
-            window.location.href = 'all-requests-d.html?status=Rejected';
-        }
+            console.log('🚀 Dashboard clicked - Role:', role);
 
-        function viewApprovedRequests() {
-            window.location.href = 'all-requests-d.html?status=approved';
-        }
+            if (!role) {
+                console.warn('⚠️ No role found, redirecting to default');
+                window.location.href = 'all-requests-d.html';
+                return;
+            }
 
-        // Add this function to your existing script section
-        function goToThisMonth() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = today.getMonth() + 1; // Add 1 because getMonth() is 0-indexed (0=Jan, 11=Dec)
+            const roleLower = role.toLowerCase();
 
-            // Format month and day with leading zeros
-            const monthStr = String(month).padStart(2, '0');
-
-            // First day of current month (always day 1)
-            const firstDayStr = `${year}-${monthStr}-01`;
-
-            // Last day of current month
-            const lastDay = new Date(year, month, 0).getDate(); // Day 0 of next month = last day of current month
-            const lastDayStr = `${year}-${monthStr}-${String(lastDay).padStart(2, '0')}`;
-
-            console.log('This Month Filter:');
-            console.log('From:', firstDayStr);
-            console.log('To:', lastDayStr);
-
-            // Redirect with date filters
-            window.location.href = `all-requests-d.html?dateFrom=${firstDayStr}&dateTo=${lastDayStr}`;
-        }
-
+            if (roleLower === 'director') {
+                console.log('👑 Redirecting to Director Dashboard');
+                window.location.href = 'director-dashboard.html';
+            } else if (roleLower === 'admin') {
+                console.log('🛠️ Redirecting to Admin Dashboard');
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                console.log('📝 Redirecting to Default Dashboard');
+                window.location.href = 'all-requests-d.html';
+            }
+        };
     </script>
 </body>
 

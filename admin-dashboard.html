@@ -8,6 +8,23 @@
     <link rel="icon" type="image/x-icon" href="images/dashboard.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
+        :root {
+            /* New Color Palette */
+            --navy: #2F4456;
+            --teal: #567C8D;
+            --sky-blue: #C8D9E6;
+            --beige: #F5EFEB;
+            --white: #FFFFFF;
+
+            /* Functional colors */
+            --primary: var(--navy);
+            --secondary: var(--teal);
+            --accent: var(--sky-blue);
+            --background: var(--beige);
+            --text-dark: #2c2c2c;
+            --text-light: #5a5a5a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -16,13 +33,13 @@
         }
 
         body {
-            background-color: #f4f4f4;
+            background-color: var(--beige);
             min-height: 100vh;
         }
 
         /* Header */
         .admin-header {
-            background: rgb(4, 4, 118);
+            background: var(--navy);
             color: white;
             padding: 20px 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -71,6 +88,13 @@
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            border: 2px solid var(--sky-blue);
+        }
+
+        .account-icon:hover {
+            background-color: var(--beige);
+            transform: scale(1.05);
+            border-color: var(--teal);
         }
 
         .account-icon img {
@@ -78,10 +102,75 @@
             object-fit: cover;
         }
 
-        .account-icon:hover {
-            background-color: #f0f4f8;
-            transform: scale(1.05);
+        .dropdown-menu {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
         }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--sky-blue);
+            background: var(--beige);
+        }
+
+        .dropdown-header .admin-name {
+            font-weight: 600;
+            color: var(--navy);
+            font-size: 15px;
+        }
+
+        .dropdown-header .admin-email {
+            color: var(--teal);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--beige);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--sky-blue);
+            margin: 8px 0;
+        }
+
+        .dropdown-item.logout {
+            color: var(--teal);
+        }
+
+        .dropdown-item.logout:hover {
+            background-color: #e8f4f8;
+        }
+
 
         /* Loading State */
         .loading-overlay {
@@ -102,8 +191,8 @@
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid rgb(4, 4, 118);
+            border: 4px solid var(--beige);
+            border-top: 4px solid var(--navy);
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -136,20 +225,19 @@
             margin: 0 1.5rem;
         }
 
-        /* Notifications Box */
         .notification-box {
             width: 350px;
             max-width: 350px;
-            background-color: #ffffff;
+            background-color: white;
             padding: 20px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             margin-top: 30px;
-            border: 2px solid rgb(4, 4, 118);
+            border: 2px solid var(--navy);
             border-radius: 8px;
         }
 
         .notification-box h2 {
-            color: rgb(4, 4, 118);
+            color: var(--navy);
             margin-bottom: 1.5rem;
             font-weight: bold;
             text-transform: uppercase;
@@ -177,18 +265,18 @@
         }
 
         .notification-card.rejected {
-            border-left-color: #FFB74D;
-            background-color: #fff9e6;
+            border-left-color: var(--teal);
+            background-color: #e8f4f8;
         }
 
         .notification-card.processing {
-            border-left-color: #071063;
-            background-color: #e9e8ff;
+            border-left-color: var(--sky-blue);
+            background-color: #f0f7fb;
         }
 
         .notification-card.approved {
-            border-left-color: #42794d;
-            background-color: #f0f9f0;
+            border-left-color: var(--navy);
+            background-color: #edf1f4;
         }
 
         .notification-card h4 {
@@ -210,29 +298,6 @@
             z-index: 1000;
         }
 
-        .account-icon {
-            width: 40px;
-            height: 40px;
-            background-color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .account-icon img {
-            width: 50%;
-            object-fit: cover;
-        }
-
-        .account-icon:hover {
-            background-color: #f0f4f8;
-            transform: scale(1.05);
-        }
-
         /* Quick Actions */
         .quick-actions {
             flex: 2;
@@ -241,36 +306,39 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
             margin-top: 30px;
-        }
-
-        .add-new {
-            display: flex;
-            gap: 15rem;
-            align-items: center;
-            margin-bottom: 2rem;
+            border: 2px solid var(--sky-blue);
         }
 
         .add-new h2 {
-            color: rgb(4, 4, 118);
+            color: var(--navy);
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
+        .add-new {
+            display: flex;
+            gap: 14rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+
         button.new {
-            border: 1.5px solid #7e7509;
-            padding: 4px;
+            border: 1.5px solid var(--teal);
             border-radius: 6px;
             height: 2.3rem;
             width: 10rem;
-            background: #ffe9c1;
+            background: var(--sky-blue);
+            color: var(--navy);
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
         }
 
         button.new:hover {
-            background: #e3e2e7;
+            background: var(--teal);
+            color: white;
             transform: translateY(-2px);
         }
 
@@ -282,7 +350,7 @@
         }
 
         .action-card {
-            background: #f3f3f3;
+            background: var(--beige);
             padding: 1.5rem;
             border-radius: 10px;
             text-align: center;
@@ -292,10 +360,11 @@
             width: 100%;
             position: relative;
             cursor: pointer;
+            border: 1px solid var(--sky-blue);
         }
 
         .action-card:hover {
-            border: 2px solid rgb(4, 4, 118);
+            border: 2px solid var(--navy);
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
@@ -304,7 +373,7 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            background-color: #b08d57;
+            background-color: var(--teal);
             color: white;
             border-radius: 50%;
             width: 28px;
@@ -314,6 +383,7 @@
             justify-content: center;
             font-size: 12px;
             font-weight: bold;
+            font-family: serif;
         }
 
         .action-card img {
@@ -323,14 +393,14 @@
 
         .action-card h3 {
             font-size: 1.1rem;
-            color: rgb(4, 4, 118);
+            color: var(--navy);
             margin-top: 1rem;
         }
 
         /* Charts Section */
         .section-title {
             font-size: 2.5rem;
-            color: var(--black);
+            color: var(--navy);
             margin-bottom: 15px;
             font-weight: 800;
             font-family: 'Playfair Display', serif;
@@ -339,7 +409,7 @@
 
         .section-subtitle {
             font-size: 1.1rem;
-            color: #5a6c57;
+            color: var(--teal);
             text-align: center;
             margin-bottom: 4.5rem;
             max-width: 700px;
@@ -386,11 +456,10 @@
             margin-right: 2px;
         }
 
-        /* Charts Section */
         .charts-section {
             margin: 3rem 1.5rem;
             margin-bottom: 4rem;
-            border-top: 1px solid rgb(204, 204, 204);
+            border-top: 2px solid var(--sky-blue);
         }
 
         .section-title {
@@ -425,8 +494,7 @@
             background: white;
             padding: 30px;
             border-radius: 15px;
-            /* box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); */
-            border: 2.5px solid rgba(4, 4, 118, 0.64);
+            border: 2.5px solid var(--navy);
             transition: all 0.3s ease;
         }
 
@@ -437,11 +505,10 @@
 
         .chart-title {
             font-size: 1.5rem;
-            color: rgb(4, 4, 118);
+            color: var(--navy);
             margin-bottom: 20px;
             font-weight: bold;
             margin-left: 2rem;
-
         }
 
         .chart-wrapper {
@@ -466,20 +533,20 @@
             cursor: pointer;
             user-select: none;
             transition: opacity 0.2s;
+            color: var(--text-dark);
         }
 
-        .legend-item.legend-static {
-            cursor: default;
+        .legend-item.inactive {
+            opacity: 0.4;
+            text-decoration: line-through;
+            color: var(--text-light);
         }
 
         .legend-item:hover:not(.legend-static) {
             opacity: 0.7;
         }
 
-        .legend-item.inactive {
-            opacity: 0.4;
-            text-decoration: line-through;
-        }
+
 
         .legend-color {
             width: 12px;
@@ -541,30 +608,30 @@
         .top-controls select {
             padding: 8px 12px;
             border-radius: 6px;
-            border: 1px solid #ccc;
+            border: 2px solid var(--sky-blue);
             font-family: Georgia, 'Times New Roman', Times, serif;
             font-size: 14px;
             background: white;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .trends-controls select:focus,
-        .trends-controls input[type="month"]:focus,
-        .top-controls select:focus {
-            outline: none;
-            border-color: rgb(4, 4, 118);
-            box-shadow: 0 0 0 2px rgba(4, 4, 118, 0.1);
+        .trends-controls select:hover,
+        .trends-controls input[type="month"]:hover,
+        .top-controls select:hover {
+            border-color: var(--teal);
         }
 
         .trends-controls label,
         .top-controls label {
             font-size: 14px;
-            color: #333;
+            color: var(--navy);
+            font-weight: 600;
         }
 
         .trends-controls button {
             padding: 8px 20px;
-            background: rgb(4, 4, 118);
+            background: var(--navy);
             color: white;
             border: none;
             border-radius: 6px;
@@ -575,7 +642,7 @@
         }
 
         .trends-controls button:hover {
-            background: rgb(6, 6, 160);
+            background: var(--teal);
             transform: translateY(-1px);
         }
 
@@ -596,7 +663,7 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="spinner"></div>
-            <p style="color: rgb(4, 4, 118); font-size: 18px; font-weight: bold;">Loading Dashboard...</p>
+            <p style="color: var(--navy); font-size: 18px; font-weight: bold;">Loading Dashboard...</p>
         </div>
     </div>
     <header class="admin-header">
@@ -608,9 +675,28 @@
                     <h1>Admin Dashboard</h1>
                 </button>
             </div>
+
+            <!-- ===== UPDATED: Account menu with dropdown ===== -->
             <div class="account-menu">
-                <div class="account-icon" id="accountIcon" onclick="window.location.href='my-account.html'">
+                <div class="account-icon" id="accountIcon" onclick="toggleDropdown(event)">
                     <img src="images/user.png" alt="User Account">
+                </div>
+
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="admin-name" id="adminName">Loading...</div>
+                        <div class="admin-email" id="adminEmail">Loading...</div>
+                    </div>
+                    <a class="dropdown-item" id="dashboardLink" onclick="goToDashboard()">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                    <a class="dropdown-item" onclick="window.location.href='my-account.html'">
+                        <span class="icon">👤</span> My Account
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item logout" onclick="logout()">
+                        <span class="icon">🚪</span> Logout
+                    </a>
                 </div>
             </div>
         </div>
@@ -698,23 +784,23 @@
                 </div>
                 <div class="custom-legend">
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #E68787;border:1px solid #e64d4d;"></span>
+                        <span class="legend-color" style="background-color: #E68787; border:1px solid #e64d4d;"></span>
                         Waiting
                     </span>
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #FCDB8D;border:1px solid #FFB700;"></span>
+                        <span class="legend-color" style="background-color: #C8D9E6; border:1px solid #567C8D;"></span>
                         Approved
                     </span>
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #9BE8AE;border:1px solid #42794d;"></span>
+                        <span class="legend-color" style="background-color: #567C8D; border:1px solid #2F4456;"></span>
                         Processing
                     </span>
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #95B2F5;border:1px solid #09034D;"></span>
+                        <span class="legend-color" style="background-color: #2F4456; border:1px solid #1a2833;"></span>
                         Completed
                     </span>
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #BAB3B3;border:1px solid #000000;"></span>
+                        <span class="legend-color" style="background-color: #F5EFEB; border:1px solid #C8D9E6;"></span>
                         Rejected
                     </span>
                 </div>
@@ -747,11 +833,11 @@
                 </div>
                 <div class="custom-legend" style="top: 3rem;">
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: rgb(4, 4, 118);"></span>
+                        <span class="legend-color" style="background-color: #2F4456;"></span>
                         Total Requests
                     </span>
                     <span class="legend-item legend-static">
-                        <span class="legend-color" style="background-color: #42794d;"></span>
+                        <span class="legend-color" style="background-color: #567C8D;"></span>
                         Completed
                     </span>
                 </div>
@@ -785,10 +871,45 @@
         </div>
     </div>
 
+    <script>
+        // Dropdown toggle
+        window.toggleDropdown = function (event) {
+            event.stopPropagation();
+            document.getElementById('dropdownMenu').classList.toggle('active');
+        };
+
+        document.addEventListener('click', function (event) {
+            const menu = document.getElementById('dropdownMenu');
+            const icon = document.getElementById('accountIcon');
+            if (!icon.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Global dashboard navigation
+        window.goToDashboard = function () {
+            const role = sessionStorage.getItem('userRole');
+            console.log('🚀 Dashboard clicked - Role:', role);
+
+            if (!role) {
+                window.location.href = 'all-requests.html';
+                return;
+            }
+
+            const roleLower = role.toLowerCase();
+            if (roleLower === 'director') {
+                window.location.href = 'director-dashboard.html';
+            } else if (roleLower === 'admin') {
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                window.location.href = 'all-requests.html';
+            }
+        };
+    </script>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { protectPage, logout } from './auth-module.js';
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         console.log('🚀 Starting dashboard...');
 
@@ -801,18 +922,25 @@
             console.log('✅ Chart.js loaded successfully');
         }
 
+        // Make logout available globally
+        window.logout = logout;
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
-            authDomain: "requests-ffdd6.firebaseapp.com",
-            projectId: "requests-ffdd6",
-            storageBucket: "requests-ffdd6.firebasestorage.app",
-            messagingSenderId: "316405880275",
-            appId: "1:316405880275:web:f4b271583e903ac639cb26"
-        };
+        // Store all requests data globally for chart updates
+        let allRequestsData = [];
+        let trendsChart = null;
+        let collegesChart = null;
+        let db = null;
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        // ✅ PROTECT PAGE AND LOAD DATA
+        protectPage().then(({ db: firestore, user }) => {
+            db = firestore;
+            console.log('✅ Admin Dashboard - User authenticated:', user.email);
+
+            // Load dashboard data
+            loadAndDisplay();
+        }).catch(error => {
+            console.error('Authentication failed:', error);
+        });
 
         // Global navigation functions
         window.viewProcessingRequests = function () {
@@ -841,11 +969,6 @@
             console.log('This Month Filter:', firstDayStr, 'to', lastDayStr);
             window.location.href = `all-requests.html?dateFrom=${firstDayStr}&dateTo=${lastDayStr}`;
         };
-
-        // Store all requests data globally for chart updates
-        let allRequestsData = [];
-        let trendsChart = null;
-        let collegesChart = null;
 
         // Helper function to generate month keys for a range
         function generateMonthKeys(monthsBack) {
@@ -882,7 +1005,8 @@
             const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             return `${monthNames[parseInt(month) - 1]} ${year}`;
         }
-        // Helper function to check if a college name is valid (not empty, unknown, or n/a)
+
+        // Helper function to check if a college name is valid
         function isValidCollegeName(name) {
             if (!name || typeof name !== 'string') return false;
             const trimmed = name.trim().toLowerCase();
@@ -941,19 +1065,20 @@
                 type: 'line',
                 data: {
                     labels: labels,
+                    // Chart 2: Monthly Trends - Update colors (around line 970)
                     datasets: [{
                         label: 'Total Requests',
                         data: totalData,
-                        borderColor: 'rgb(4, 4, 118)',
-                        backgroundColor: 'rgba(4, 4, 118)',
+                        borderColor: '#2F4456',           // navy
+                        backgroundColor: 'rgba(47, 68, 86, 0.1)',
                         tension: 0.4,
                         borderWidth: 1.5,
                         fill: false
                     }, {
                         label: 'Completed',
                         data: completedData,
-                        borderColor: '#42794d',
-                        backgroundColor: 'rgba(66, 121, 77, 0.1)',
+                        borderColor: '#567C8D',            // teal
+                        backgroundColor: 'rgba(86, 124, 141, 0.1)',
                         tension: 0.4,
                         borderWidth: 1.5,
                         fill: true
@@ -1004,7 +1129,6 @@
 
                     if (monthKeys.includes(key)) {
                         const college = req.College;
-                        // Only count valid college names (skip Unknown, N/A, empty, etc.)
                         if (isValidCollegeName(college)) {
                             collegeCounts[college] = (collegeCounts[college] || 0) + 1;
                         }
@@ -1014,7 +1138,6 @@
                 }
             });
 
-            // Sort by count and get top colleges
             const sortedColleges = Object.entries(collegeCounts)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 5);
@@ -1027,7 +1150,7 @@
             if (collegesChart) {
                 collegesChart.destroy();
             }
-            // Function to wrap text into multiple lines
+
             function wrapText(text, maxCharsPerLine = 15) {
                 const words = text.split(' ');
                 const lines = [];
@@ -1046,18 +1169,18 @@
                 return lines;
             }
 
-            // Wrap labels into multiple lines
             const wrappedLabels = labels.map(label => wrapText(label, 15));
 
             collegesChart = new Chart(document.getElementById('collegesChart'), {
                 type: 'bar',
                 data: {
                     labels: wrappedLabels,
+                    // Chart 3: Top Colleges - Update colors (around line 1110)
                     datasets: [{
                         label: 'Requests',
                         data: values,
-                        borderColor: 'black',
-                        backgroundColor: '#FFDEAD',
+                        borderColor: '#2F4456',           // navy
+                        backgroundColor: '#C8D9E6',       // sky blue
                         borderWidth: 1.3,
                         borderRadius: 4
                     }]
@@ -1070,10 +1193,9 @@
                         legend: { display: false },
                         tooltip: {
                             callbacks: {
-                                // Show full college name in tooltip
                                 title: function (context) {
                                     const index = context[0].dataIndex;
-                                    return labels[index]; // Full name
+                                    return labels[index];
                                 },
                                 label: function (context) {
                                     return `Requests: ${context.parsed.x}`;
@@ -1184,7 +1306,6 @@
 
                 let thisMonthCount = 0;
 
-                // ✅ NEW: Stats for THIS MONTH only
                 const thisMonthStats = {
                     waiting: 0,
                     approved: 0,
@@ -1221,7 +1342,6 @@
                         if (monthIndex === currentMonth && year === currentYear) {
                             thisMonthCount++;
 
-                            // ✅ NEW: Count this month's stats by status
                             if (status.includes('wait')) thisMonthStats.waiting++;
                             else if (status.includes('approved')) thisMonthStats.approved++;
                             else if (status.includes('process')) thisMonthStats.processing++;
@@ -1260,9 +1380,16 @@
                         labels: ['Waiting', 'Approved', 'Processing', 'Completed', 'Rejected'],
                         datasets: [{
                             data: [stats.waiting, stats.approved, stats.processing, stats.completed, stats.rejected],
-                            backgroundColor: ['#E68787', '#FCDB8D', '#9BE8AE', '#95B2F5', '#BAB3B3'],
-                            borderWidth: 2,
-                            borderColor: '#1A1919'
+                            // Chart 1: Status Doughnut Chart - Update colors
+                            backgroundColor: [
+                                '#E68787',      // Waiting - red
+                                '#C8D9E6',      // Approved - sky blue
+                                '#567C8D',      // Processing - teal  
+                                '#2F4456',      // Completed - navy
+                                '#F5EFEB'       // Rejected - beige
+                            ],
+                            borderColor: '#2F4456',
+                            borderWidth: 2
                         }]
                     },
                     options: {
@@ -1283,25 +1410,32 @@
                     }
                 });
 
-                // Chart 2: Monthly Trends - Default to last 6 months
+                // Chart 2: Monthly Trends
                 setupTrendsControls();
                 const defaultMonthKeys = generateMonthKeys(6);
                 buildTrendsChart(defaultMonthKeys);
 
-                // Chart 3: Top Colleges - Default to last 6 months
+                // Chart 3: Top Colleges
                 setupCollegesControls();
                 buildCollegesChart(6);
 
-                //Chart 4: This Month Requests 
+                // Chart 4: This Month Requests 
                 new Chart(document.getElementById('stackedChart'), {
                     type: 'bar',
                     data: {
                         labels: ['Waiting', 'Approved', 'Processing', 'Completed', 'Rejected'],
                         datasets: [{
                             data: [thisMonthStats.waiting, thisMonthStats.approved, thisMonthStats.processing, thisMonthStats.completed, thisMonthStats.rejected],
-                            backgroundColor: ['#E68787', '#FCDB8D', '#9BE8AE', '#95B2F5', '#BAB3B3'],
-                            borderWidth: 2,
-                            borderColor: '#1A1919'
+                            // Chart 4: This Month Requests - Update colors (around line 1280)
+                            backgroundColor: [
+                                '#E68787',      // Waiting
+                                '#C8D9E6',      // Approved - sky blue
+                                '#567C8D',      // Processing - teal
+                                '#2F4456',      // Completed - navy
+                                '#F5EFEB'       // Rejected - beige
+                            ],
+                            borderColor: '#2F4456',
+                            borderWidth: 2
                         }]
                     },
                     options: {
@@ -1322,11 +1456,8 @@
                     }
                 });
 
-
                 console.log('✅ All charts created successfully!');
                 document.getElementById('loadingOverlay').style.display = 'none';
-
-
 
             } catch (error) {
                 console.error('❌ Error loading dashboard:', error);
@@ -1335,15 +1466,12 @@
                         <h2>⚠️ Error Loading Dashboard</h2>
                         <p>${error.message}</p>
                         <p style="font-size: 14px; color: #666;">Check console for details</p>
-                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: rgb(4, 4, 118); color: white; border: none; border-radius: 5px; cursor: pointer;">
-                            Retry
-                        </button>
+                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: var(--navy); color: white; border: none; border-radius: 5px; cursor: pointer;">
+    Retry
+</button>
                     </div>`;
             }
         }
-
-        // Start loading data
-        loadAndDisplay();
     </script>
 </body>
 

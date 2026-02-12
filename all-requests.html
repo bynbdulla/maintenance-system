@@ -14,6 +14,23 @@
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Amiri&display=swap");
 
+        :root {
+            /* New Color Palette */
+            --navy: #2F4456;
+            --teal: #567C8D;
+            --sky-blue: #C8D9E6;
+            --beige: #F5EFEB;
+            --white: #FFFFFF;
+
+            /* Functional colors */
+            --primary: var(--navy);
+            --secondary: var(--teal);
+            --accent: var(--sky-blue);
+            --background: var(--beige);
+            --text-dark: #2c2c2c;
+            --text-light: #5a5a5a;
+        }
+
         .mixed-content {
             font-family: "Amiri", serif;
             /* This automatically handles RTL for Arabic and LTR for English */
@@ -54,7 +71,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
+            background-color: var(--beige);
             min-height: 100vh;
         }
 
@@ -64,7 +81,7 @@
         }
 
         .admin-header {
-            background: rgb(4, 4, 118);
+            background: var(--navy);
             color: white;
             padding: 20px 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -118,14 +135,14 @@
         }
 
         .table-header h2 {
-            color: #2c3e50;
+            color: var(--navy);
             font-size: 24px;
             font-weight: 600;
             margin-left: 30px;
         }
 
         .download {
-            background: rgb(212, 180, 132);
+            background: var(--teal);
             border: none;
             padding: 10px 20px;
             border-radius: 8px;
@@ -134,19 +151,19 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: rgb(27, 24, 24);
+            color: white;
             font-weight: 600;
         }
 
         .download:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(212, 180, 132, 0.6);
-            background: rgb(230, 200, 150);
+            box-shadow: 0 6px 20px rgba(86, 124, 141, 0.6);
+            background: var(--navy);
         }
 
         .download:active {
             transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(212, 180, 132, 0.3);
+            box-shadow: 0 2px 8px rgba(86, 124, 141, 0.3);
         }
 
 
@@ -162,7 +179,7 @@
             text-align: center;
             padding: 40px;
             font-size: 16px;
-            color: #667eea;
+            color: var(--navy);
         }
 
         .error {
@@ -186,7 +203,7 @@
         }
 
         #requests-table thead {
-            background: rgb(4, 4, 118);
+            background: var(--navy);
             color: white;
         }
 
@@ -264,7 +281,7 @@
         }
 
         #requests-table tbody tr:hover {
-            background-color: #f8f9ff;
+            background-color: var(--sky-blue);
         }
 
         #requests-table tbody tr:last-child {
@@ -277,10 +294,9 @@
             font-size: 14px;
         }
 
-        /* Status badge styling */
         .status-waiting {
-            color: #e64d4d;
-            background-color: #f4d4d4;
+            color: #83792c;
+            background-color: #f7f5dac2;
             padding: 4px 12px;
             border-radius: 20px;
             display: inline-block;
@@ -288,8 +304,8 @@
         }
 
         .status-Approved {
-            color: #FFB700;
-            background-color: #fcedca;
+            color: var(--teal);
+            background-color: var(--sky-blue);
             padding: 4px 12px;
             border-radius: 20px;
             display: inline-block;
@@ -297,8 +313,8 @@
         }
 
         .status-processing {
-            color: #42794d;
-            background-color: #d4edda;
+            color: var(--navy);
+            background-color: var(--sky-blue);
             padding: 4px 12px;
             border-radius: 20px;
             display: inline-block;
@@ -306,17 +322,18 @@
         }
 
         .status-Completed {
-            color: #09034D;
-            background-color: #d7e3ff;
+            color: var(--navy);
+            background-color: var(--beige);
             padding: 4px 12px;
             border-radius: 20px;
             display: inline-block;
             font-size: 12px;
+            border: 1px solid var(--teal);
         }
 
         .status-rejected {
-            color: #000000;
-            background-color: #eeeeee;
+            color: #666;
+            background-color: #e0e0e0;
             padding: 4px 12px;
             border-radius: 20px;
             display: inline-block;
@@ -329,13 +346,12 @@
             color: #041358;
         }
 
-        /* Loading spinner */
         .loading::after {
             content: '';
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid #667eea;
+            border: 3px solid var(--navy);
             border-top-color: transparent;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
@@ -408,23 +424,20 @@
         }
 
         .stat-card.total.active {
-            background-color: #d8dfff;
-            border: 3px solid #667eea;
+            border: 3px solid var(--teal);
+            color: white;
         }
 
         .stat-card.waiting.active {
-            background-color: #f4d4d4;
-            border: 3px solid #e64d4d;
+            border: 3px solid #83792c;
         }
 
         .stat-card.processing.active {
-            background-color: #dff7e4;
-            border: 3px solid #42794d;
+            border: 3px solid var(--navy);
         }
 
         .stat-card.rejected.active {
-            border: 3px solid #000000;
-            background-color: #eeeeee;
+            border: 3px solid #333;
         }
 
 
@@ -443,30 +456,30 @@
         }
 
         .stat-card.total {
-            border: 2px solid #667eea;
-            background-color: #eff2fd;
+            border: 2px solid var(--navy);
+            background-color: var(--sky-blue);
         }
 
         .stat-card.waiting {
-            border: 2px solid #e64d4d;
-            background-color: #f4d4d4;
+            border: 2px solid #83792c;
+            background-color: #f7f5dac2;
         }
 
         .stat-card.processing {
-            border: 2px solid #42794d;
-            background-color: #dff7e4;
+            border: 2px solid var(--teal);
+            background-color: var(--beige);
         }
 
         .stat-card.rejected {
-            border: 2px solid #000000;
-            background-color: #eeeeee;
+            border: 2px solid #666;
+            background-color: #e0e0e0;
         }
 
         /* Search and Filters Styling */
         .search-filters-container {
             background: white;
             border-radius: 12px;
-            padding: 15px 20px;
+            padding: 15px 40px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             flex: 1;
             display: flex;
@@ -488,7 +501,7 @@
         }
 
         .search-bar input {
-            width: 97%;
+            width: 100%;
             padding: 10px 40px 10px 40px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
@@ -498,8 +511,8 @@
 
         .search-bar input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(47, 68, 86, 0.1);
         }
 
         .search-icon {
@@ -507,7 +520,7 @@
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: #999;
+            color: var(--teal);
             font-size: 14px;
             pointer-events: none;
         }
@@ -534,7 +547,7 @@
         }
 
         .clear-search:hover {
-            background: #d32f2f;
+            background: var(--teal);
             color: white;
         }
 
@@ -544,7 +557,7 @@
 
         .filters {
             display: flex;
-            gap: 10px;
+            gap: 16px;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -552,40 +565,40 @@
         .filters select,
         .filters input[type="date"] {
             padding: 8px 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--sky-blue);
             border-radius: 8px;
             font-size: 13px;
-            background-color: #f8f9fa;
+            background-color: white;
             transition: all 0.3s ease;
             cursor: pointer;
-            max-width: 300px;
         }
 
         .filters select:focus,
         .filters input[type="date"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--navy);
             background-color: white;
         }
 
         .clear-btn {
             padding: 8px 16px;
-            background: #d3e4ff;
-            color: rgb(0, 0, 0);
+            background: var(--sky-blue);
+            color: var(--navy);
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            border: 2px solid #414082;
+            border: 2px solid var(--teal);
             font-size: 13px;
             width: 200px;
         }
 
         .clear-btn:hover {
-            background: #414082;
+            background: var(--navy);
             transform: translateY(-2px);
             color: white;
+            border-color: var(--navy);
         }
 
         @media (max-width: 1200px) {
@@ -630,10 +643,17 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: #4A5568;
+            color: var(--navy);
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            overflow: hidden
+            overflow: hidden;
+            border: 2px solid var(--sky-blue);
+        }
+
+        .account-icon:hover {
+            background-color: var(--beige);
+            border-color: var(--teal);
+            transform: scale(1.05);
         }
 
         .account-icon img {
@@ -641,15 +661,8 @@
             object-fit: cover;
         }
 
-        .account-icon:hover {
-            background-color: #f0f4f8;
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
-        }
-
-        /* Clickable request number */
         .request-link {
-            color: #08175c;
+            color: var(--navy);
             text-decoration: none;
             font-weight: 600;
             cursor: pointer;
@@ -657,11 +670,11 @@
         }
 
         .request-link:hover {
-            color: #4a5dc9;
+            color: var(--teal);
             text-decoration: underline;
         }
 
-        .dropdown-menu {
+       .dropdown-menu {
             position: absolute;
             top: 55px;
             right: 0;
@@ -684,17 +697,18 @@
 
         .dropdown-header {
             padding: 16px;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--sky-blue);
+            background: var(--beige);
         }
 
         .dropdown-header .admin-name {
             font-weight: 600;
-            color: #333;
+            color: var(--navy);
             font-size: 15px;
         }
 
         .dropdown-header .admin-email {
-            color: #666;
+            color: var(--teal);
             font-size: 13px;
             margin-top: 4px;
         }
@@ -712,26 +726,21 @@
         }
 
         .dropdown-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .dropdown-item .icon {
-            width: 20px;
-            font-size: 16px;
+            background-color: var(--beige);
         }
 
         .dropdown-divider {
             height: 1px;
-            background-color: #e0e0e0;
+            background-color: var(--sky-blue);
             margin: 8px 0;
         }
 
         .dropdown-item.logout {
-            color: #d32f2f;
+            color: var(--teal);
         }
 
         .dropdown-item.logout:hover {
-            background-color: #ffebee;
+            background-color: #e8f4f8;
         }
 
         #requestModal {
@@ -785,8 +794,9 @@
         }
 
         .pagination-info {
-            color: #666;
+            color: var(--navy);
             font-size: 14px;
+            font-weight: 500;
         }
 
         .pagination-controls {
@@ -796,7 +806,7 @@
         }
 
         .pagination-btn {
-            background: #16079C;
+            background: var(--navy);
             color: white;
             border: none;
             padding: 8px 16px;
@@ -809,6 +819,7 @@
 
         .pagination-btn:hover:not(:disabled) {
             transform: translateY(-2px);
+            background: var(--teal);
         }
 
         .pagination-btn:disabled {
@@ -823,9 +834,9 @@
         }
 
         .page-number {
-            background: #f5f7fa;
-            color: #666;
-            border: 1px solid #e0e0e0;
+            background: var(--beige);
+            color: var(--navy);
+            border: 1px solid var(--sky-blue);
             padding: 8px 12px;
             border-radius: 6px;
             cursor: pointer;
@@ -836,14 +847,14 @@
         }
 
         .page-number:hover {
-            background: #e8eef3;
-            border-color: #16079C;
+            background: var(--sky-blue);
+            border-color: var(--navy);
         }
 
         .page-number.active {
-            background: #16079C;
+            background: var(--navy);
             color: white;
-            border-color: #16079C;
+            border-color: var(--navy);
             font-weight: 600;
         }
 
@@ -855,11 +866,16 @@
 
         .rows-per-page select {
             padding: 6px 10px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--sky-blue);
             border-radius: 6px;
             font-size: 14px;
             cursor: pointer;
             background: white;
+        }
+
+        .rows-per-page select:focus {
+            outline: none;
+            border-color: var(--navy);
         }
 
         @media print {
@@ -908,9 +924,14 @@
             }
         }
 
+        #EndDateInput:focus {
+            border-color: var(--navy) !important;
+            box-shadow: 0 0 0 3px rgba(47, 68, 86, 0.1) !important;
+        }
+
         .amount-cell {
             font-weight: 600;
-            color: #2e7d32;
+            color: var(--teal);
         }
 
         .amount-cell.no-amount {
@@ -921,80 +942,6 @@
 </head>
 
 <body>
-
-    <!-- ============================================ -->
-    <!-- AUTHENTICATION PROTECTION - START -->
-    <!-- ============================================ -->
-    <!-- <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-        const authConfig = {
-            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
-            authDomain: "requests-ffdd6.firebaseapp.com",
-            projectId: "requests-ffdd6",
-            storageBucket: "requests-ffdd6.firebasestorage.app",
-            messagingSenderId: "316405880275",
-            appId: "1:316405880275:web:f4b271583e903ac639cb26"
-        };
-
-        const authApp = initializeApp(authConfig, 'adminAuth');
-        const adminAuth = getAuth(authApp);
-
-        console.log('🔍 Checking authentication...');
-
-        // Check sessionStorage (ATHAR Museum method)
-        const isAuthenticated = sessionStorage.getItem('isAuthenticated');
-        const userEmail = sessionStorage.getItem('userEmail');
-
-        if (isAuthenticated !== 'true' || !userEmail) {
-            console.log('❌ Not authenticated - redirecting to login');
-            window.location.replace('login.html');
-        } else {
-            console.log('✅ Authenticated as:', userEmail);
-
-            // Update UI
-            const adminEmailElement = document.querySelector('.admin-email');
-            const adminNameElement = document.querySelector('.admin-name');
-
-            if (adminEmailElement) {
-                adminEmailElement.textContent = userEmail;
-            }
-            if (adminNameElement) {
-                const displayName = userEmail.split('@')[0];
-                adminNameElement.textContent = displayName;
-            }
-        }
-
-        // Global logout function
-        window.logout = async function () {
-            if (confirm('Are you sure you want to logout?')) {
-                try {
-                    console.log('🚪 Logging out...');
-
-                    // Clear session
-                    sessionStorage.clear();
-                    localStorage.clear();
-
-                    // Sign out from Firebase
-                    await signOut(adminAuth);
-
-                    console.log('✅ Logged out successfully');
-                    window.location.replace('login.html');
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    // Force logout even if Firebase fails
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    window.location.replace('login.html');
-                }
-            }
-        };
-    </script> -->
-    <!-- ============================================ -->
-    <!-- AUTHENTICATION PROTECTION - END -->
-    <!-- ============================================ -->
-
     <header class="admin-header">
         <div class="header-content">
             <div class="header-title">
@@ -1004,11 +951,32 @@
                     <h1 style="color: white; margin: 0;">Admin Dashboard</h1>
                 </button>
             </div>
+
+            <!-- ===== UPDATED: Account menu with dropdown ===== -->
             <div class="account-menu">
-                <div class="account-icon" id="accountIcon" onclick="window.location.href='my-account.html'">
+                <div class="account-icon" id="accountIcon" onclick="toggleDropdown(event)">
                     <img src="images/user.png" alt="User Account">
                 </div>
+
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="admin-name" id="adminName">Loading...</div>
+                        <div class="admin-email" id="adminEmail">Loading...</div>
+                    </div>
+                    <a class="dropdown-item" onclick="goToDashboard()" style="cursor: pointer;">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                    <a class="dropdown-item" onclick="window.location.href='my-account.html'" style="cursor: pointer;">
+                        <span class="icon">👤</span> My Account
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item logout" onclick="logout()" style="cursor: pointer;">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </div>
             </div>
+            <!-- ===== END ===== -->
+
         </div>
         </div>
     </header>
@@ -1105,7 +1073,8 @@
         <div class="table-header">
             <h2> Maintenance Requests</h2>
             <button class="download" id="download">
-                <span>📥 Download PDF</span>
+                <img src="images/download-pdf.png" style="width: 26px;height: 26px;">
+                <h4>Download</h4>
             </button>
         </div>
 
@@ -1151,6 +1120,33 @@
         </div>
     </div>
     </div>
+
+    <!-- ===== DROPDOWN TOGGLE SCRIPT ===== -->
+    <script>
+        // Toggle dropdown open/close
+        window.toggleDropdown = function (event) {
+            event.stopPropagation();
+            document.getElementById('dropdownMenu').classList.toggle('active');
+        };
+
+        // Close dropdown when clicking anywhere outside
+        document.addEventListener('click', function (event) {
+            const menu = document.getElementById('dropdownMenu');
+            const icon = document.getElementById('accountIcon');
+            if (!icon.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Placeholder logout function — wire up to your Firebase auth if needed
+        window.logout = function () {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.clear();
+                localStorage.clear();
+                window.location.replace('login.html');
+            }
+        };
+    </script>
 
     <!-- Firebase SDKs - YOUR EXISTING FIREBASE CODE -->
     <script type="module">
@@ -1278,16 +1274,16 @@
             printContainer.innerHTML = `
         <div style="direction: ltr; text-align: left;">
             <!-- Header -->
-            <div style="background: rgb(4, 4, 118); color: white; padding: 30px; text-align: center; margin-bottom: 30px; border-radius: 10px;">
-                <h1 style="margin: 0 0 10px 0; font-size: 28px;">Request Details</h1>
-                <p style="margin: 0; font-size: 16px;">Request #: ${request['Request Number']}</p>
-            </div>
+            <div style="background: var(--navy); color: white; padding: 30px; text-align: center; margin-bottom: 30px; border-radius: 10px;">
+    <h1 style="margin: 0 0 10px 0; font-size: 28px;">Request Details</h1>
+    <p style="margin: 0; font-size: 16px;">Request #: ${request['Request Number']}</p>
+</div>
 
             <!-- Basic Information with Status Badge -->
             <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; margin-bottom: 15px;">
                 <!-- ✅ Header row with Status Badge -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid rgb(4, 4, 118);">
-                    <h2 style="color: rgb(4, 4, 118); margin: 0; font-size: 18px;">Basic Information</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--navy);">
+                    <h2 style="color:var(--navy); margin: 0; font-size: 18px;">Basic Information</h2>
                     <!-- ✅ Status Badge moved here -->
                     <span style="
                         display: inline-block;
@@ -1296,10 +1292,10 @@
                         font-weight: bold;
                         font-size: 13px;
                         ${statusCheck.includes('waiting') ? 'background: #f4d4d4; color: #e64d4d;' : ''}
-                        ${statusCheck.includes('approved') ? 'background: #fcedca; color: #FFB700;' : ''}
-                        ${statusCheck.includes('processing') || statusCheck.includes('progress') ? 'background: #d4edda; color: #42794d;' : ''}
-                        ${statusCheck.includes('completed') ? 'background: #d7e3ff; color: #09034D;' : ''}
-                        ${statusCheck.includes('rejected') ? 'background: #eeeeee; color: #000000;' : ''}
+                        ${statusCheck.includes('approved') ? 'background: #C8D9E6; color: #567C8D;' : ''}
+                        ${statusCheck.includes('processing') || statusCheck.includes('progress') ? 'background: #C8D9E6; color: #2F4456;' : ''}
+                        ${statusCheck.includes('completed') ? 'background: #F5EFEB; color: #2F4456; border: 1px solid #567C8D;' : ''}
+                        ${statusCheck.includes('rejected') ? 'background: #e0e0e0; color: #666;' : ''}
                     ">${status}</span>
                 </div>
                 <table style="width: 100%; border-collapse: collapse;">
@@ -1867,6 +1863,8 @@
             }
         }
 
+
+
         window.goToPage = function (page) {
             currentPage = page;
             filterAndDisplayRequests();
@@ -1964,6 +1962,33 @@
             }
         }
 
+        // Load admin profile information
+        async function loadAdminProfile() {
+            try {
+                const userEmail = sessionStorage.getItem('userEmail') || localStorage.getItem('userEmail');
+                const userName = sessionStorage.getItem('userName') || localStorage.getItem('userName');
+
+                // Update dropdown header
+                const adminNameEl = document.getElementById('adminName');
+                const adminEmailEl = document.getElementById('adminEmail');
+
+                if (adminNameEl && userName) {
+                    adminNameEl.textContent = userName;
+                }
+
+                if (adminEmailEl && userEmail) {
+                    adminEmailEl.textContent = userEmail;
+                }
+
+                console.log('✅ Admin profile loaded:', { userName, userEmail });
+            } catch (error) {
+                console.error('❌ Error loading admin profile:', error);
+            }
+        }
+
+        // Call this function when page loads
+        loadAdminProfile();
+
         window.closeModal = function () {
             const modal = document.getElementById('requestModal');
             if (modal) {
@@ -1992,70 +2017,69 @@
     
     
     <!-- Print PDF Button (Circle) -->
-    <button onclick="printRequestDetails('${request['Request Number']}')" 
-            style="background: rgb(4, 4, 118,0.3); 
-                   color: white; 
-                   border: none; 
-                   width: 45px; 
-                   height: 45px; 
-                   border-radius: 50%; 
-                   font-size: 20px; 
-                   cursor: pointer; 
-                   transition: all 0.3s ease; 
-                   display: flex; 
-                   align-items: center; 
-                   justify-content: center;
-                   box-shadow: 0 2px 8px rgba(4,4,118,0.3);" 
-            onmouseover="this.style.transform='scale(1.1)'" 
-            onmouseout="this.style.transform='scale(1)'"
-            title="Print PDF">
-        <img src="images/printer.png"style="width:25px;height:25px">
-    </button>
-    
-    <!-- View Job Button (Circle) -->
-    <button onclick="viewMaterialReport('${request['Request Number']}')" 
-            style="background: rgb(255, 152, 0, 0.4); 
-                   color: white; 
-                   border: none; 
-                   width: 45px; 
-                   height: 45px; 
-                   border-radius: 50%; 
-                   font-size: 20px; 
-                   cursor: pointer; 
-                   transition: all 0.3s ease; 
-                   display: flex; 
-                   align-items: center; 
-                   justify-content: center;
-                   box-shadow: 0 2px 8px rgba(255,152,0,0.3);" 
-            onmouseover="this.style.transform='scale(1.1)'" 
-            onmouseout="this.style.transform='scale(1)'"
-            title="View Job Description">
-                <img src="images/file.png"style="width:25px;height:25px">
-    </button>
+<button onclick="printRequestDetails('${request['Request Number']}')" 
+        style="background: var(--navy); 
+               color: white; 
+               border: none; 
+               width: 45px; 
+               height: 45px; 
+               border-radius: 50%; 
+               font-size: 20px; 
+               cursor: pointer; 
+               transition: all 0.3s ease; 
+               display: flex; 
+               align-items: center; 
+               justify-content: center;
+               box-shadow: 0 2px 8px rgba(47, 68, 86, 0.3);" 
+        onmouseover="this.style.background='var(--teal)'" 
+        onmouseout="this.style.background='var(--navy)'"
+        title="Print PDF">
+    <img src="images/printer.png" style="width:25px;height:25px">
+</button>
+
+<!-- View Job Button (Circle) -->
+<button onclick="viewMaterialReport('${request['Request Number']}')" 
+        style="background: var(--teal); 
+               color: white; 
+               border: none; 
+               width: 45px; 
+               height: 45px; 
+               border-radius: 50%; 
+               font-size: 20px; 
+               cursor: pointer; 
+               transition: all 0.3s ease; 
+               display: flex; 
+               align-items: center; 
+               justify-content: center;
+               box-shadow: 0 2px 8px rgba(86, 124, 141, 0.3);" 
+        onmouseover="this.style.background='var(--navy)'" 
+        onmouseout="this.style.background='var(--teal)'"
+        title="View Job Description">
+    <img src="images/file.png" style="width:25px;height:25px">
+</button>
     <!-- Close Button (Circle) -->
     <button onclick="closeModal()" 
-            style="background: rgba(207, 203,203,1); 
-                   color: #333; 
-                   border: none; 
-                   width: 45px; 
-                   height: 45px; 
-                   border-radius: 50%; 
-                   font-size: 22px; 
-                   cursor: pointer; 
-                   transition: all 0.3s ease; 
-                   display: flex; 
-                   align-items: center; 
-                   justify-content: center; 
-                   padding: 0;
-                   box-shadow: 0 2px 8px rgba(0,0,0,0.15);" 
-            onmouseover="this.style.background='#d32f2f'; this.style.color='white'; this.style.transform='scale(1.1)'" 
-            onmouseout="this.style.background='#e0e0e0'; this.style.color='#333'; this.style.transform='scale(1)'">
-        ×
-    </button>
+        style="background: #e0e0e0; 
+               color: #333; 
+               border: none; 
+               width: 45px; 
+               height: 45px; 
+               border-radius: 50%; 
+               font-size: 22px; 
+               cursor: pointer; 
+               transition: all 0.3s ease; 
+               display: flex; 
+               align-items: center; 
+               justify-content: center; 
+               padding: 0;
+               box-shadow: 0 2px 8px rgba(0,0,0,0.15);" 
+        onmouseover="this.style.background='var(--teal)'; this.style.color='white'; this.style.transform='scale(1.1)'" 
+        onmouseout="this.style.background='#e0e0e0'; this.style.color='#333'; this.style.transform='scale(1)'">
+    ×
+</button>
 </div>
 
-            <h2 style="color: rgb(4, 4, 118); margin-bottom: 20px; font-size: 24px; border-bottom: 2px solid rgb(4, 4, 118); padding-bottom: 10px; padding-right: 120px;">Request Details</h2>
-
+<h2 style="color: var(--navy); margin-bottom: 20px; font-size: 24px; border-bottom: 2px solid var(--navy); padding-bottom: 10px; padding-right: 120px;">Request Details</h2>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
                         <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Date Submitted:</p>
@@ -2095,9 +2119,9 @@
                 </div>
 
                 ${showCompletedDates ? `
-                    <div style="background: #E3F2FD; border: 2px solid #2196F3; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
-                    <h3 style="color: #1565C0; margin-bottom: 15px; font-size: 18px;">✅ Request Completed</h3>
-                    
+                    <div style="background: var(--sky-blue); border: 2px solid var(--navy); border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                        <h3 style="color: var(--navy); margin-bottom: 15px; font-size: 18px;">✅ Request Completed</h3>
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         <div>
                             <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Start Date:</p>
@@ -2112,19 +2136,21 @@
                 ` : ''}
 
                 ${showApprovedSection ? `
-                <div style="background: #FFF3E0; border: 2px solid #FF9800; border-radius: 10px; padding: 20px; margin-bottom: 20px;font-family:serif;">
-                    <h3 style="color: #E65100; margin-bottom: 15px; font-size: 18px; display: flex; align-items: center; gap: 8px;"><img src="images/contract.png" style="width:25px;height:25px;margin-right:5px;"> Assign Materials & Labor</h3>
+                <div style="background: #e8f4f8; border: 2px solid var(--teal); border-radius: 10px; padding: 20px; margin-bottom: 20px;font-family:serif;">
+                    <h3 style="color: var(--teal); margin-bottom: 15px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                        <img src="images/contract.png" style="width:25px;height:25px;margin-right:5px;"> Assign Materials & Labor
+                    </h3>
                     
-                    <p style="color: #666; margin-bottom: 15px; font-size: 14px;">This request has been approved. Click below to assign materials and labor for this job.</p>
-                    
-                     <div style="display: flex; justify-content: center;">
-                        <button onclick="checkAndRedirectToMaterialReport('${request['Request Number']}')" style="background: #FF9800;float:center; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 50%; transition: all 0.3s ease;" onmouseover="this.style.background='#F57C00'" onmouseout="this.style.background='#FF9800'">
+                    <button onclick="checkAndRedirectToMaterialReport('${request['Request Number']}')" 
+                            style="background: var(--teal); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 50%; transition: all 0.3s ease;" 
+                            onmouseover="this.style.background='var(--navy)'" 
+                            onmouseout="this.style.background='var(--teal)'">
                         Create Job Description
                     </button>
-                    </div>
-                    
+                </div>
+                                    
 
-                    ${request['Approved Date'] ? `
+                ${request['Approved Date'] ? `
                     <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #FFE0B2;">
                         <p style="font-weight: 600; color: #666; margin-bottom: 5px;">Approved On:</p>
                         <p style="color: #E65100; font-size: 14px;">${formatDate(request['Approved Date'])}</p>
@@ -2159,17 +2185,16 @@
                 ` : ''}
 
                 ${showProcessingSection ? `
-                <div style="background: #E8F5E9; border: 2px solid #4CAF50; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
-                    <h3 style="color: #2E7D32; margin-bottom: 15px; font-size: 18px;">📅 Set Completion Date</h3>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; font-weight: 600; color: #666; margin-bottom: 8px;">End Date (must be today or in the past):</label>
-                        <input type="date" id="EndDateInput" value="${request['End Date'] || ''}" max="${new Date().toISOString().split('T')[0]}" style="width: 100%; padding: 12px; border: 2px solid #4CAF50; border-radius: 8px; font-size: 14px;" />
-                        <p style="color: #666; font-size: 12px; margin-top: 5px;">⚠️ Date must be today or earlier. Setting a past/today date will mark as Completed.</p>
-                    </div>
-                    
-                    <button onclick="saveEndDate('${request['Request Number']}')" style="background: #4CAF50; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s ease;" onmouseover="this.style.background='#45a049'" onmouseout="this.style.background='#4CAF50'">Save End Date & Complete</button>
-                    
+                <div style="background: #e8f4f8; border: 2px solid var(--navy); border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+    <h3 style="color: var(--navy); margin-bottom: 15px; font-size: 18px;">📅 Set Completion Date</h3>
+    
+    <button onclick="saveEndDate('${request['Request Number']}')" 
+            style="background: var(--navy); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s ease;" 
+            onmouseover="this.style.background='var(--teal)'" 
+            onmouseout="this.style.background='var(--navy)'">
+        Save End Date & Complete
+    </button>
+</div>
                     ${request['End Date'] ? `<p style="margin-top: 15px; color: #2E7D32; font-size: 14px; text-align: center;">✓ Current end date: ${formatDateOnly(request['End Date'])}</p>` : ''}
 
                     ${request['StartDate'] ? `
@@ -2486,10 +2511,11 @@
         });
 
         loadRequests();
+        loadAdminProfile();
         setInterval(loadRequests, 100000);
 
         document.getElementById('download').addEventListener('click', async function () {
-            console.log('📥 Download PDF button clicked');
+            console.log('📥 Download PDF button clicked - Optimized Version');
 
             if (typeof jspdf === 'undefined' || typeof html2canvas === 'undefined') {
                 alert('PDF library not loaded. Please refresh the page.');
@@ -2502,147 +2528,138 @@
             }
 
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'mm', 'a4'); // Landscape orientation
-
-            // Page settings
+            const doc = new jsPDF('l', 'mm', 'a4'); // Landscape A4
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 14;
-            let yPosition = 20;
+            const margin = 10; // 10mm margin
+            const contentWidth = pageWidth - (margin * 2);
 
-            // Title
-            doc.setFontSize(20);
-            doc.setTextColor(4, 4, 118);
-            doc.setFont(undefined, 'bold');
-            doc.text('Maintenance Requests Report', pageWidth / 2, yPosition, { align: 'center' });
+            // Create a temporary container
+            const downloadContainer = document.createElement('div');
+            downloadContainer.style.position = 'absolute';
+            downloadContainer.style.left = '-9999px';
+            downloadContainer.style.width = '1200px'; // Wide enough for landscape
+            downloadContainer.style.background = 'white';
+            downloadContainer.style.fontFamily = "'Amiri', serif";
+            document.body.appendChild(downloadContainer);
 
-            yPosition += 8;
+            // Function to generate a single page chunk
+            const generatePageHtml = (rows, pageNum, totalPages) => {
+                return `
+            <div style="padding: 20px; background: white;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <h2 style="color: var(--navy); margin: 0; font-size: 24px;">Maintenance Requests Report</h2>
+                    <p style="color: #666; font-size: 12px; margin: 5px 0;">
+                        Generated: ${new Date().toLocaleDateString()} | Page ${pageNum} of ${totalPages}
+                    </p>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px; table-layout: fixed;">
+                    <thead>
+                        <tr style="background: var(--navy); color: white; font-size:15px; text-align:center;">                            
+                            <th style="padding: 10px; border: 1px solid #ccc; width: 10%;">Request No.</th>
+                            <th style="padding: 10px; border: 1px solid #ccc; width: 8%;">Status</th>
+                            <th style="padding: 10px; border: 1px solid #ccc; width: 15%;">College</th>
+                            <th style="padding: 10px; border: 1px solid #ccc; width: 10%;">Department</th>
+                            <th style="padding: 10px; border: 1px solid #ccc; width: 10%;">Location</th>
+                            <th style="padding: 10px; border: 1px solid #ccc; width: 30%;">Description</th>
+                            <th style="padding: 10px; border: 1px solid #ccc; width: 10%;">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map(req => `
+                            <tr style="height: 50px; font-size:15px;text-align:center;">
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: center; font-weight: bold; word-wrap: break-word;">${req['Request Number'] || 'N/A'}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: center;">${req.Status || 'Waiting'}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; word-wrap: break-word;">${mapCollegeName(req.College) || 'N/A'}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; word-wrap: break-word;">${req.Department || 'N/A'}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; word-wrap: break-word;">${req.Location || 'N/A'}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; direction: rtl; text-align: right; word-wrap: break-word;">${req.Description || 'N/A'}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: center;">${formatDate(req['Request Date'] || req.Date)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+            };
 
-            // Date
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.setFont(undefined, 'normal');
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, pageWidth / 2, yPosition, { align: 'center' });
-            doc.text(`Total Requests: ${filteredRequests.length}`, pageWidth / 2, yPosition + 5, { align: 'center' });
+            // Split data into chunks (e.g., 10 rows per page)
+            const rowsPerPage = 10;
+            const totalPages = Math.ceil(filteredRequests.length / rowsPerPage);
 
-            yPosition += 12;
+            try {
+                for (let i = 0; i < totalPages; i++) {
+                    const start = i * rowsPerPage;
+                    const end = start + rowsPerPage;
+                    const chunk = filteredRequests.slice(start, end);
 
-            // Prepare table data - Process Arabic text
-            const tableData = filteredRequests.map(req => {
-                const description = req.Description || 'N/A';
-                const hasArabic = /[\u0600-\u06FF]/.test(description);
+                    // Render chunk to container
+                    downloadContainer.innerHTML = generatePageHtml(chunk, i + 1, totalPages);
 
-                // If Arabic, reverse text for display (simple fix for jsPDF)
-                let processedDesc = description;
-                if (hasArabic) {
-                    // Reverse words for RTL display
-                    const words = description.split(' ');
-                    processedDesc = words.reverse().join(' ');
+                    // Wait for font rendering
+                    await document.fonts.ready;
+
+                    // Capture chunk as image
+                    const canvas = await html2canvas(downloadContainer, {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#ffffff'
+                    });
+
+                    const imgData = canvas.toDataURL('image/png');
+
+                    if (i > 0) doc.addPage();
+
+                    // Calculate height to maintain aspect ratio within margins
+                    const imgProps = doc.getImageProperties(imgData);
+                    const displayHeight = (imgProps.height * contentWidth) / imgProps.width;
+
+                    // Add image with margins
+                    doc.addImage(imgData, 'PNG', margin, margin, contentWidth, displayHeight);
                 }
 
-                return [
-                    req['Request Number'] || 'N/A',
-                    req.Status || 'Waiting',
-                    mapCollegeName(req.College) || 'N/A',
-                    req.Department || 'N/A',
-                    req.Location || 'N/A',
-                    processedDesc,
-                    formatDate(req['Request Date'] || req.Date),
-                    formatAmount(req['Request Number'])
-                ];
-            });
+                const filename = `Maintenance_Requests_${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(filename);
+                console.log('✅ PDF downloaded with proper margins and breaks');
 
-            // Create table with better styling
-            doc.autoTable({
-                head: [['Request #', 'Status', 'College/Center', 'Department', 'Location', 'Description', 'Date', 'Amount']],
-                body: tableData,
-                startY: yPosition,
-                theme: 'grid',
-
-                // Header styling
-                headStyles: {
-                    fillColor: [4, 4, 118],
-                    textColor: [255, 255, 255],
-                    fontSize: 9,
-                    fontStyle: 'bold',
-                    halign: 'center',
-                    valign: 'middle',
-                    cellPadding: 3
-                },
-
-                // Body styling
-                bodyStyles: {
-                    fontSize: 8,
-                    cellPadding: 3,
-                    valign: 'top',
-                    lineColor: [200, 200, 200],
-                    lineWidth: 0.1
-                },
-
-                // Alternating row colors
-                alternateRowStyles: {
-                    fillColor: [245, 247, 250]
-                },
-
-                // Column widths - OPTIMIZED for landscape A4 (297mm)
-                columnStyles: {
-                    0: { cellWidth: 24, halign: 'center', fontStyle: 'bold' },  // Request #
-                    1: { cellWidth: 20, halign: 'center' },                      // Status
-                    2: { cellWidth: 45, halign: 'left' },                        // College
-                    3: { cellWidth: 28, halign: 'left' },                        // Department
-                    4: { cellWidth: 25, halign: 'left' },                        // Location
-                    5: { cellWidth: 70, halign: 'left' },                        // Description (largest)
-                    6: { cellWidth: 26, halign: 'center' },                      // Date
-                    7: { cellWidth: 22, halign: 'center', fontStyle: 'bold' }   // Amount
-                },
-
-                // Margins
-                margin: { top: margin, left: margin, right: margin, bottom: margin },
-
-                // Text wrapping and overflow
-                styles: {
-                    overflow: 'linebreak',
-                    cellWidth: 'wrap',
-                    minCellHeight: 8,
-                    fontSize: 8,
-                    cellPadding: 2
-                },
-
-                // Page break settings - IMPORTANT
-                pageBreak: 'auto',
-                rowPageBreak: 'avoid',  // Avoid breaking rows across pages
-
-                // Callback for custom styling
-                didDrawCell: function (data) {
-                    // Add subtle borders
-                    if (data.section === 'body') {
-                        doc.setDrawColor(220, 220, 220);
-                    }
-                },
-
-                // Footer on each page
-                didDrawPage: function (data) {
-                    // Page number
-                    const pageCount = doc.internal.getNumberOfPages();
-                    const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
-
-                    doc.setFontSize(8);
-                    doc.setTextColor(150);
-                    doc.text(
-                        `Page ${currentPage} of ${pageCount}`,
-                        pageWidth / 2,
-                        pageHeight - 8,
-                        { align: 'center' }
-                    );
+            } catch (error) {
+                console.error('❌ Download error:', error);
+                alert('Error generating PDF: ' + error.message);
+            } finally {
+                if (downloadContainer.parentNode) {
+                    document.body.removeChild(downloadContainer);
                 }
-            });
+            }
 
-            // Save PDF
-            const filename = `Maintenance_Requests_${new Date().toISOString().split('T')[0]}.pdf`;
-            doc.save(filename);
-
-            console.log('✅ PDF downloaded:', filename);
         });
+    </script>
+    <script>
+        // Global dashboard navigation based on user role
+        window.goToDashboard = function () {
+            const role = sessionStorage.getItem('userRole');
+
+            console.log('🚀 Dashboard clicked - Role:', role);
+
+            if (!role) {
+                console.warn('⚠️ No role found, redirecting to default');
+                window.location.href = 'all-requests-d.html';
+                return;
+            }
+
+            const roleLower = role.toLowerCase();
+
+            if (roleLower === 'director') {
+                console.log('👑 Redirecting to Director Dashboard');
+                window.location.href = 'director-dashboard.html';
+            } else if (roleLower === 'admin') {
+                console.log('🛠️ Redirecting to Admin Dashboard');
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                console.log('📝 Redirecting to Default Dashboard');
+                window.location.href = 'all-requests-d.html';
+            }
+        };
     </script>
 </body>
 

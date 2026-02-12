@@ -14,17 +14,31 @@
             box-sizing: border-box;
         }
 
+        :root {
+            /* Navy, Teal, Sky Blue, Beige Color Palette */
+            --navy: #2F4456;
+            --teal: #567C8D;
+            --sky-blue: #C8D9E6;
+            --beige: #F5EFEB;
+            --white: #FFFFFF;
+
+            /* Functional colors */
+            --primary: var(--navy);
+            --secondary: var(--teal);
+            --accent: var(--sky-blue);
+            --background: var(--beige);
+            --text-dark: #2c2c2c;
+            --text-light: #5a5a5a;
+        }
+
         body {
-            /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; */
             font-family: cinzyl;
-            background: rgb(4, 4, 118);
-            ;
+            background: var(--navy);
             min-height: 100vh;
             padding: 24px;
             display: flex;
             justify-content: center;
             align-items: center;
-
         }
 
         .container {
@@ -74,7 +88,7 @@
 
         .icon-wrapper {
             display: inline-flex;
-            background: #e0e7ff;
+            background: var(--sky-blue);
             padding: 16px;
             border-radius: 50%;
             margin-bottom: 16px;
@@ -83,11 +97,11 @@
         .icon {
             width: 48px;
             height: 48px;
-            color: #4f46e5;
+            color: var(--navy);
         }
 
         h1 {
-            color: #0e447e;
+            color: var(--navy);
             font-size: 28px;
             margin-bottom: 8px;
         }
@@ -114,8 +128,20 @@
         }
 
         .alert-success {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
+            background: #e8f4f8;
+            border: 1px solid var(--teal);
+        }
+
+        .alert-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .alert-message {
+            font-size: 14px;
+            color: var(--teal);
         }
 
         .alert-error {
@@ -138,27 +164,15 @@
         }
 
         .alert-success .alert-icon {
-            color: #16a34a;
+            color: var(--teal);
         }
 
         .alert-error .alert-icon {
             color: #dc2626;
         }
 
-        .alert-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #166534;
-            margin-bottom: 8px;
-        }
-
         .alert-error .alert-title {
             color: #991b1b;
-        }
-
-        .alert-message {
-            font-size: 14px;
-            color: #15803d;
         }
 
         .alert-error .alert-message {
@@ -170,13 +184,14 @@
             border-radius: 8px;
             padding: 16px;
             margin-top: 16px;
+            border: 1px solid var(--sky-blue);
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
             padding: 12px 0;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--sky-blue);
         }
 
         .detail-row:last-child {
@@ -185,16 +200,16 @@
 
         .detail-label {
             font-weight: 600;
-            color: #374151;
+            color: var(--navy);
         }
 
         .detail-value {
-            color: #1f2937;
+            color: var(--teal);
             text-align: right;
         }
 
         .request-number {
-            color: #4f46e5;
+            color: var(--navy);
             font-family: 'Courier New', monospace;
             font-weight: 700;
         }
@@ -204,17 +219,17 @@
         }
 
         .description-text {
-            background: #f9fafb;
+            background: var(--beige);
             padding: 12px;
             border-radius: 6px;
-            color: #1f2937;
+            color: var(--navy);
             margin-top: 8px;
             white-space: pre-wrap;
         }
 
         .status-badge {
-            background: #fef3c7;
-            color: #92400e;
+            background: var(--sky-blue);
+            color: var(--navy);
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 14px;
@@ -231,12 +246,12 @@
             display: block;
             font-size: 14px;
             font-weight: 600;
-            color: #374151;
+            color: var(--navy);
             margin-bottom: 8px;
         }
 
         .required {
-            color: #ef4444;
+            color: var(--teal);
         }
 
         input,
@@ -244,7 +259,7 @@
         textarea {
             width: 410px;
             padding: 12px 16px;
-            border: 1px solid #d1d5db;
+            border: 1px solid var(--sky-blue);
             border-radius: 8px;
             font-size: 16px;
             font-family: inherit;
@@ -257,8 +272,8 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(47, 68, 86, 0.1);
         }
 
         textarea {
@@ -270,23 +285,24 @@
             transition: background 0.2s;
             width: 35%;
             padding: 14px;
-            background: #d4b483;
-            color: rgb(0, 0, 0);
+            background: var(--teal);
+            color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
-            font-weight: 60;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: #e5e7eb;
+            box-shadow: 0 2px 8px rgba(86, 124, 141, 0.3);
             font-family: serif;
             font-weight: bold;
             margin-left: 23px;
-
         }
 
         button:hover:not(:disabled) {
-            background: #e3e2e7;
+            background: var(--navy);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(47, 68, 86, 0.4);
         }
 
         button:disabled {
@@ -296,138 +312,6 @@
 
         .hidden {
             display: none;
-        }
-
-        /* Drag and Drop Styles */
-        .drop-zone {
-            border: 2px dashed #d1d5db;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            background: #f9fafb;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            width: 410px;
-        }
-
-        .drop-zone:hover {
-            border-color: #4f46e5;
-            background: #f3f4f6;
-        }
-
-        .drop-zone.dragover {
-            border-color: #4f46e5;
-            background: #e0e7ff;
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            color: #9ca3af;
-            margin-bottom: 8px;
-            width: 40px;
-            height: 40px;
-        }
-
-        .drop-zone-text {
-            font-size: 14px;
-            color: #374151;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .drop-zone-or {
-            font-size: 12px;
-            color: #6b7280;
-            margin: 6px 0;
-        }
-
-        .browse-btn {
-            background: #4f46e5;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 6px;
-            border: none;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: auto;
-            margin: 0;
-        }
-
-        .browse-btn:hover {
-            background: #4338ca;
-        }
-
-        .file-list {
-            margin-top: 16px;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            width: 410px;
-        }
-
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            background: #e0e7ff;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #4f46e5;
-            font-weight: bold;
-        }
-
-        .file-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .file-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .file-size {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .remove-file {
-            background: #fee2e2;
-            color: #dc2626;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            padding: 0;
-            margin: 0;
-        }
-
-        .remove-file:hover {
-            background: #fecaca;
         }
     </style>
 
@@ -725,7 +609,7 @@
                     const badge = document.createElement('span');
                     badge.className = 'admin-badge';
                     badge.textContent = '(Editable)';
-                    badge.style.cssText = 'color: #667eea; font-size: 12px; margin-left: 8px; font-weight: normal;';
+                    badge.style.cssText = 'color: var(--teal); font-size: 12px; margin-left: 8px; font-weight: normal;'; 
                     label.appendChild(badge);
                 }
             } else {
@@ -881,7 +765,7 @@
 
                 console.log('✅ Document created with ID:', docRef.id);
 
-                alert(`✅ Request submitted successfully!\n\nRequest Number: ${requestNumber}\n\nYou will receive updates via email.`);
+                alert(`✅ Request submitted successfully!\n\nRequest Number: ${requestNumber}`);
 
                 // Reset form
                 document.getElementById('maintenanceForm').reset();

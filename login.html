@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - UoB Maintenance System</title>
+    <title>UoB Maintenance System</title>
     <link rel="icon" type="image/x-icon" href="tools.png">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
@@ -34,7 +34,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: serif;
             line-height: 1.6;
             color: var(--text-dark);
             min-height: 100vh;
@@ -50,7 +50,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" opacity="0.05"><circle cx="200" cy="150" r="3" fill="%23ffffff"/><circle cx="800" cy="250" r="2" fill="%23ffffff"/><circle cx="1000" cy="100" r="4" fill="%23ffffff"/><circle cx="400" cy="600" r="2" fill="%23ffffff"/></svg>');
+            background: #c8d9e6;
             background-size: cover;
             pointer-events: none;
         }
@@ -64,19 +64,18 @@
         }
 
         .login-container {
+            margin: 0 auto;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            max-width: 80rem;
             display: flex;
-            align-items: center;
+            gap: 5rem;
             justify-content: center;
-            min-height: 100vh;
-            padding: 2rem;
-            position: relative;
-            z-index: 1;
-            width: 120rem;
         }
 
         .login-card {
             background: var(--white);
-            padding: 3rem;
+            padding: 2.3rem;
             border-radius: 20px;
             box-shadow: var(--shadow-large);
             width: 100%;
@@ -123,8 +122,7 @@
 
         .login-header h1 {
             font-size: 2rem;
-            color: var(--primary-dark);
-            margin-bottom: 0.5rem;
+            color: #223448;
         }
 
         .login-header p {
@@ -185,19 +183,30 @@
         .form-group input {
             width: 100%;
             padding: 1rem 1.2rem;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #f5efeb;
             border-radius: 10px;
             font-size: 1rem;
             transition: var(--transition);
-            background: var(--neutral-light);
+            background: #f5efeb;
             font-family: 'Inter', sans-serif;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: var(--primary-light);
+            border-color: #2f4156;
             background: var(--white);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0px 1000px #f5efeb inset;
+            -webkit-text-fill-color: var(--text-dark);
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #f5efeb inset;
+            -webkit-text-fill-color: var(--text-dark);
         }
 
         .password-toggle {
@@ -216,28 +225,10 @@
             color: var(--primary-dark);
         }
 
-        .forgot-password-link {
-            text-align: right;
-            margin-bottom: 1.5rem;
-        }
-
-        .forgot-password-link a {
-            color: var(--primary-light);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .forgot-password-link a:hover {
-            color: var(--accent);
-            text-decoration: underline;
-        }
-
         .login-button {
             width: 100%;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
-            color: var(--white);
+            background: #2f4156;
+            color: #F5EFEB;
             padding: 1.2rem;
             font-size: 1.1rem;
             font-weight: 600;
@@ -318,9 +309,9 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" placeholder="Enter your password" required
                         autocomplete="current-password">
-                    <span class="password-toggle" id="passwordToggle">👁</span>
+                    <img src="images/view.png" class="password-toggle" id="passwordToggle"
+                        style="width: 20px; height: 20px;">
                 </div>
-
 
                 <button type="submit" class="login-button" id="loginButton">
                     <span id="buttonText">Sign In</span>
@@ -332,7 +323,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -347,6 +339,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
         // DOM Elements
         const passwordToggle = document.getElementById('passwordToggle');
@@ -364,7 +357,14 @@
         const isLoggedIn = sessionStorage.getItem('isAuthenticated');
         if (isLoggedIn === 'true') {
             console.log('✅ Already authenticated, redirecting...');
-            window.location.replace('all-requests.html');
+            const userRole = sessionStorage.getItem('userRole');
+            if (userRole && userRole.toLowerCase() === 'director') {
+                window.location.replace('director-dashboard.html');
+            } else if (userRole && userRole.toLowerCase() === 'admin') {
+                window.location.replace('admin-dashboard.html');
+            } else {
+                window.location.replace('all-requests-d.html');
+            }
         }
 
         // Message Functions
@@ -379,13 +379,18 @@
             messageDiv.style.display = 'none';
         }
 
-        // Password Toggle
         passwordToggle.addEventListener('click', () => {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            passwordToggle.textContent = type === 'password' ? '👁' : '🙈';
-        });
 
+            if (type === 'text') {
+                // Password is visible - show close-eye icon
+                passwordToggle.src = 'images/close-eye.png';
+            } else {
+                // Password is hidden - show view icon
+                passwordToggle.src = 'images/view.png';
+            }
+        });
 
         // Login Form Handler
         loginForm.addEventListener('submit', async (e) => {
@@ -420,25 +425,63 @@
                 const token = await user.getIdToken();
                 console.log('🎫 Token obtained');
 
-                // Store authentication data in sessionStorage (like ATHAR Museum)
+                // ✅ FETCH USER DATA FROM FIRESTORE
+                let userRole = 'User'; // Default
+                let userName = user.email.split('@')[0]; // Default
+
+                try {
+                    console.log('📄 Fetching user data from Firestore...');
+                    const userDocRef = doc(db, 'Users', user.email);
+                    const userDoc = await getDoc(userDocRef);
+
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        userRole = userData.role || 'User';
+                        userName = userData.name || userName;
+                        console.log('✅ User data loaded:', { name: userName, role: userRole });
+                    } else {
+                        console.warn('⚠️ No user document found in Firestore for:', user.email);
+                    }
+                } catch (firestoreError) {
+                    console.error('❌ Error fetching user data:', firestoreError);
+                }
+
+                // Store authentication data in sessionStorage
                 sessionStorage.setItem('isAuthenticated', 'true');
                 sessionStorage.setItem('userEmail', user.email);
                 sessionStorage.setItem('userId', user.uid);
                 sessionStorage.setItem('authToken', token);
+                sessionStorage.setItem('userRole', userRole);
+                sessionStorage.setItem('userName', userName);
                 sessionStorage.setItem('loginTime', new Date().toISOString());
 
                 // Backup in localStorage
                 localStorage.setItem('lastLoginEmail', user.email);
 
                 console.log('✅ Session data saved');
+                console.log('📋 Stored role:', userRole);
 
                 // Show success message
                 showMessage('Login successful! Redirecting...', 'success');
 
-                // Redirect to dashboard
+                // ✅ ROLE-BASED REDIRECT
                 setTimeout(() => {
-                    console.log('🔄 Redirecting to dashboard...');
-                    window.location.replace('all-requests.html');
+                    const role = userRole.toLowerCase();
+                    let redirectUrl = '';
+
+                    if (role === 'director') {
+                        console.log('👑 Redirecting to Director Dashboard...');
+                        redirectUrl = 'director-dashboard.html';
+                    } else if (role === 'admin') {
+                        console.log('🛠️ Redirecting to Admin Dashboard...');
+                        redirectUrl = 'admin-dashboard.html';
+                    } else {
+                        console.log('📝 Redirecting to Default View...');
+                        redirectUrl = 'all-requests-d.html';
+                    }
+
+                    console.log('🔗 Final redirect URL:', redirectUrl);
+                    window.location.replace(redirectUrl);
                 }, 1500);
 
             } catch (error) {
