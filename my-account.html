@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
     <title>My Account</title>
     <link rel="icon" type="image/x-icon" href="images/user1.png">
     <style>
@@ -398,13 +400,13 @@
         }
 
         .admin-header {
-    background: var(--navy);
-    color: white;
-    padding: 20px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    height: 7.4rem;
-    position: relative;
-}
+            background: var(--navy);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 7.4rem;
+            position: relative;
+        }
 
         #admin-img {
             width: 50px;
@@ -928,12 +930,24 @@
             }
         });
 
-        // ── Fallback logout (module script overwrites this) ────────
-        window.logout = function () {
-            if (confirm('Are you sure you want to logout?')) {
-                sessionStorage.clear();
-                localStorage.clear();
-                window.location.replace('login.html');
+        window.logout = async function () {
+            if (confirm('🚪 Are you sure you want to logout?')) {
+                try {
+                    const { getAuth, signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                    const auth = getAuth();
+
+                    await signOut(auth);
+                    sessionStorage.clear();
+                    localStorage.clear();
+
+                    console.log('✅ Logout successful');
+                    window.location.replace('login.html');
+                } catch (error) {
+                    console.error('❌ Logout error:', error);
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    window.location.replace('login.html');
+                }
             }
         };
         // Password toggle

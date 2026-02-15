@@ -674,7 +674,7 @@
             text-decoration: underline;
         }
 
-       .dropdown-menu {
+        .dropdown-menu {
             position: absolute;
             top: 55px;
             right: 0;
@@ -1091,7 +1091,7 @@
                         <th>Location</th>
                         <th>Issue Description</th>
                         <th>Date</th>
-                        <th>Amount</th>
+                        <th>Estimated Cost</th>
                     </tr>
                 </thead>
                 <tbody id="tickets-tbody">
@@ -1152,6 +1152,7 @@
     <script type="module">
 
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';  
         import { getFirestore, collection, getDocs, updateDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -1215,8 +1216,8 @@
                             laborGrandTotal: data.laborGrandTotal || 0,
                             materials: data.materials || [],
                             labor: data.labor || [],
-                            startingDate: data.startingDate || null,  // ✅ ADD THIS
-                            EndDate: data.EndDate || null              // ✅ ADD THIS
+                            startingDate: data.startingDate || null,
+                            EndDate: data.EndDate || null
                         };
 
                         console.log(`✅ ${requestNumber}: Total Amount = ${totalAmount.toFixed(2)} BD`);
@@ -1519,14 +1520,17 @@
             return 'N/A';
         }
 
-        // ✅ NEW FUNCTION: Get dates from JobDescriptions collection
         function getJobDescDate(requestNumber, fieldName) {
+            console.log('🔍 getJobDescDate called:', { requestNumber, fieldName });
             const jobDesc = jobDescriptionsData[requestNumber];
+            console.log('📦 Job Description found:', jobDesc);
 
             if (jobDesc && jobDesc[fieldName]) {
+                console.log(`✅ ${fieldName} value:`, jobDesc[fieldName]);
                 return formatDateOnly(jobDesc[fieldName]);
             }
 
+            console.warn(`⚠️ No ${fieldName} found for ${requestNumber}`);
             return 'N/A';
         }
 
@@ -2563,6 +2567,8 @@
                             <th style="padding: 10px; border: 1px solid #ccc; width: 10%;">Location</th>
                             <th style="padding: 10px; border: 1px solid #ccc; width: 30%;">Description</th>
                             <th style="padding: 10px; border: 1px solid #ccc; width: 10%;">Date</th>
+                            <th style="padding: 10px; border: 1px solid #ccc; width: 10%;">Estimated cost</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -2575,6 +2581,7 @@
                                 <td style="padding: 8px; border: 1px solid #eee; word-wrap: break-word;">${req.Location || 'N/A'}</td>
                                 <td style="padding: 8px; border: 1px solid #eee; direction: rtl; text-align: right; word-wrap: break-word;">${req.Description || 'N/A'}</td>
                                 <td style="padding: 8px; border: 1px solid #eee; text-align: center;">${formatDate(req['Request Date'] || req.Date)}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: center; font-weight: 600; color: #567C8D;">${formatAmount(req['Request Number'])}</td>
                             </tr>
                         `).join('')}
                     </tbody>

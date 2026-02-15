@@ -4,6 +4,80 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+            authDomain: "requests-ffdd6.firebaseapp.com",
+            projectId: "requests-ffdd6",
+            storageBucket: "requests-ffdd6.firebasestorage.app",
+            messagingSenderId: "316405880275",
+            appId: "1:316405880275:web:f4b271583e903ac639cb26"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // ✅ Check if user is authenticated
+        function checkAuth() {
+            const sessionToken = sessionStorage.getItem('sessionToken') || localStorage.getItem('sessionToken');
+            const sessionExpiry = sessionStorage.getItem('sessionExpiry') || localStorage.getItem('sessionExpiry');
+
+            if (!sessionToken || !sessionExpiry) {
+                console.warn('⚠️ No session found');
+                redirectToLogin();
+                return false;
+            }
+
+            // Check if session expired
+            const expiryDate = new Date(sessionExpiry);
+            if (new Date() > expiryDate) {
+                console.warn('⚠️ Session expired');
+                redirectToLogin();
+                return false;
+            }
+
+            return true;
+        }
+
+        // ✅ Firebase auth state observer
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                console.warn('⚠️ No Firebase user authenticated');
+                redirectToLogin();
+            } else {
+                console.log('✅ User authenticated:', user.email);
+                checkAuth();
+            }
+        });
+
+        function redirectToLogin() {
+            sessionStorage.clear();
+            localStorage.clear();
+            window.location.replace('login.html');
+        }
+
+        // ✅ Inactivity timeout (30 minutes)
+        let inactivityTimer;
+        function resetTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                alert('⏱️ Session expired due to inactivity');
+                redirectToLogin();
+            }, 30 * 60 * 1000); // 30 minutes
+        }
+
+        ['mousedown', 'keypress', 'scroll', 'touchstart', 'click'].forEach(event => {
+            document.addEventListener(event, resetTimer, true);
+        });
+
+        resetTimer();
+        checkAuth();
+    </script>
+
     <title>All requests</title>
     <link rel="icon" type="image/x-icon" href="images/dashboard.png" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1024,12 +1098,36 @@
                 }
             });
 
-            // Placeholder logout function — wire up to your Firebase auth if needed
-            window.logout = function () {
-                if (confirm('Are you sure you want to logout?')) {
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    window.location.replace('login.html');
+            window.logout = async function () {
+                if (confirm('🚪 Are you sure you want to logout?')) {
+                    try {
+                        // Import Firebase auth
+                        const { getAuth, signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                        const auth = getAuth();
+
+                        // Sign out from Firebase
+                        await signOut(auth);
+
+                        // Clear all session data
+                        sessionStorage.clear();
+                        localStorage.removeItem('sessionToken');
+                        localStorage.removeItem('sessionExpiry');
+                        localStorage.removeItem('userEmail_enc');
+                        localStorage.removeItem('userEmail');
+                        localStorage.removeItem('userName');
+                        localStorage.removeItem('userRole');
+                        localStorage.removeItem('loginTime');
+                        localStorage.removeItem('lastActivity');
+
+                        console.log('✅ Logout successful');
+                        window.location.replace('login.html');
+                    } catch (error) {
+                        console.error('❌ Logout error:', error);
+                        // Force redirect anyway
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        window.location.replace('login.html');
+                    }
                 }
             };
         </script>

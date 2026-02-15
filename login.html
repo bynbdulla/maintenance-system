@@ -446,14 +446,30 @@
                     console.error('❌ Error fetching user data:', firestoreError);
                 }
 
+                // ✅ Generate session token
+                function generateSessionToken() {
+                    const array = new Uint8Array(32);
+                    crypto.getRandomValues(array);
+                    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+                }
+
+                const sessionToken = generateSessionToken();
+                const sessionExpiry = new Date();
+                sessionExpiry.setHours(sessionExpiry.getHours() + 8); // 8 hours
+
                 // Store authentication data in sessionStorage
                 sessionStorage.setItem('isAuthenticated', 'true');
+                sessionStorage.setItem('sessionToken', sessionToken);  // ✅ NEW
+                sessionStorage.setItem('sessionExpiry', sessionExpiry.toISOString());  // ✅ NEW
                 sessionStorage.setItem('userEmail', user.email);
                 sessionStorage.setItem('userId', user.uid);
                 sessionStorage.setItem('authToken', token);
                 sessionStorage.setItem('userRole', userRole);
                 sessionStorage.setItem('userName', userName);
                 sessionStorage.setItem('loginTime', new Date().toISOString());
+
+                console.log('✅ Session token created:', sessionToken.substring(0, 10) + '...');
+                console.log('✅ Session expires:', sessionExpiry.toLocaleString());
 
                 // Backup in localStorage
                 localStorage.setItem('lastLoginEmail', user.email);
