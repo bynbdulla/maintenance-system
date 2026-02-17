@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -17,10 +18,10 @@
             appId: "1:316405880275:web:f4b271583e903ac639cb26"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        // ✅ Initialize Firebase properly and make it global
+        window.firebaseApp = initializeApp(firebaseConfig);
+        const auth = getAuth(window.firebaseApp);
 
-        // ✅ ADD THIS LINE
         window.firebaseAuth = auth;
 
         function checkAuth() {
@@ -691,100 +692,148 @@
     </div>
 
     <script type="module">
-        // ✅ CHANGED - Use getApp instead of initializeApp
-        import { getApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ✅ REMOVED firebaseConfig and initializeApp
-        // Get the already initialized Firebase app
-        const firebaseApp = getApp();
+        // ✅ Use the global Firebase app that was already initialized
+        const app = window.firebaseApp || getApp();
         const db = getFirestore(app);
+        console.log('✅ Firestore initialized');
 
-        // Load data on page load
-        window.addEventListener('DOMContentLoaded', function () {
-            console.log('🔄 Loading Job Description data...');
+        // ✅ Get Request Number from URL
+        function getRequestNumberFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('request');
+        }
 
-            const viewMode = localStorage.getItem('viewMode');
-            const jobDescDataString = localStorage.getItem('jobDescriptionData');
+        // ✅ Load Job Description from Firebase
+        async function loadJobDescriptionFromFirebase(requestNumber) {
+            try {
+                console.log('🔍 Searching for Job Description:', requestNumber);
 
-            if (viewMode === 'view' && jobDescDataString) {
-                try {
-                    const jobDescData = JSON.parse(jobDescDataString);
-                    console.log('📦 Job Description data:', jobDescData);
-                    console.log('Materials:', jobDescData.materials);
-                    console.log('Labor:', jobDescData.labor);
-                    console.log('Request Number:', jobDescData.requestNumber);
+                const jobDescRef = collection(db, 'JobDescriptions');
+                const jobDescSnapshot = await getDocs(jobDescRef);
 
-                    localStorage.removeItem('viewMode');
+                let jobDescData = null;
 
-                    // Fill basic information
-                    document.getElementById('requestNo').value = jobDescData.requestNumber || '';
-                    document.getElementById('Location').value = jobDescData.location || '';
-                    document.getElementById('college').value = jobDescData.college || '';
-                    document.getElementById('startDate').value = jobDescData.startingDate || '';
-                    const endDateField = document.getElementById('EndDate');
-                    if (endDateField && (jobDescData.EndDate || jobDescData.endDate)) {
-                        endDateField.value = jobDescData.EndDate || jobDescData.endDate || '';
+                // Search through all documents
+                jobDescSnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const docRequestNum = data.requestNumber || data['Request Number'];
+
+                    console.log('Checking doc:', docSnap.id.substring(0, 8), 'Request#:', docRequestNum);
+
+                    if (docRequestNum === requestNumber) {
+                        jobDescData = data;
+                        console.log('✅ MATCH FOUND!', docSnap.id);
                     }
+                });
 
-                    // Fill materials table
-                    if (jobDescData.materials && Array.isArray(jobDescData.materials)) {
-                        const materialsTableBody = document.getElementById('materialsTableBody');
-                        let materialsTotalCost = 0;
-
-                        jobDescData.materials.forEach((material, index) => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${index + 1}</td>
-                                <td style="text-align: left; padding-left: 20px;">${material.materialName || ''}</td>
-                                <td>${material.quantity || 0}</td>
-                                <td>${(material.unitCost || 0).toFixed(3)}</td>
-                                <td>${(material.totalCost || 0).toFixed(3)}</td>
-                            `;
-                            materialsTableBody.appendChild(row);
-                            materialsTotalCost += material.totalCost || 0;
-                        });
-
-                        document.getElementById('materialsTotalBD').textContent = materialsTotalCost.toFixed(3);
-                    }
-
-                    // Fill labor table
-                    if (jobDescData.labor && Array.isArray(jobDescData.labor)) {
-                        const laborTableBody = document.getElementById('laborTableBody');
-                        let laborTotalCost = 0;
-
-                        jobDescData.labor.forEach((laborItem, index) => {
-                            const row = document.createElement('tr');
-
-                            row.innerHTML = `
-                            <td>${index + 1}</td>
-                            <td style="text-align: left; padding-left: 20px;">${laborItem.specialization || ''}</td>
-                            <td>${laborItem.numberOfWorkers || 0}</td>
-                            <td>${laborItem.days || 0}</td>
-                            <td>${laborItem.hours || 0}</td>
-                            <td>${(laborItem.dailySalary || 0).toFixed(3)}</td>
-                            <td>${(laborItem.totalCost || 0).toFixed(3)}</td>
-                            `;
-                            laborTableBody.appendChild(row);
-                            laborTotalCost += laborItem.totalCost || 0;
-                        });
-
-                        document.getElementById('laborTotalBD').textContent = laborTotalCost.toFixed(3);
-                    }
-
-                    // Fill grand total
-                    const grandTotal = jobDescData.estimatedTotalCost || 0;
-                    document.getElementById('grandTotalDisplay').textContent = grandTotal.toFixed(3);
-
-                    console.log('✅ Job Description loaded successfully!');
-
-                } catch (error) {
-                    console.error('❌ Error loading Job Description:', error);
-                    alert('Error loading data: ' + error.message);
+                if (!jobDescData) {
+                    console.error('❌ No Job Description found for:', requestNumber);
+                    alert('No Job Description found for Request #' + requestNumber);
+                    return null;
                 }
-            } else {
-                console.log('ℹ️ No Job Description data found');
-                alert('No job description data found. Please select a job description to view.');
+
+                console.log('📦 Job Description data:', jobDescData);
+                return jobDescData;
+
+            } catch (error) {
+                console.error('❌ Error loading from Firebase:', error);
+                alert('Error loading data: ' + error.message);
+                return null;
+            }
+        }
+
+        // ✅ Fill the form with data
+        function fillFormWithData(jobDescData) {
+            console.log('📝 Filling form with data...');
+
+            // Fill basic information
+            document.getElementById('requestNo').value = jobDescData.requestNumber || jobDescData['Request Number'] || '';
+            document.getElementById('Location').value = jobDescData.location || '';
+            document.getElementById('college').value = jobDescData.college || jobDescData.department || '';
+            document.getElementById('startDate').value = jobDescData.startingDate || '';
+            document.getElementById('EndDate').value = jobDescData.EndDate || jobDescData.endDate || '';
+
+            // Fill materials table
+            if (jobDescData.materials && Array.isArray(jobDescData.materials)) {
+                const materialsTableBody = document.getElementById('materialsTableBody');
+                materialsTableBody.innerHTML = ''; // Clear existing rows
+                let materialsTotalCost = 0;
+
+                jobDescData.materials.forEach((material, index) => {
+                    const row = document.createElement('tr');
+                    const totalCost = material.totalCost || 0;
+                    row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td style="text-align: left; padding-left: 20px;">${material.materialName || material.name || ''}</td>
+                    <td>${material.quantity || 0}</td>
+                    <td>${(material.unitCost || 0).toFixed(3)}</td>
+                    <td>${totalCost.toFixed(3)}</td>
+                `;
+                    materialsTableBody.appendChild(row);
+                    materialsTotalCost += totalCost;
+                });
+
+                document.getElementById('materialsTotalBD').textContent = materialsTotalCost.toFixed(3);
+                console.log('✅ Materials loaded. Total:', materialsTotalCost.toFixed(3));
+            }
+
+            // Fill labor table
+            if (jobDescData.labor && Array.isArray(jobDescData.labor)) {
+                const laborTableBody = document.getElementById('laborTableBody');
+                laborTableBody.innerHTML = ''; // Clear existing rows
+                let laborTotalCost = 0;
+
+                jobDescData.labor.forEach((laborItem, index) => {
+                    const row = document.createElement('tr');
+                    const totalCost = laborItem.totalCost || 0;
+                    row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td style="text-align: left; padding-left: 20px;">${laborItem.specialization || laborItem.labor || ''}</td>
+                    <td>${laborItem.numberOfWorkers || laborItem.workers || 0}</td>
+                    <td>${laborItem.days || 0}</td>
+                    <td>${laborItem.hours || 0}</td>
+                    <td>${(laborItem.dailySalary || laborItem.wage || 0).toFixed(3)}</td>
+                    <td>${totalCost.toFixed(3)}</td>
+                `;
+                    laborTableBody.appendChild(row);
+                    laborTotalCost += totalCost;
+                });
+
+                document.getElementById('laborTotalBD').textContent = laborTotalCost.toFixed(3);
+                console.log('✅ Labor loaded. Total:', laborTotalCost.toFixed(3));
+            }
+
+            // Fill grand total
+            const grandTotal = jobDescData.estimatedTotalCost || jobDescData.grandTotal || 0;
+            document.getElementById('grandTotalDisplay').textContent = grandTotal.toFixed(3);
+            console.log('✅ Grand Total:', grandTotal.toFixed(3));
+
+            console.log('✅ Form filled successfully!');
+        }
+
+        // ✅ Main execution when page loads
+        window.addEventListener('DOMContentLoaded', async function () {
+            console.log('🚀 Page loaded - Starting data fetch...');
+
+            // Get request number from URL
+            const requestNumber = getRequestNumberFromURL();
+
+            if (!requestNumber) {
+                console.error('❌ No request number in URL');
+                alert('Error: No request number specified in URL');
+                return;
+            }
+
+            console.log('📋 Request Number from URL:', requestNumber);
+
+            // Load data from Firebase
+            const jobDescData = await loadJobDescriptionFromFirebase(requestNumber);
+
+            if (jobDescData) {
+                fillFormWithData(jobDescData);
             }
         });
     </script>

@@ -4,6 +4,100 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+            authDomain: "requests-ffdd6.firebaseapp.com",
+            projectId: "requests-ffdd6",
+            storageBucket: "requests-ffdd6.firebasestorage.app",
+            messagingSenderId: "316405880275",
+            appId: "1:316405880275:web:f4b271583e903ac639cb26"
+        };
+
+        window.firebaseApp = initializeApp(firebaseConfig);
+        window.firebaseAuth = getAuth(window.firebaseApp);
+
+        // ✅ IMMEDIATE AUTH CHECK - Runs before page loads
+        (function () {
+            const sessionToken = sessionStorage.getItem('sessionToken');
+            const sessionExpiry = sessionStorage.getItem('sessionExpiry');
+            const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+
+            if (!sessionToken || !sessionExpiry || isAuthenticated !== 'true') {
+                console.warn('⚠️ No valid session - redirecting to login');
+                window.location.replace('login.html');
+                return;
+            }
+
+            if (new Date() > new Date(sessionExpiry)) {
+                console.warn('⚠️ Session expired - redirecting to login');
+                sessionStorage.clear();
+                localStorage.clear();
+                window.location.replace('login.html');
+                return;
+            }
+
+            console.log('✅ Session valid - loading page');
+        })();
+
+        function checkAuth() {
+            const sessionToken = sessionStorage.getItem('sessionToken');
+            const sessionExpiry = sessionStorage.getItem('sessionExpiry');
+            const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+
+            if (!sessionToken || !sessionExpiry || isAuthenticated !== 'true') {
+                console.warn('⚠️ No valid session');
+                redirectToLogin();
+                return false;
+            }
+
+            if (new Date() > new Date(sessionExpiry)) {
+                console.warn('⚠️ Session expired');
+                redirectToLogin();
+                return false;
+            }
+
+            return true;
+        }
+
+        onAuthStateChanged(window.firebaseAuth, (user) => {
+            if (!user) {
+                console.warn('⚠️ Not authenticated');
+                redirectToLogin();
+            } else {
+                console.log('✅ User authenticated:', user.email);
+                checkAuth();
+            }
+        });
+
+        function redirectToLogin() {
+            sessionStorage.clear();
+            localStorage.clear();
+            window.location.replace('login.html');
+        }
+
+        // Inactivity timeout
+        let timer;
+        function resetTimer() {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                alert('⏱️ Session expired due to inactivity');
+                redirectToLogin();
+            }, 30 * 60 * 1000); // 30 minutes
+        }
+
+        ['mousedown', 'keypress', 'scroll', 'touchstart', 'click'].forEach(e => {
+            document.addEventListener(e, resetTimer, true);
+        });
+
+        resetTimer();
+        checkAuth();
+    </script>
+
     <title>Job Description - Day Work Form</title>
     <link rel="icon" type="image/x-icon" href="images/tools.png" />
     <style>
@@ -441,7 +535,7 @@
             border-color: var(--teal);
         }
 
-       .btn-success {
+        .btn-success {
             background: var(--teal);
             color: white;
         }
@@ -1329,17 +1423,10 @@
             doc           // ✅ Make sure this is imported (if not already)
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
-            authDomain: "requests-ffdd6.firebaseapp.com",
-            projectId: "requests-ffdd6",
-            storageBucket: "requests-ffdd6.firebasestorage.app",
-            messagingSenderId: "316405880275",
-            appId: "1:316405880275:web:f4b271583e903ac639cb26"
-        };
-
-        const app = initializeApp(firebaseConfig);
+        // ✅ Use the global Firebase app created in the auth script
+        const app = window.firebaseApp;
         const db = getFirestore(app);
+
         let materialsDatabase = [];
 
         window.materialsDatabase = materialsDatabase;
