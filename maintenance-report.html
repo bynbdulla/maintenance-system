@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maintenance Reports</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        :root {
+            /* New Color Palette */
+            --navy: #2F4456;
+            --teal: #567C8D;
+            --sky-blue: #C8D9E6;
+            --beige: #F5EFEB;
+            --white: #FFFFFF;
+
+            /* Functional colors */
+            --primary: var(--navy);
+            --secondary: var(--teal);
+            --accent: var(--sky-blue);
+            --background: var(--beige);
+            --text-dark: #2c2c2c;
+            --text-light: #5a5a5a;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ─── Layout ─── */
+        .page {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .admin-header {
+            background: var(--navy);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 7.4rem;
+            position: relative;
+        }
+
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            padding-left: 10rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            margin-left: -50px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+
+        .controls {
+            margin-top: 2rem;
+            margin-left: 6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .period-tabs {
+            display: flex;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .tab {
+            padding: 8px 18px;
+            font-size: 16px;
+            font-weight: 400;
+            font-family: var(--font);
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-right: 1px solid var(--border);
+            transition: all 0.15s;
+        }
+
+        .tab:last-child {
+            border-right: none;
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        select,
+        input[type="text"] {
+            font-family: var(--font);
+            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--white-);
+            color: var(--text-primary);
+            outline: none;
+            transition: border 0.15s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236B6B66'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 28px;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: var(--font);
+            border-radius: var(--radius);
+            border: none;
+            background: var(--sky-blue);
+            color: var(--navy);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .download-btn:hover {
+            background: var(--teal);
+        }
+
+        .download-btn svg {
+            flex-shrink: 0;
+        }
+
+        /* ─── Period label ─── */
+        .period-bar {
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .period-label {
+            margin-left: 4rem;
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+
+        .period-label strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .record-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            padding: 3px 10px;
+            border-radius: 99px;
+        }
+
+        /* ─── Metrics ─── */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin: 1rem;
+            place-items: center;
+        }
+
+        .metric {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.1rem 1.25rem;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .metric-value.green {
+            color: var(--green);
+        }
+
+        .metric-value.amber {
+            color: var(--amber);
+        }
+
+        .metric-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* ─── Filter row ─── */
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-row label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-right: -4px;
+        }
+
+        /* ─── Table ─── */
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            padding: 0rem 0.5rem;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: var(--accent);
+            padding: 0px 20px;
+        }
+
+        thead th {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 11px 16px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 11px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: var(--bg);
+        }
+
+        tbody td {
+            padding: 11px 16px;
+            color: var(--text-primary);
+        }
+
+        .req-id {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .desc-cell {
+            white-space: normal;
+            max-width: 280px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .cost-cell {
+            font-weight: 500;
+            font-family: var(--mono);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .badge-completed {
+            background: var(--green-bg);
+            color: var(--green-text);
+        }
+
+        .badge-pending {
+            background: var(--amber-bg);
+            color: var(--amber-text);
+        }
+
+        .badge-inprogress {
+            background: var(--blue-bg);
+            color: var(--blue-text);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* ─── Breakdown ─── */
+        .breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 1.25rem;
+        }
+
+        .breakdown-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.1rem 1.25rem;
+        }
+
+        .breakdown-card h3 {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 14px;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 9px;
+        }
+
+        .bar-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            width: 80px;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 7px;
+            background: var(--surface2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .bar-count {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+            min-width: 22px;
+            text-align: right;
+        }
+
+        @media (max-width: 640px) {
+            .breakdown {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+            }
+
+            .controls {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>Maintenance Reports</h1>                    
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="period-tabs" id="periodTabs">
+                <button class="tab" data-p="weekly">Weekly</button>
+                <button class="tab active" data-p="monthly">Monthly</button>
+                <button class="tab" data-p="quarterly">Quarterly</button>
+                <button class="tab" data-p="yearly">Yearly</button>
+            </div>
+            <select id="periodSelect" style="gap: 4rem; margin-left: 4rem;"></select>
+            <button class="download-btn" onclick="window.print()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M7 1v8M4 6l3 3 3-3M2 10h10v2a1 1 0 01-1 1H3a1 1 0 01-1-1v-2z" stroke="currentColor"
+                        stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Download PDF
+            </button>
+        </div>
+
+    </div>
+
+
+
+    <!-- Metric cards -->
+    <div class="metrics" id="metrics"></div>
+
+    <!-- Period bar -->
+    <div class="period-bar">
+        <div class="period-label">Showing: <strong id="periodLabelText"></strong></div>
+        <div class="record-count" id="recordCount"></div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Request #</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Est. Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Breakdown charts -->
+    <div class="breakdown">
+        <div class="breakdown-card">
+            <h3>Requests by location</h3>
+            <div id="locationChart"></div>
+        </div>
+        <div class="breakdown-card">
+            <h3>Requests by status</h3>
+            <div id="statusChart"></div>
+        </div>
+    </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCibZPg1QZKtY7g3FHrl5AeZoSFI3xeid0",
+            authDomain: "requests-ffdd6.firebaseapp.com",
+            projectId: "requests-ffdd6",
+            storageBucket: "requests-ffdd6.firebasestorage.app",
+            messagingSenderId: "316405880275",
+            appId: "1:316405880275:web:f4b271583e903ac639cb26"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let ALL_DATA = [];
+        let currentPeriod = "monthly";
+        let currentPeriodValue = "";
+
+        async function loadData() {
+            const snapshot = await getDocs(collection(db, 'Requests'));
+            ALL_DATA = snapshot.docs.map(doc => {
+                const d = doc.data();
+                return {
+                    id: d['Request Number'] || d.requestNumber || doc.id,
+                    status: d.Status || d.status || 'Pending',
+                    location: d.Location || 'N/A',
+                    date: d['Request Date']?.toDate?.()?.toISOString?.()?.slice(0, 10) || '2026-01-01',
+                    cost: parseFloat(d.estimatedTotalCost) || 0
+                };
+            });
+            render();
+        }
+
+        /* ─── Helpers ─── */
+        function getWeekKey(d) {
+            const day = d.getDay();
+            const mon = new Date(d);
+            mon.setDate(d.getDate() - ((day + 6) % 7));
+            return mon.toISOString().slice(0, 10);
+        }
+        function getWeekLabel(d) {
+            const day = d.getDay();
+            const mon = new Date(d); mon.setDate(d.getDate() - ((day + 6) % 7));
+            const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+            const fmt = (dt) => dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+            return `${fmt(mon)} – ${fmt(sun)}, ${sun.getFullYear()}`;
+        }
+
+        function getPeriodOptions(period) {
+            const dates = ALL_DATA.map(r => r.date);
+            if (ALL_DATA.length === 0) return [];
+            const min = dates.reduce((a, b) => a < b ? a : b);
+            const max = dates.reduce((a, b) => a > b ? a : b);
+            const options = [];
+
+            if (period === "weekly") {
+                let cur = new Date(min);
+                cur.setDate(cur.getDate() - ((cur.getDay() + 6) % 7));
+                const end = new Date(max);
+                while (cur <= end) {
+                    options.unshift({ value: getWeekKey(cur), label: getWeekLabel(new Date(cur)) });
+                    cur.setDate(cur.getDate() + 7);
+                }
+            } else if (period === "monthly") {
+                let y = +min.slice(0, 4), m = +min.slice(5, 7);
+                const ey = +max.slice(0, 4), em = +max.slice(5, 7);
+                while (y < ey || (y === ey && m <= em)) {
+                    const d = new Date(y, m - 1, 1);
+                    options.unshift({ value: `${y}-${String(m).padStart(2, '0')}`, label: d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) });
+                    m++; if (m > 12) { m = 1; y++; }
+                }
+            } else if (period === "quarterly") {
+                let y = +min.slice(0, 4), q = Math.ceil(+min.slice(5, 7) / 3);
+                const ey = +max.slice(0, 4), eq = Math.ceil(+max.slice(5, 7) / 3);
+                while (y < ey || (y === ey && q <= eq)) {
+                    options.unshift({ value: `${y}-Q${q}`, label: `Q${q} ${y}` });
+                    q++; if (q > 4) { q = 1; y++; }
+                }
+            } else { // yearly
+                let y = +min.slice(0, 4);
+                const ey = +max.slice(0, 4);
+                while (y <= ey) { options.unshift({ value: `${y}`, label: `${y}` }); y++; }
+            }
+            return options;
+        }
+
+        function filterByPeriod(data, period, val) {
+            return data.filter(r => {
+                const d = r.date;
+                if (period === "weekly") return getWeekKey(new Date(d)) === val;
+                if (period === "monthly") return d.slice(0, 7) === val;
+                if (period === "quarterly") {
+                    const y = d.slice(0, 4), q = `Q${Math.ceil(+d.slice(5, 7) / 3)}`;
+                    return `${y}-${q}` === val;
+                }
+                if (period === "yearly") return d.slice(0, 4) === val;
+                return true;
+            });
+        }
+
+        function badgeClass(s) {
+            return s === "Completed" ? "badge-completed" : s === "Pending" ? "badge-pending" : "badge-inprogress";
+        }
+
+        /* ─── Render ─── */
+        function render() {
+            if (ALL_DATA.length === 0) return;
+            // Period select
+            const sel = document.getElementById("periodSelect");
+            const opts = getPeriodOptions(currentPeriod);
+            sel.innerHTML = opts.map(o => `<option value="${o.value}"${o.value === currentPeriodValue ? " selected" : ""}>${o.label}</option>`).join("");
+            if (!currentPeriodValue || !opts.find(o => o.value === currentPeriodValue)) {
+                currentPeriodValue = opts[0]?.value || "";
+                sel.value = currentPeriodValue;
+            }
+            const selOpt = opts.find(o => o.value === currentPeriodValue);
+            document.getElementById("periodLabelText").textContent = selOpt?.label || "";
+
+            // Data slices
+            const periodData = filterByPeriod(ALL_DATA, currentPeriod, currentPeriodValue);
+
+            // Populate location filter
+            const locs = [...new Set(periodData.map(r => r.location))].sort();
+
+            let filtered = periodData;
+
+            document.getElementById("recordCount").textContent = `${filtered.length} record${filtered.length !== 1 ? 's' : ''}`;
+
+            // Metrics (based on full period data, not filtered)
+            const total = periodData.length;
+            const completed = periodData.filter(r => r.status === "Completed").length;
+            const notDone = periodData.filter(r => r.status !== "Completed").length;
+            const totalCost = periodData.reduce((s, r) => s + r.cost, 0);
+            const rate = total > 0 ? Math.round(completed / total * 100) : 0;
+
+            document.getElementById("metrics").innerHTML = `
+      <div class="metric">
+        <div class="metric-label">Total Requests</div>
+        <div class="metric-value">${total}</div>
+        <div class="metric-sub">This period</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Completed</div>
+        <div class="metric-value green">${completed}</div>
+        <div class="metric-sub">${rate}% completion rate</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Processing</div>
+        <div class="metric-value amber">${notDone}</div>
+        <div class="metric-sub">Needs attention</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Total Est. Cost</div>
+        <div class="metric-value">${totalCost.toFixed(2)}</div>
+        <div class="metric-sub">Bahraini Dinar (BD)</div>
+      </div>
+    `;
+
+            // Table
+            const tbody = document.getElementById("tableBody");
+            if (!filtered.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="no-data">No requests found for this period.</td></tr>`;
+            } else {
+                tbody.innerHTML = filtered.map(r => `
+        <tr>
+          <td class="req-id">${r.id}</td>
+          <td><span class="badge ${badgeClass(r.status)}">${r.status}</span></td>
+          <td>${r.location}</td>
+          <td>${new Date(r.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+          <td class="cost-cell">${r.cost.toFixed(2)} BD</td>
+        </tr>
+      `).join("");
+            }
+
+            // Charts
+            const locCounts = {};
+            const statCounts = {};
+            periodData.forEach(r => {
+                locCounts[r.location] = (locCounts[r.location] || 0) + 1;
+                statCounts[r.status] = (statCounts[r.status] || 0) + 1;
+            });
+            const maxLoc = Math.max(...Object.values(locCounts), 1);
+            const maxStat = Math.max(...Object.values(statCounts), 1);
+
+            document.getElementById("locationChart").innerHTML =
+                Object.entries(locCounts).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([loc, cnt]) => `
+        <div class="bar-row">
+          <div class="bar-label" title="${loc}">${loc.replace("Building - ", "")}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt / maxLoc * 100)}%"></div></div>
+          <div class="bar-count">${cnt}</div>
+        </div>`).join("") || `<p style="color:var(--text-muted);font-size:13px">No data</p>`;
+
+            document.getElementById("statusChart").innerHTML =
+                Object.entries(statCounts).map(([s, cnt]) => `
+        <div class="bar-row">
+          <div class="bar-label">${s}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt / maxStat * 100)}%"></div></div>
+          <div class="bar-count">${cnt}</div>
+        </div>`).join("") || `<p style="color:var(--text-muted);font-size:13px">No data</p>`;
+        }
+
+        /* ─── Event listeners ─── */
+        document.getElementById("periodTabs").addEventListener("click", e => {
+            if (!e.target.dataset.p) return;
+            currentPeriod = e.target.dataset.p;
+            currentPeriodValue = "";
+            document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.p === currentPeriod));
+            render();
+        });
+        document.getElementById("periodSelect").addEventListener("change", e => { currentPeriodValue = e.target.value; render(); });
+
+
+        // Init
+        loadData();
+    </script>
+</body>
+
+</html>
